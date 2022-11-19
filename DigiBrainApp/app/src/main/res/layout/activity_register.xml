@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="9"
     android:orientation="vertical"
-    tools:context=".RegisterActivity">
+    tools:context=".activities.RegisterActivity">
 
     <TextView
         android:layout_height="0dp"
@@ -139,17 +139,29 @@
         <Button
             android:id="@+id/register_button"
             android:layout_width="0dp"
-            app:layout_constraintWidth_percent="0.7"
             android:layout_height="wrap_content"
+            android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/teal_700"
             android:text="@string/register"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/teal_700"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.7" />
+
+        <TextView
+            android:id="@+id/error_message"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.9"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:textSize="20sp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/register_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
