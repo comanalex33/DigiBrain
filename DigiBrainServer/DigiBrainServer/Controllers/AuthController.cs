@@ -40,7 +40,10 @@ namespace DigiBrainServer.Controllers
 
             if(user == null || !await _userModel.CheckPasswordAsync(user, model.Password))
             {
-                return Unauthorized();
+                return Unauthorized(new ErrorResponseModel
+                {
+                    message = "Invalid username or password"
+                });
             }
 
             var userRoles = await _userModel.GetRolesAsync(user);
@@ -91,10 +94,32 @@ namespace DigiBrainServer.Controllers
             }
 
             var userWithSameName = await _userModel.FindByNameAsync(model.Username);
-            var userWithSameEmail = await _userModel.FindByEmailAsync(model.Email);
-            if (userWithSameName != null || userWithSameEmail != null)
+            if (userWithSameName != null)
             {
-                return BadRequest("User already exists, please login");
+                return BadRequest(new ErrorResponseModel
+                {
+                    message = "User already exists, please login",
+                    invalidFeilds = new List<string> { nameof(model.Username) }
+                });
+            }
+
+            var userWithSameEmail = await _userModel.FindByEmailAsync(model.Email);
+            if (userWithSameEmail != null)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    message = "An account with this Email already exists",
+                    invalidFeilds = new List<string> { nameof(model.Email) }
+                });
+            }
+
+            if (model.Password.Length < 8)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    message = "Password must be at least 8 characters long",
+                    invalidFeilds = new List<string> { nameof(model.Password) }
+                });
             }
 
             var user = await AddUser(model, false);
