@@ -11,6 +11,7 @@ import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityLoginBinding
 import com.dig.digibrain.dialogs.LoadingDialog
 import com.dig.digibrain.models.LoginModel
+import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LoginViewModel
@@ -21,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
     private lateinit var animation: Animation
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
 
         setupViewModel()
         animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
+        sessionManager = SessionManager(applicationContext)
 
         binding.loginButton.setOnClickListener {
             if (checkLoginFields()) {
@@ -61,7 +64,16 @@ class LoginActivity : AppCompatActivity() {
                         loadingDialog.dismiss()
                         binding.errorMessage.text = ""
                         changeEditTextStatus(usernameField = false, passwordField = false)
-                        Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+
+                        if(resource.data != null) {
+                            val connectionStatus = sessionManager.setAuthToken(resource.data.token)
+                            if(!connectionStatus) {
+                                Toast.makeText(applicationContext, "Authentication could not be performed", Toast.LENGTH_SHORT).show()
+                            } else {
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                            }
+                        }
                     }
                     Status.ERROR -> {
                         loadingDialog.dismiss()

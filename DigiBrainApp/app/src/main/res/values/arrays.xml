@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list">
+        <item>El1</item>
+        <item>El2</item>
+        <item>El3</item>
+    </string-array>
+    <string-array name="empty_array">
+    </string-array>
+
+    <declare-styleable name="PreferencesBadge">
+        <attr name="badge" format="reference" />
+    </declare-styleable>
+</resources>
