@@ -20,7 +20,19 @@ class MainActivity : AppCompatActivity() {
         sessionManager = SessionManager(applicationContext)
 
         setupUI()
+        handleActivity()
+    }
 
+    private fun setupUI() {
+        val username = sessionManager.getUserName()
+        if(username != null) {
+            "Hi, $username".also { binding.titleText.text = it }
+        } else {
+            "Hello".also { binding.titleText.text = it }
+        }
+    }
+
+    private fun handleActivity() {
         binding.logoutButton.setOnClickListener {
             sessionManager.disconnect()
             val intent = Intent(this, LoginActivity::class.java)
@@ -37,14 +49,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-    }
 
-    private fun setupUI() {
-        val username = sessionManager.getUserName()
-        if(username != null) {
-            "Hi, $username".also { binding.titleText.text = it }
-        } else {
-            "Hello".also { binding.titleText.text = it }
+        binding.learnButton.setOnClickListener {
+            val intent = Intent(this, LearnActivity::class.java)
+            startActivity(intent)
         }
     }
 }
