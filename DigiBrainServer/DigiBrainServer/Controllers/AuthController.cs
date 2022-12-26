@@ -42,7 +42,7 @@ namespace DigiBrainServer.Controllers
             {
                 return Unauthorized(new ErrorResponseModel
                 {
-                    message = "Invalid username or password"
+                    Message = "Invalid username or password"
                 });
             }
 
@@ -51,7 +51,8 @@ namespace DigiBrainServer.Controllers
             var authClaims = new List<Claim>
             {
                 new ("name", user.UserName),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.Name, model.Username)
             };
 
             authClaims.AddRange(userRoles.Select(userRole => new Claim("roles", userRole)));
@@ -82,7 +83,7 @@ namespace DigiBrainServer.Controllers
             var rolesDoesNotExist = !await _roleManager.RoleExistsAsync("admin");
             var admins = await _userModel.GetUsersInRoleAsync("admin");
 
-            if (rolesDoesNotExist || admins.Count() == 0)
+            if (rolesDoesNotExist || admins.Count == 0)
             {
                 await AddRoles("admin");
                 await AddRoles("student");
@@ -98,8 +99,8 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "User already exists, please login",
-                    invalidFeilds = new List<string> { nameof(model.Username) }
+                    Message = "User already exists, please login",
+                    InvalidFeilds = new List<string> { nameof(model.Username) }
                 });
             }
 
@@ -108,8 +109,8 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "An account with this Email already exists",
-                    invalidFeilds = new List<string> { nameof(model.Email) }
+                    Message = "An account with this Email already exists",
+                    InvalidFeilds = new List<string> { nameof(model.Email) }
                 });
             }
 
@@ -117,8 +118,8 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "Password must be at least 8 characters long",
-                    invalidFeilds = new List<string> { nameof(model.Password) }
+                    Message = "Password must be at least 8 characters long",
+                    InvalidFeilds = new List<string> { nameof(model.Password) }
                 });
             }
 

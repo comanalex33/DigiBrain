@@ -4,6 +4,6 @@ namespace DigiBrainServer.ResponseModels
 {
     public class UserResponseModel: IdentityUser
     {
-        public long classId { get; set; }
+        public long ClassId { get; set; }
     }
 }

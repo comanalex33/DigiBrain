@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DigiBrainServer.ResponseModels
 {
     public class ErrorResponseModel
     {
-        public string message { get; set; }
-        public List<string> invalidFeilds { get; set; }
+        public string Message { get; set; }
+        public List<string> InvalidFeilds { get; set; }
     }
 }

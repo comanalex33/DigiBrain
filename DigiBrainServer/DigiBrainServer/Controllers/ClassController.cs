@@ -1,0 +1,100 @@
+﻿using DigiBrainServer.Models;
+using DigiBrainServer.ResponseModels;
+using DigiBrainServer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DigiBrainServer.Controllers
+{
+    [Route("api/classes")]
+    [ApiController]
+    public class ClassController : ControllerBase
+    {
+        private readonly AppDbContext _context;
+
+        public ClassController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        [Route("domains")]
+        public async Task<ActionResult<IEnumerable<DomainResponseModel>>> GetDomainsByClassNumber([FromQuery]ClassDomainsViewModel classDomainModel)
+        {
+            var classes = await _context.Class.Where(item => item.Number == classDomainModel.Number && item.AtUniversity == classDomainModel.AtUniversity).ToListAsync();
+            if(classes == null || classes.Count == 0)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Classes not found for this number and at University"
+                });
+            }
+
+            var domains = new List<DomainResponseModel>();
+            foreach(var classModel in classes) {
+                var domain = await _context.Domain.FindAsync(classModel.DomainId);
+                if(domain == null)
+                {
+                    return NotFound(new ErrorResponseModel
+                    {
+                        Message = "Domain not found"
+                    });
+                }
+                if(domain.LanguageId == classDomainModel.LanguageId)
+                {
+                    domains.Add((DomainResponseModel)domain);
+                }   
+            }
+
+            return Ok(domains);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<ClassResponseModel>> AddClass(ClassViewModel classModel)
+        {
+            var classCheck = _context.Class.Where(item => item.Number.Equals(classModel.Number) && item.AtUniversity == classModel.AtUniversity).FirstOrDefault();
+            if (classCheck != null)
+            {
+                return BadRequest(new { message = "Class already exists" });
+            }
+
+            long id = _context.Class.Count() + 1;
+            classCheck = await _context.Class.FindAsync(id);
+            while (classCheck != null)
+            {
+                id++;
+                classCheck = await _context.Class.FindAsync(id);
+            }
+
+            ClassModel classModelToSave = new(id, classModel.Number, classModel.DomainId, classModel.AtUniversity);
+            _context.Class.Add(classModelToSave);
+            await _context.SaveChangesAsync();
+
+            return Ok((ClassResponseModel)classModelToSave);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<ClassResponseModel>> DeleteClass(long id)
+        {
+            var classModel = await _context.Class.FindAsync(id);
+            if (classModel == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This class does not exist"
+                });
+            }
+
+            _context.Class.Remove(classModel);
+            await _context.SaveChangesAsync();
+
+            return Ok((ClassResponseModel)classModel);
+        }
+    }
+}

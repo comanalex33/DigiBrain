@@ -6,8 +6,8 @@ namespace DigiBrainServer.Models
 {
     public class UserModel: IdentityUser
     {
-        public long classId { get; set; }
-        public bool requestToResolve { get; set; }
+        public long ClassId { get; set; }
+        public bool RequestToResolve { get; set; }
 
         public static explicit operator UserResponseModel(UserModel user)
         {

@@ -3,7 +3,6 @@ using DigiBrainServer.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,10 +15,11 @@ namespace DigiBrainServer.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<UserModel> _userManager;
-        
-        public UserController(UserManager<UserModel> userManager)
+        private readonly AppDbContext _context;
+        public UserController(UserManager<UserModel> userManager, AppDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "This used does not exist"
+                    Message = "This used does not exist"
                 });
             }
 
@@ -49,16 +49,15 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "This used does not exist"
+                    Message = "This used does not exist"
                 });
             }
-
             var roles = await _userManager.GetRolesAsync(user);
             if(roles.Count == 0)
             {
                 return NotFound(new ErrorResponseModel
                 {
-                    message = "This user does not have any roles assigned"
+                    Message = "This user does not have any roles assigned"
                 });
             }
 
@@ -78,7 +77,7 @@ namespace DigiBrainServer.Controllers
             }
             else if (roleName.Equals("none"))
             {
-                var usersInAnyRole = await getUsersInAnyRole();
+                var usersInAnyRole = await GetUsersInAnyRole();
                 var allUsers = await _userManager.Users.ToListAsync();
                 users = allUsers.Where(
                     user => !usersInAnyRole.Any(userInRole => userInRole.Id.Equals(user.Id))
@@ -108,7 +107,7 @@ namespace DigiBrainServer.Controllers
             {
                 return NotFound(new ErrorResponseModel 
                 {
-                   message = "User does not exists"
+                   Message = "User does not exists"
                 });
             }
             var roles = await _userManager.GetRolesAsync(user);
@@ -116,42 +115,82 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "This user already has a role"
+                    Message = "This user already has a role"
                 });
             }
             if (!role.Equals("student") && !role.Equals("teacher"))
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    message = "Not an existing role"
+                    Message = "Not an existing role"
                 });
             }
             await _userManager.AddToRoleAsync(user, role);
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{username}")]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<string>> DeleteUser(string username)
+        [HttpPut]
+        [Route("{username}/classes/{classId}")]
+        [Authorize(Roles = "admin,student")]
+        public async Task<ActionResult<UserResponseModel>> ChangeClass(string username, long classId)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
                 return NotFound(new ErrorResponseModel
                 {
-                    message = "User does not exists"
+                    Message = "User does not exists"
+                });
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if(currentUser.Id != user.Id)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Not allowed to modify this user's data"
+                });
+            }
+
+            var classModel = await _context.Class.FindAsync(classId);
+            if(classModel == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Class does not exists"
+                });
+            }
+
+            user.ClassId = classId;
+            await _userManager.UpdateAsync(user);
+            return Ok((UserResponseModel)user);
+        }
+
+        [HttpDelete]
+        [Route("{username}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<UserResponseModel>> DeleteUser(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "User does not exists"
                 });
             }
             var result = await _userManager.DeleteAsync(user);
             if (result == null)
             {
-                return NotFound();
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "User couldn't be found"
+                });
             }
-            return Ok();
+            return Ok((UserResponseModel)user);
         }
 
-        private async Task<List<UserModel>> getUsersInAnyRole()
+        private async Task<List<UserModel>> GetUsersInAnyRole()
         {
             var admins = await _userManager.GetUsersInRoleAsync("admin");
             var students = await _userManager.GetUsersInRoleAsync("student");
