@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -25,7 +24,7 @@ namespace DigiBrainServer
             Configuration = configuration;
 
             // Read secrets file
-            using StreamReader r = new StreamReader(Configuration.GetValue<string>("SecretsFile"));
+            using StreamReader r = new(Configuration.GetValue<string>("SecretsFile"));
             string json = r.ReadToEnd();
             Secrets = JsonConvert.DeserializeObject<SecretsModel>(json);
         }

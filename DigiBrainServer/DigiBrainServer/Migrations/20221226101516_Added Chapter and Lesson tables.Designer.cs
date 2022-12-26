@@ -3,15 +3,17 @@ using System;
 using DigiBrainServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DigiBrainServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221226101516_Added Chapter and Lesson tables")]
+    partial class AddedChapterandLessontables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,6 +67,24 @@ namespace DigiBrainServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Class");
+                });
+
+            modelBuilder.Entity("DigiBrainServer.Models.ClassSubjectModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<long>("ClassId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SubjectId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ClassSubject");
                 });
 
             modelBuilder.Entity("DigiBrainServer.Models.DomainModel", b =>
@@ -168,9 +188,6 @@ namespace DigiBrainServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<long>("ClassId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("IconId")
                         .HasColumnType("bigint");
