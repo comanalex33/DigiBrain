@@ -85,8 +85,8 @@ class SubjectAdapter(var context: Context, var application: Application, var lis
             var iconAvailable = false
             val iconPack = (application as App).iconPack
             if(iconPack != null) {
-                if(iconPack.getIcon(model.iconId) != null) {
-                    subjectImage.background = iconPack.getIcon(model.iconId)!!.drawable
+                if(iconPack.getIcon(model.iconId.toInt()) != null) {
+                    subjectImage.background = iconPack.getIcon(model.iconId.toInt())!!.drawable
                     iconAvailable = true
                 }
             }

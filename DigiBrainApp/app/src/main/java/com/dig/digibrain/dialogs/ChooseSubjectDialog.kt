@@ -22,22 +22,25 @@ import com.dig.digibrain.databinding.DialogChooseSubjectBinding
 import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
+import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
+import com.dig.digibrain.utils.Status
+import com.dig.digibrain.viewModels.LearnViewModel
 
 class ChooseSubjectDialog(
     var application: Application,
     var currentSubject: SubjectModel?,
-    var selectedDomain: DomainModel?,
-    var classNumber: Int,
+    var classModel: ClassModel?,
     var atUniversity: Boolean): DialogFragment(), ISubjectChanged {
 
     private lateinit var binding: DialogChooseSubjectBinding
+    private lateinit var listener: ISubjectChanged
+    private lateinit var viewModel: LearnViewModel
 
     private lateinit var subjectAdapter: SubjectAdapter
     private var selectedSubject: SubjectModel? = null
-
-    private lateinit var listener: ISubjectChanged
+    private var subjectsUpdated = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,39 +54,10 @@ class ChooseSubjectDialog(
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-        val subjects = listOf(
-            SubjectModel(1, "Subject 1", 5, 1, 1, false),
-            SubjectModel(2, "Subject 2", 57, 2, 1, false),
-            SubjectModel(3, "Subject 3", 8, 1, 12, false),
-            SubjectModel(4, "Subject 4", 5, 4, 12, false),
-            SubjectModel(5, "Subject 5", 57, 1, 1, true),
-            SubjectModel(6, "Subject 6", 8, 2, 1, true),
-//            SubjectModel(7, "Domain 1", 5, 3),
-//            SubjectModel(8, "Domain 2", 57, 1),
-//            SubjectModel(9, "Domain 3", 8, 2)
-        )
-
-        val subjectsForRecyclerView = getSubjectsForRecyclerView(subjects)
-
-        if(subjectsForRecyclerView.isNotEmpty()) {
-            subjectAdapter = SubjectAdapter(
-                activity as LearnActivity,
-                application,
-                this,
-                currentSubject,
-                subjectsForRecyclerView
-            )
-            binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
-            binding.recyclerView.addItemDecoration(SpacingItemDecorator(30, 10))
-            binding.recyclerView.adapter = subjectAdapter
-        } else {
-            binding.errorMessage.text = resources.getString(R.string.no_subjects_defined_for_this_class)
-            binding.errorMessage.visibility = View.VISIBLE
-            binding.selectButton.text = "Ok"
-        }
+        updateSubjects()
 
         binding.selectButton.setOnClickListener {
-            if(subjectsForRecyclerView.isNotEmpty()) {
+            if(subjectsUpdated) {
                 if (selectedSubject == null) {
                     binding.errorMessage.text = resources.getString(R.string.select_subject)
                     binding.errorMessage.visibility = View.VISIBLE
@@ -111,23 +85,78 @@ class ChooseSubjectDialog(
         this.listener = listener
     }
 
-    private fun getSubjectsForRecyclerView(list: List<SubjectModel>): List<SubjectModel> {
-        val filteredList = ArrayList<SubjectModel>()
-        for(subject in list) {
-            if(subject.atUniversity == atUniversity) {
-                if(atUniversity || classNumber >= 8) {
-                    selectedDomain?.apply {
-                        if (subject.domainId == this.id && subject.classNumber == classNumber) {
-                            filteredList.add(subject)
+    fun setViewModel(viewModel: LearnViewModel) {
+        this.viewModel = viewModel
+    }
+
+    private fun setSubjects(subjects: List<SubjectModel>) {
+        subjectAdapter = SubjectAdapter(
+            activity as LearnActivity,
+            application,
+            this,
+            currentSubject,
+            subjects
+        )
+        binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
+        binding.recyclerView.addItemDecoration(SpacingItemDecorator(30, 10))
+        binding.recyclerView.adapter = subjectAdapter
+    }
+
+    private fun setMessageForNoSubjects(message: String) {
+        binding.errorMessage.text = message
+        binding.errorMessage.visibility = View.VISIBLE
+        binding.selectButton.text = "Ok"
+    }
+
+    private fun updateSubjects() {
+
+        if(classModel != null) {
+            viewModel.getSubjectsForClass(classModel!!.id).observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            if(resource.data != null) {
+                                if(resource.data.isNotEmpty()) {
+                                    subjectsUpdated = true
+                                    setSubjects(resource.data)
+                                } else {
+                                    setMessageForNoSubjects(resources.getString(R.string.no_subjects_defined_for_this_class))
+                                }
+                            } else {
+                                setMessageForNoSubjects(resources.getString(R.string.no_subjects_defined_for_this_class))
+                            }
                         }
-                    }
-                } else {
-                    if (subject.classNumber == classNumber) {
-                        filteredList.add(subject)
+                        Status.ERROR -> {
+                            setMessageForNoSubjects(resource.message!!)
+                        }
+                        Status.LOADING -> {
+                            //TODO - Loading dialog
+                        }
                     }
                 }
             }
+        } else {
+            setMessageForNoSubjects(resources.getString(R.string.no_subjects_defined_for_this_class))
         }
+    }
+
+    private fun getSubjectsForRecyclerView(list: List<SubjectModel>): List<SubjectModel> {
+        val filteredList = ArrayList<SubjectModel>()
+//        for(subject in list) {
+//            if(subject.atUniversity == atUniversity) {
+//                if(atUniversity || classNumber >= 8) {
+//                    selectedDomain?.apply {
+//                        if (subject.domainId == this.id && subject.classNumber == classNumber) {
+//                            filteredList.add(subject)
+//                        }
+//                    }
+//                } else {
+//                    if (subject.classNumber == classNumber) {
+//                        filteredList.add(subject)
+//                    }
+//                }
+//            }
+//        }
         return filteredList
     }
 }

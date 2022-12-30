@@ -1,10 +1,12 @@
 package com.dig.digibrain.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityLearnBinding
 import com.dig.digibrain.dialogs.ChooseClassDialog
@@ -13,14 +15,22 @@ import com.dig.digibrain.dialogs.ChooseSubjectDialog
 import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
+import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
+import com.dig.digibrain.services.server.ApiClient
+import com.dig.digibrain.utils.Status
+import com.dig.digibrain.viewModels.LearnViewModel
+import com.dig.digibrain.viewModels.LoginViewModel
+import com.dig.digibrain.viewModels.ViewModelFactory
 
 class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjectChanged {
 
     private lateinit var binding: ActivityLearnBinding
+    private lateinit var viewModel: LearnViewModel
 
     private var selectedClass: Int? = null
+    private var selectedClassModel: ClassModel? = null
     private var isUniversity: Boolean = false
     private var selectedDomain: DomainModel? = null
     private var selectedSubject: SubjectModel? = null
@@ -32,6 +42,8 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
         super.onCreate(savedInstanceState)
         binding = ActivityLearnBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupViewModel()
 
         binding.backArrow.setOnClickListener {
             finish()
@@ -45,8 +57,9 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
 
         binding.chooseDomainButton.setOnClickListener {
             if(domainClickable) {
-                val dialog = ChooseDomainDialog(application, selectedDomain, isUniversity)
+                val dialog = ChooseDomainDialog(application, selectedDomain, selectedClass!!, isUniversity, 2)
                 dialog.addListener(this)
+                dialog.setViewModel(viewModel)
                 dialog.show(this.supportFragmentManager, "Choose domain")
             }
         }
@@ -54,23 +67,38 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
         binding.chooseSubjectButton.setOnClickListener {
             if(subjectClickable) {
                 selectedClass?.apply {
-                    val dialog = ChooseSubjectDialog(application, selectedSubject, selectedDomain, this, isUniversity)
+                    val dialog = ChooseSubjectDialog(application, selectedSubject, selectedClassModel, isUniversity)
                     dialog.addListener(this@LearnActivity)
+                    dialog.setViewModel(viewModel)
                     dialog.show(this@LearnActivity.supportFragmentManager, "Choose subject")
                 }
-//                if(!isUniversity) {
-//                    val dialog = ChooseSubjectDialog(application, selectedSubject,)
-//                    dialog.addListener(this@LearnActivity)
-//                    dialog.show(this@LearnActivity.supportFragmentManager, "Choose subject")
-//                } else {
-//                    selectedDomain?.apply {
-//                        val dialog = ChooseSubjectDialog(application, selectedSubject, this.id)
-//                        dialog.addListener(this@LearnActivity)
-//                        dialog.show(this@LearnActivity.supportFragmentManager, "Choose subject")
-//                    }
-//                }
             }
         }
+
+        binding.searchButton.setOnClickListener {
+            if(selectedClass != null && selectedSubject != null) {
+                val intent = Intent(this@LearnActivity, SubjectActivity::class.java)
+
+                val bundle = Bundle()
+                bundle.putLong("subjectId", selectedSubject!!.id)
+                bundle.putString("subjectName", selectedSubject!!.name)
+                bundle.putLong("subjectIconId", selectedSubject!!.iconId)
+                bundle.putInt("classNumber", selectedClass!!)
+                bundle.putBoolean("atUniversity", isUniversity)
+                intent.putExtras(bundle)
+
+                startActivity(intent)
+            } else {
+                // TODO - Message if not all the fields completed
+            }
+        }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiClient.getService())
+        )[LearnViewModel::class.java]
     }
 
     override fun changeClass(classNumber: Int, isUniversity: Boolean) {
@@ -100,6 +128,7 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
             // Enable subject selection
             subjectClickable = true
             setViewClickable(binding.chooseSubjectButton, true)
+            getClassByNumberAndDomain()
         }
 
         // Enable domain selection
@@ -132,6 +161,8 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
         binding.chooseSubjectText.text = resources.getString(R.string.choose_subject)
         binding.chooseSubjectValue.text = ""
         selectedSubject = null
+
+        getClassByNumberAndDomain()
     }
 
     override fun disableErrorMessage() {}
@@ -155,6 +186,36 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
                 applicationContext,
                 R.color.light_gray
             )
+        }
+    }
+
+    private fun getClassByNumberAndDomain() {
+        if(selectedDomain != null) {
+            viewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, selectedDomain!!.id)
+                .observe(this) {
+                    it?.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                selectedClassModel = resource.data
+                            }
+                            Status.ERROR -> {}
+                            Status.LOADING -> {}
+                        }
+                    }
+                }
+        } else {
+            viewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, 0)
+                .observe(this) {
+                    it?.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                selectedClassModel = resource.data
+                            }
+                            Status.ERROR -> {}
+                            Status.LOADING -> {}
+                        }
+                    }
+                }
         }
     }
 }

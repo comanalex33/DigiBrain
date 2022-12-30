@@ -53,6 +53,29 @@ namespace DigiBrainServer.Controllers
             return Ok(domains);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<ClassResponseModel>> GetClassByNumberAndDomain([FromQuery] ClassViewModel classModel)
+        {
+            var classes = await _context.Class.Where(item => item.Number == classModel.Number && item.AtUniversity == classModel.AtUniversity && item.DomainId == classModel.DomainId).ToListAsync();
+            if (classes == null || classes.Count == 0)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Classes not found for this number and domain"
+                });
+            }
+            if (classes.Count > 1)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    Message = "Classes found multiple times"
+                });
+            }
+
+            return Ok((ClassResponseModel)classes[0]);
+
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<ClassResponseModel>> AddClass(ClassViewModel classModel)
@@ -69,6 +92,12 @@ namespace DigiBrainServer.Controllers
             {
                 id++;
                 classCheck = await _context.Class.FindAsync(id);
+            }
+
+            var domainCheck = await _context.Domain.FindAsync(classModel.DomainId);
+            if (domainCheck == null)
+            {
+                return BadRequest(new { message = "Domain does not exists" });
             }
 
             ClassModel classModelToSave = new(id, classModel.Number, classModel.DomainId, classModel.AtUniversity);
