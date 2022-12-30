@@ -82,8 +82,8 @@ class DomainAdapter(var context: Context, var application: Application, var list
             var iconAvailable = false
             val iconPack = (application as App).iconPack
             if(iconPack != null) {
-                if(iconPack.getIcon(model.iconId) != null) {
-                    domainImage.background = iconPack.getIcon(model.iconId)!!.drawable
+                if(iconPack.getIcon(model.iconId.toInt()) != null) {
+                    domainImage.background = iconPack.getIcon(model.iconId.toInt())!!.drawable
                     iconAvailable = true
                 }
             }

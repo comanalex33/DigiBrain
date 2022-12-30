@@ -17,6 +17,22 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.LessonActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activities.SubjectActivity"
+            android:exported="false"
+            android:label="@string/title_activity_subject"
+            android:theme="@style/Theme.DigiBrainApp.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.LearnActivity"
             android:exported="false">
             <meta-data

@@ -20,15 +20,23 @@ import com.dig.digibrain.databinding.DialogChooseDomainBinding
 import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.models.subject.DomainModel
+import com.dig.digibrain.utils.Status
+import com.dig.digibrain.viewModels.LearnViewModel
 
-class ChooseDomainDialog(var application: Application,  var currentDomain: DomainModel?, var atUniversity: Boolean): DialogFragment(), IDomainChanged {
+class ChooseDomainDialog(
+    var application: Application,
+    var currentDomain: DomainModel?,
+    var classNumber: Int,
+    var atUniversity: Boolean,
+    var languageId: Long): DialogFragment(), IDomainChanged {
 
     private lateinit var binding: DialogChooseDomainBinding
+    private lateinit var listener: IDomainChanged
+    private lateinit var viewModel: LearnViewModel
 
     private lateinit var domainAdapter: DomainAdapter
     private var selectedDomain: DomainModel? = null
-
-    private lateinit var listener: IDomainChanged
+    private var domainsUpdated = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,39 +50,10 @@ class ChooseDomainDialog(var application: Application,  var currentDomain: Domai
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-        val domains = listOf(
-            DomainModel(1, "Domain 1", 5, true),
-            DomainModel(2, "Domain 2", 57, true),
-            DomainModel(3, "Domain 3", 8, true),
-            DomainModel(4, "Domain 1", 5, false),
-            DomainModel(5, "Domain 2", 57, false),
-            DomainModel(6, "Domain 3", 8, true),
-            DomainModel(7, "Domain 1", 5, true),
-            DomainModel(8, "Domain 2", 57, true),
-            DomainModel(9, "Domain 3", 8, true)
-        )
-
-        val domainsForRecyclerView = getDomainsForRecyclerView(domains)
-
-        if (domainsForRecyclerView.isNotEmpty()) {
-            domainAdapter = DomainAdapter(
-                activity as LearnActivity,
-                application,
-                this,
-                currentDomain,
-                domainsForRecyclerView
-            )
-            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-            binding.recyclerView.addItemDecoration(SpacingItemDecorator(30, 10))
-            binding.recyclerView.adapter = domainAdapter
-        } else {
-            binding.errorMessage.text = resources.getString(R.string.no_domains_defined_for_this_class)
-            binding.errorMessage.visibility = View.VISIBLE
-            binding.selectButton.text = "Ok"
-        }
+        updateDomains()
 
         binding.selectButton.setOnClickListener {
-            if (domainsForRecyclerView.isNotEmpty()) {
+            if (domainsUpdated) {
                 if (selectedDomain == null) {
                     binding.errorMessage.text = resources.getString(R.string.select_domain)
                     binding.errorMessage.visibility = View.VISIBLE
@@ -102,13 +81,53 @@ class ChooseDomainDialog(var application: Application,  var currentDomain: Domai
         this.listener = listener
     }
 
-    private fun getDomainsForRecyclerView(list: List<DomainModel>): List<DomainModel> {
-        val filteredList = ArrayList<DomainModel>()
-        for(domain in list) {
-            if(domain.atUniversity == this.atUniversity) {
-                filteredList.add(domain)
+    fun setViewModel(viewModel: LearnViewModel) {
+        this.viewModel = viewModel
+    }
+
+    private fun setDomains(domains: List<DomainModel>) {
+        domainAdapter = DomainAdapter(
+            activity as LearnActivity,
+            application,
+            this,
+            currentDomain,
+            domains
+        )
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.addItemDecoration(SpacingItemDecorator(30, 10))
+        binding.recyclerView.adapter = domainAdapter
+    }
+
+    private fun setMessageForNoDomains(message: String) {
+        binding.errorMessage.text = message
+        binding.errorMessage.visibility = View.VISIBLE
+        binding.selectButton.text = "Ok"
+    }
+
+    private fun updateDomains() {
+        viewModel.getDomainsForClass(classNumber, atUniversity, languageId).observe(this) {
+            it.let { resource ->
+                when(resource.status) {
+                    Status.SUCCESS -> {
+                        if(resource.data != null) {
+                            if(resource.data.isNotEmpty()) {
+                                domainsUpdated = true
+                                setDomains(resource.data)
+                            } else {
+                                setMessageForNoDomains(resources.getString(R.string.no_domains_defined_for_this_class))
+                            }
+                        } else {
+                            setMessageForNoDomains(resources.getString(R.string.no_domains_defined_for_this_class))
+                        }
+                    }
+                    Status.ERROR -> {
+                        setMessageForNoDomains(resource.message!!)
+                    }
+                    Status.LOADING -> {
+                        //TODO - Loading dialog
+                    }
+                }
             }
         }
-        return filteredList
     }
 }
