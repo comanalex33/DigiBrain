@@ -54,5 +54,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LearnActivity::class.java)
             startActivity(intent)
         }
+
+        binding.quizButton.setOnClickListener {
+            val intent = Intent(this, QuizActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

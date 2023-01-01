@@ -91,7 +91,7 @@ class ChooseSubjectDialog(
 
     private fun setSubjects(subjects: List<SubjectModel>) {
         subjectAdapter = SubjectAdapter(
-            activity as LearnActivity,
+            application.applicationContext,
             application,
             this,
             currentSubject,

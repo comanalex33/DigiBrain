@@ -87,7 +87,7 @@ class ChooseDomainDialog(
 
     private fun setDomains(domains: List<DomainModel>) {
         domainAdapter = DomainAdapter(
-            activity as LearnActivity,
+            application.applicationContext,
             application,
             this,
             currentDomain,
