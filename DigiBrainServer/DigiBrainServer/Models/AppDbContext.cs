@@ -18,5 +18,15 @@ namespace DigiBrainServer.Models
         public DbSet<ChapterModel> Chapter { get; set; }
 
         public DbSet<LessonModel> Lesson { get; set; }
+
+        public DbSet<QuestionModel> Question { get; set; }
+
+        public DbSet<AnswerModel> Answer { get; set; }
+
+        public DbSet<LessonQuestionModel> LessonQuestion { get; set; }
+
+        public DbSet<QuizModel> Quiz { get; set; }
+        
+        public DbSet<QuizQuestionModel> QuizQuestion { get; set; }
     }
 }

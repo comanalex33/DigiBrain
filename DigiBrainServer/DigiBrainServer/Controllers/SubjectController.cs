@@ -25,13 +25,6 @@ namespace DigiBrainServer.Controllers
         [Route("class/{classId}")]
         public async Task<ActionResult<IEnumerable<SubjectResponseModel>>> GetSubjectForClass(long classId)
         {
-            /*var classSubjects = await _context.ClassSubject.Where(item => item.ClassId == classId).ToListAsync();
-            var responseSubjects = new List<SubjectResponseModel>();
-            foreach(var classSubject in classSubjects)
-            {
-                var subject = await _context.Subject.FindAsync(classSubject.SubjectId);
-                responseSubjects.Add((SubjectResponseModel)subject);
-            }*/
 
             var subjects = await _context.Subject.Where(item => item.ClassId == classId).ToListAsync();
             var responseSubjects = new List<SubjectResponseModel>();

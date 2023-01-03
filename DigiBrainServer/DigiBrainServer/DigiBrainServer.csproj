@@ -16,6 +16,8 @@
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.6.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.2" />
   </ItemGroup>
 
 </Project>
