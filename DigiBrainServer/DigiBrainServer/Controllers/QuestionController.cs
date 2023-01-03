@@ -84,7 +84,7 @@ namespace DigiBrainServer.Controllers
                     var question = await _context.Question.FindAsync(questionId);
                     if(question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
                     {
-                        selectedQuestionsIds.Add(questionId);
+                        selectedQuestionsIds.Add(questionIdPosition);
                         questions.Add((QuestionResponseModel)question);
                         break;
                     }
