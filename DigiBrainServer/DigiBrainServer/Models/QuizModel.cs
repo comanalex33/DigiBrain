@@ -6,14 +6,14 @@ namespace DigiBrainServer.Models
     {
         public long Id { get; set; }
         public DateTime Date { get; set; }
-        public long UserId { get; set; }
+        public string Username { get; set; }
 
         public QuizModel() { }
-        public QuizModel(long Id, DateTime Date, long UserId)
+        public QuizModel(long Id, DateTime Date, string Username)
         {
             this.Id = Id;
             this.Date = Date;
-            this.UserId = UserId;
+            this.Username = Username;
         }
     }
 }
