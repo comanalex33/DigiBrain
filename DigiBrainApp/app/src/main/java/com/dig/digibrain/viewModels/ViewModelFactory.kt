@@ -19,6 +19,12 @@ class ViewModelFactory(private val apiService: ApiService): ViewModelProvider.Fa
         if (modelClass.isAssignableFrom(SubjectViewModel::class.java)) {
             return SubjectViewModel(Repository(apiService)) as T
         }
+        if (modelClass.isAssignableFrom(QuizViewModel::class.java)) {
+            return  QuizViewModel(Repository(apiService)) as T
+        }
+        if (modelClass.isAssignableFrom(QuestionViewModel::class.java)) {
+            return  QuestionViewModel(Repository(apiService)) as T
+        }
         throw java.lang.IllegalArgumentException("Unknown class name")
     }
 }

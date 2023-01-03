@@ -9,8 +9,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.CardMultipleChoiceAnswerBinding
+import com.dig.digibrain.models.quiz.AnswerModel
 
-class MultipleChoiceAnswerAdapter(var context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MultipleChoiceAnswerAdapter(var context: Context, private var arrayList: List<AnswerModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding: CardMultipleChoiceAnswerBinding
 
@@ -20,20 +21,24 @@ class MultipleChoiceAnswerAdapter(var context: Context): RecyclerView.Adapter<Re
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val multipleChoiceAnswer = arrayList[position]
+
+        (holder as MultipleChoiceAnswerViewHolder).initializeUIComponents(multipleChoiceAnswer)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return arrayList.size
     }
 
     inner class MultipleChoiceAnswerViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
 
         var card: CardView = myView.findViewById(R.id.multiple_choice_answer_card)
         var answerText: TextView = myView.findViewById(R.id.multiple_choice_answer)
+        var correct: Boolean = false
 
-        fun initializeUIComponents() {
-            // TODO - Complete question
+        fun initializeUIComponents(model: AnswerModel) {
+            answerText.text = model.text
+            correct = model.correct
         }
     }
 }

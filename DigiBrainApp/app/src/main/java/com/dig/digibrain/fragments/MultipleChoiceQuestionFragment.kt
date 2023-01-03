@@ -5,56 +5,29 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dig.digibrain.R
+import com.dig.digibrain.adapters.MultipleChoiceAnswerAdapter
+import com.dig.digibrain.databinding.FragmentMultipleChoiceQuestionBinding
+import com.dig.digibrain.models.quiz.AnswerModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MultipleChoiceQuestionFragment(var questionText: String, var answers: List<AnswerModel>) : Fragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MultipleChoiceQuestionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MultipleChoiceQuestionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentMultipleChoiceQuestionBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_multiple_choice_question, container, false)
-    }
+        binding = FragmentMultipleChoiceQuestionBinding.inflate(layoutInflater)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MultipleChoiceQuestionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MultipleChoiceQuestionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        binding.questionText.text = questionText
+
+        val adapter = MultipleChoiceAnswerAdapter(requireContext(), answers)
+        binding.answersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.answersRecyclerView.adapter = adapter
+
+
+        return binding.root
     }
 }

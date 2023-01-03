@@ -11,18 +11,119 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class QuizViewModel(private val repository: Repository): ViewModel() {
-    fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = liveData(
+//    fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = liveData(
+//        Dispatchers.IO) {
+//        emit(Resource.loading(data = null))
+//        try {
+//            emit(Resource.success(data = repository.getDomainsForClass(number, atUniversity, languageId)))
+//        } catch (throwable: Throwable) {
+//            when(throwable) {
+//                is IOException -> {
+//                    emit(
+//                        Resource.error(
+//                        data = null,
+//                        message = throwable.message ?: "Network error"))
+//                }
+//                is HttpException -> {
+//                    try {
+//                        val gson = Gson()
+//                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+//
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = errorModel.message,
+//                            invalidFields = errorModel.invalidFeilds))
+//                    } catch (exception: Exception) {
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = "Error occurred!"))
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    fun getClassByNumberAndDomain(number: Int, atUniversity: Boolean, domainId: Long) = liveData(
+//        Dispatchers.IO) {
+//        emit(Resource.loading(data = null))
+//        try {
+//            emit(Resource.success(data = repository.getClassByNumberAndDomain(number, atUniversity, domainId)))
+//        } catch (throwable: Throwable) {
+//            when(throwable) {
+//                is IOException -> {
+//                    emit(
+//                        Resource.error(
+//                        data = null,
+//                        message = throwable.message ?: "Network error"))
+//                }
+//                is HttpException -> {
+//                    try {
+//                        val gson = Gson()
+//                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+//
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = errorModel.message,
+//                            invalidFields = errorModel.invalidFeilds))
+//                    } catch (exception: Exception) {
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = "Error occurred!"))
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    fun getSubjectsForClass(classId: Long) = liveData(Dispatchers.IO) {
+//        emit(Resource.loading(data = null))
+//        try {
+//            emit(Resource.success(data = repository.getSubjectsForClass(classId)))
+//        } catch (throwable: Throwable) {
+//            when(throwable) {
+//                is IOException -> {
+//                    emit(
+//                        Resource.error(
+//                        data = null,
+//                        message = throwable.message ?: "Network error"))
+//                }
+//                is HttpException -> {
+//                    try {
+//                        val gson = Gson()
+//                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+//
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = errorModel.message,
+//                            invalidFields = errorModel.invalidFeilds))
+//                    } catch (exception: Exception) {
+//                        emit(
+//                            Resource.error(
+//                            data = null,
+//                            message = "Error occurred!"))
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    fun getRandomQuestions(number: Int, difficulty: String, type: String, languageId: Long) = liveData(
         Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = repository.getDomainsForClass(number, atUniversity, languageId)))
+            emit(Resource.success(data = repository.getRandomQuestions(number, difficulty, type, languageId)))
         } catch (throwable: Throwable) {
             when(throwable) {
                 is IOException -> {
                     emit(
                         Resource.error(
-                        data = null,
-                        message = throwable.message ?: "Network error"))
+                            data = null,
+                            message = throwable.message ?: "Network error"))
                 }
                 is HttpException -> {
                     try {
@@ -31,12 +132,42 @@ class QuizViewModel(private val repository: Repository): ViewModel() {
 
                         emit(
                             Resource.error(
+                                data = null,
+                                message = errorModel.message,
+                                invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = "Error occurred!"))
+                    }
+                }
+            }
+        }
+    }
+
+    fun getQuestionAnswers(questionId: Long) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getQuestionAnswers(questionId)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(Resource.error(
+                        data = null,
+                        message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(Resource.error(
                             data = null,
                             message = errorModel.message,
                             invalidFields = errorModel.invalidFeilds))
                     } catch (exception: Exception) {
-                        emit(
-                            Resource.error(
+                        emit(Resource.error(
                             data = null,
                             message = "Error occurred!"))
                     }
@@ -45,16 +176,14 @@ class QuizViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    fun getClassByNumberAndDomain(number: Int, atUniversity: Boolean, domainId: Long) = liveData(
-        Dispatchers.IO) {
+    fun createQuizForUser(username: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = repository.getClassByNumberAndDomain(number, atUniversity, domainId)))
+            emit(Resource.success(data = repository.createQuizForUser(username)))
         } catch (throwable: Throwable) {
             when(throwable) {
                 is IOException -> {
-                    emit(
-                        Resource.error(
+                    emit(Resource.error(
                         data = null,
                         message = throwable.message ?: "Network error"))
                 }
@@ -63,47 +192,12 @@ class QuizViewModel(private val repository: Repository): ViewModel() {
                         val gson = Gson()
                         val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
 
-                        emit(
-                            Resource.error(
+                        emit(Resource.error(
                             data = null,
                             message = errorModel.message,
                             invalidFields = errorModel.invalidFeilds))
                     } catch (exception: Exception) {
-                        emit(
-                            Resource.error(
-                            data = null,
-                            message = "Error occurred!"))
-                    }
-                }
-            }
-        }
-    }
-
-    fun getSubjectsForClass(classId: Long) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(data = null))
-        try {
-            emit(Resource.success(data = repository.getSubjectsForClass(classId)))
-        } catch (throwable: Throwable) {
-            when(throwable) {
-                is IOException -> {
-                    emit(
-                        Resource.error(
-                        data = null,
-                        message = throwable.message ?: "Network error"))
-                }
-                is HttpException -> {
-                    try {
-                        val gson = Gson()
-                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
-
-                        emit(
-                            Resource.error(
-                            data = null,
-                            message = errorModel.message,
-                            invalidFields = errorModel.invalidFeilds))
-                    } catch (exception: Exception) {
-                        emit(
-                            Resource.error(
+                        emit(Resource.error(
                             data = null,
                             message = "Error occurred!"))
                     }
