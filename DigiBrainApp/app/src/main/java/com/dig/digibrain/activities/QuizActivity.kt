@@ -1,10 +1,10 @@
 package com.dig.digibrain.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
@@ -18,24 +18,18 @@ import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.interfaces.IQuizTypeChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
 import com.dig.digibrain.models.QuizTypeModel
-import com.dig.digibrain.models.quiz.AnswerModel
-import com.dig.digibrain.models.quiz.FullQuestionAnswersModel
-import com.dig.digibrain.models.quiz.QuestionModel
 import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
-import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnViewModel
-import com.dig.digibrain.viewModels.QuizViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
 
 class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjectChanged, IQuizTypeChanged {
 
     private lateinit var binding: ActivityQuizBinding
-    private lateinit var learnViewModel: LearnViewModel
-    private lateinit var quizViewModel: QuizViewModel
+    private lateinit var viewModel: LearnViewModel
 
     private var selectedClass: Int? = null
     private var selectedClassModel: ClassModel? = null
@@ -69,7 +63,7 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
             if(domainClickable) {
                 val dialog = ChooseDomainDialog(application, selectedDomain, selectedClass!!, isUniversity, 2)
                 dialog.addListener(this)
-                dialog.setViewModel(learnViewModel)
+                dialog.setViewModel(viewModel)
                 dialog.show(this.supportFragmentManager, "Choose domain")
             }
         }
@@ -79,7 +73,7 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
                 selectedClass?.apply {
                     val dialog = ChooseSubjectDialog(application, selectedSubject, selectedClassModel, isUniversity)
                     dialog.addListener(this@QuizActivity)
-                    dialog.setViewModel(learnViewModel)
+                    dialog.setViewModel(viewModel)
                     dialog.show(this@QuizActivity.supportFragmentManager, "Choose subject")
                 }
             }
@@ -87,7 +81,14 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
 
         binding.searchButton.setOnClickListener {
             if(selectedClass != null && selectedSubject != null && selectedQuizType != null) {
-                getQuizQuestions(2)
+                val intent = Intent(this, QuestionActivity::class.java)
+
+                val bundle = Bundle()
+                bundle.putString("difficulty", getDifficulty())
+                bundle.putString("type", selectedQuizType!!.key)
+                intent.putExtras(bundle)
+
+                startActivity(intent)
             } else {
                 // TODO - Message if not all the fields completed
             }
@@ -111,15 +112,10 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
     }
 
     private fun setupViewModel() {
-        learnViewModel = ViewModelProvider(
+        viewModel = ViewModelProvider(
             this,
             ViewModelFactory(ApiClient.getService())
         )[LearnViewModel::class.java]
-
-        quizViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(ApiClient.getService())
-        )[QuizViewModel::class.java]
     }
 
     override fun changeClass(classNumber: Int, isUniversity: Boolean) {
@@ -212,7 +208,7 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
 
     private fun getClassByNumberAndDomain() {
         if(selectedDomain != null) {
-            learnViewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, selectedDomain!!.id)
+            viewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, selectedDomain!!.id)
                 .observe(this) {
                     it?.let { resource ->
                         when (resource.status) {
@@ -225,7 +221,7 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
                     }
                 }
         } else {
-            learnViewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, 0)
+            viewModel.getClassByNumberAndDomain(selectedClass!!, isUniversity, 0)
                 .observe(this) {
                     it?.let { resource ->
                         when (resource.status) {
@@ -253,83 +249,5 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
         if(selectedDifficulty == 1)
             return "Medium"
         return "Hard"
-    }
-
-    private fun getQuizQuestions(number: Int) {
-        quizViewModel.getRandomQuestions(number, getDifficulty(), selectedQuizType!!.key, 2)
-            .observe(this) {
-                it.let { resource ->
-                    when(resource.status) {
-                        Status.SUCCESS -> {
-                            if(resource.data != null) {
-                                getAnswers(resource.data)
-                            }
-                        }
-                        Status.ERROR -> { }
-                        Status.LOADING -> { }
-                    }
-                }
-            }
-    }
-
-    private fun getAnswers(questions: List<QuestionModel>) {
-        val questionAnswersList = mutableListOf<FullQuestionAnswersModel>()
-        var questionsResolved = 0
-        for(question in questions) {
-            println("Question: ${question.text}")
-        }
-
-        for(question in questions) {
-            quizViewModel.getQuestionAnswers(question.id)
-                .observe(this) {
-                    it.let { resource ->
-                        when(resource.status) {
-                            Status.SUCCESS -> {
-                                questionsResolved++
-                                if(resource.data != null) {
-                                    questionAnswersList.add(
-                                        FullQuestionAnswersModel(
-                                            question,
-                                            resource.data
-                                        )
-                                    )
-                                }
-
-                                if(questionsResolved == questions.size) {
-                                    createQuiz(questionAnswersList)
-                                }
-                            }
-                            Status.ERROR -> {
-                                questionsResolved++
-                            }
-                            Status.LOADING -> { }
-                        }
-                    }
-                }
-        }
-    }
-
-    private fun createQuiz(questionsAnswers: List<FullQuestionAnswersModel>) {
-        val username = SessionManager(applicationContext).getUserName()
-        if(username != null) {
-            quizViewModel.createQuizForUser(username)
-                .observe(this) {
-                    it.let { resource ->
-                        when(resource.status) {
-                            Status.SUCCESS -> {
-                                for(questionAnswer in questionsAnswers) {
-                                    println("Question: ${questionAnswer.question.text}")
-                                    for(answer in questionAnswer.answers) {
-                                        println("    Answer: ${answer.text} - ${answer.correct}")
-                                    }
-                                }
-                                Toast.makeText(applicationContext, "Quiz created ${resource.data!!.id}", Toast.LENGTH_SHORT).show()
-                            }
-                            Status.ERROR -> { }
-                            Status.LOADING -> { }
-                        }
-                    }
-                }
-        }
     }
 }
