@@ -12,10 +12,20 @@ class Repository(private val apiService: ApiService) {
     suspend fun login(loginModel: LoginModel) = apiService.login(loginModel)
     suspend fun register(registerModel: RegisterModel) = apiService.register(registerModel)
 
+    // User
+    // --GET--
+    suspend fun getUserDetailsByUsername(username: String) = apiService.getUserDetailsByUsername(username)
+    // --PUT--
+    suspend fun updateClass(authHeader: String, username: String, id: Long) = apiService.updateClass(authHeader, username, id)
+    // --DELETE--
+    suspend fun deleteAccount(authHeader: String, username: String) = apiService.deleteAccount(authHeader, username)
+
     // Theory
     // --GET--
     suspend fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = apiService.getDomainsForClass(number, atUniversity, languageId)
+    suspend fun getDomainById(id: Long) = apiService.getDomainById(id)
     suspend fun getClassByNumberAndDomain(number: Int, atUniversity: Boolean, domainId: Long) = apiService.getClassByNumberAndDomain(number, atUniversity, domainId)
+    suspend fun getClassById(id: Long) = apiService.getClassById(id)
     suspend fun getSubjectsForClass(classId: Long) = apiService.getSubjectsForClass(classId)
     suspend fun getChaptersForSubject(subjectId: Long) = apiService.getChaptersForSubject(subjectId)
     suspend fun getLessonsForChapter(chapterId: Long) = apiService.getLessonsForChapter(chapterId)

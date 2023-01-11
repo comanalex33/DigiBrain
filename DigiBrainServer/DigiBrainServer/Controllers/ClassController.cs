@@ -21,6 +21,20 @@ namespace DigiBrainServer.Controllers
             _context = context;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClassResponseModel>> GetClassById(long id)
+        {
+            var classModel = await _context.Class.FindAsync(id);
+            if (classModel == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This class does not exists"
+                });
+            }
+            return Ok((ClassResponseModel)classModel);
+        }
+
         [HttpGet]
         [Route("domains")]
         public async Task<ActionResult<IEnumerable<DomainResponseModel>>> GetDomainsByClassNumber([FromQuery]ClassDomainsViewModel classDomainModel)

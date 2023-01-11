@@ -1,6 +1,5 @@
 package com.dig.digibrain.viewModels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.dig.digibrain.models.ErrorResponseModel
 import com.dig.digibrain.services.server.Repository
@@ -10,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import retrofit2.HttpException
 import java.io.IOException
 
-class LearnViewModel(private val repository: Repository): ViewModel() {
+class LearnViewModel(private val repository: Repository): GetDomainsViewModel() {
 
-    fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = liveData(Dispatchers.IO) {
+    override fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = repository.getDomainsForClass(number, atUniversity, languageId)))

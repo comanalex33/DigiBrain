@@ -21,6 +21,7 @@ import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.utils.Status
+import com.dig.digibrain.viewModels.GetDomainsViewModel
 import com.dig.digibrain.viewModels.LearnViewModel
 
 class ChooseDomainDialog(
@@ -32,7 +33,7 @@ class ChooseDomainDialog(
 
     private lateinit var binding: DialogChooseDomainBinding
     private lateinit var listener: IDomainChanged
-    private lateinit var viewModel: LearnViewModel
+    private lateinit var viewModel: GetDomainsViewModel
 
     private lateinit var domainAdapter: DomainAdapter
     private var selectedDomain: DomainModel? = null
@@ -81,7 +82,7 @@ class ChooseDomainDialog(
         this.listener = listener
     }
 
-    fun setViewModel(viewModel: LearnViewModel) {
+    fun setViewModel(viewModel: GetDomainsViewModel) {
         this.viewModel = viewModel
     }
 
