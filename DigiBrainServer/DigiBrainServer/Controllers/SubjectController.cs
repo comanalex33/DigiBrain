@@ -48,7 +48,7 @@ namespace DigiBrainServer.Controllers
             }
             
 
-            long id = _context.Class.Count() + 1;
+            long id = _context.Subject.Count() + 1;
             subjectCheck = await _context.Subject.FindAsync(id);
             while (subjectCheck != null)
             {

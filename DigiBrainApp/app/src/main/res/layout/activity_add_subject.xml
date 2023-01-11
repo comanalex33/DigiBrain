@@ -98,7 +98,7 @@
             android:id="@+id/add_subject_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/teal_200"
+            android:background="@drawable/curve_shape"
             android:text="@string/add"
             android:textSize="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"

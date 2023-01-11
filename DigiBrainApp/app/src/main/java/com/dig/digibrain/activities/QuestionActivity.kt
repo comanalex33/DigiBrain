@@ -14,6 +14,7 @@ import com.dig.digibrain.fragments.MultipleChoiceQuestionFragment
 import com.dig.digibrain.fragments.QuestionFragment
 import com.dig.digibrain.fragments.WordsGapFragment
 import com.dig.digibrain.interfaces.ItemClickListener
+import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
 import com.dig.digibrain.models.quiz.AnswerModel
 import com.dig.digibrain.models.quiz.QuestionAnswerModel
 import com.dig.digibrain.models.quiz.QuestionModel
@@ -31,12 +32,16 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
 
     private lateinit var binding: ActivityQuestionBinding
     private lateinit var viewModel: QuestionViewModel
+    private lateinit var sessionManager: SessionManager
     private lateinit var dialog: QuizResultsDialog
 
     var difficulty: String? = null
+    var subjectId: Long? = null
     var type: String? = null
     var nextQuestion = false
-    var quizId: Long = 0
+    var questionsNumber = 2
+
+    var score: Double = 0.0
 
     private val quizMinutes: Long = 4
     private val quizSeconds: Long = 0
@@ -50,47 +55,49 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         binding = ActivityQuestionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sessionManager = SessionManager(applicationContext)
         setupViewModel()
-
-//        supportFragmentManager.beginTransaction()
-//            .replace(
-//                binding.containerFragment.id, WordsGapFragment(
-//                    QuestionModel(1, "WordsGap", "Medium", "Aici este bine __ si asa vreau sa o fac __", 2)
-//                )
-//            )
-//            .commit()
 
         val bundle = intent.extras
         if(bundle != null) {
+            subjectId = bundle.getLong("subjectId")
             difficulty = bundle.getString("difficulty")
             type = bundle.getString("type")
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
         }
 
-        if(difficulty != null && type != null) {
-            getQuizQuestions(2)
+        if(subjectId != null && difficulty != null && type != null) {
+            getQuizQuestions(questionsNumber)
         }
 
         binding.nextButton.setOnClickListener {
             if(nextQuestion) {
+                val fragment = supportFragmentManager.findFragmentById(binding.containerFragment.id) as QuestionFragment
+                score += fragment.getScore()
                 updateQuestion()
                 binding.nextButton.text = applicationContext.getString(R.string.check)
-
                 nextQuestion = false
             } else {
                 val fragment = supportFragmentManager.findFragmentById(binding.containerFragment.id) as QuestionFragment
                 if (fragment.answerQuestion()) {
-                    selectedAnswers.add(fragment.getSelectedAnswers())
 
-                    lifecycleScope.launch {
-                        withContext(Dispatchers.Main) {
-                            val selectedAnswers = fragment.getSelectedAnswers()
-                            // Need to wait a bit for the fragment to return the selected answers
-                            delay(200)
-                            createQuiz(questionsAnswers[currentQuestionPosition - 1].question, selectedAnswers)
+                    selectedAnswers.add(fragment.getSelectedAnswers())
+                    for(list in selectedAnswers) {
+                        for(element in list) {
+                            println("${element.text} - ${element.correct}")
                         }
                     }
+//
+//                    lifecycleScope.launch {
+//                        withContext(Dispatchers.Main) {
+//                            val selectedAnswers = fragment.getSelectedAnswers()
+//                            // Need to wait a bit for the fragment to return the selected answers
+//                            delay(200)
+//                            createQuiz(questionsAnswers[currentQuestionPosition - 1].question, selectedAnswers)
+//                        }
+//                    }
+
 
                     binding.nextButton.text = applicationContext.getString(R.string.next)
                     nextQuestion = true
@@ -108,7 +115,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         )[QuestionViewModel::class.java]
     }
     private fun getQuizQuestions(number: Int) {
-        viewModel.getRandomQuestions(number, difficulty!!, type!!, 2)
+        viewModel.getRandomQuestionsForSubject(subjectId!!, number, difficulty!!, type!!, 2)
             .observe(this) {
                 it.let { resource ->
                     when(resource.status) {
@@ -162,55 +169,55 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         }
     }
 
-    private fun createQuiz(question: QuestionModel, answers: List<AnswerModel>) {
-        if(quizId == 0L) {
-            val username = SessionManager(applicationContext).getUserName()
-            if (username != null) {
-                viewModel.createQuizForUser(username)
-                    .observe(this) {
-                        it.let { resource ->
-                            when (resource.status) {
-                                Status.SUCCESS -> {
-                                    if (resource.data != null) {
-                                        quizId = resource.data.id
-                                        addQuestionToQuiz(question, answers)
-                                    }
-                                }
-                                Status.ERROR -> {}
-                                Status.LOADING -> {}
-                            }
-                        }
-                    }
-            }
-        } else {
-            addQuestionToQuiz(question, answers)
-        }
-    }
+//    private fun createQuiz(question: QuestionModel, answers: List<AnswerModel>) {
+//        if(quizId == 0L) {
+//            val username = SessionManager(applicationContext).getUserName()
+//            if (username != null) {
+//                viewModel.createQuizForUser(username)
+//                    .observe(this) {
+//                        it.let { resource ->
+//                            when (resource.status) {
+//                                Status.SUCCESS -> {
+//                                    if (resource.data != null) {
+//                                        quizId = resource.data.id
+//                                        addQuestionToQuiz(question, answers)
+//                                    }
+//                                }
+//                                Status.ERROR -> {}
+//                                Status.LOADING -> {}
+//                            }
+//                        }
+//                    }
+//            }
+//        } else {
+//            addQuestionToQuiz(question, answers)
+//        }
+//    }
 
-    private fun addQuestionToQuiz(question: QuestionModel, answers: List<AnswerModel>) {
-        //Toast.makeText(applicationContext, "Adding question ${answers.size}", Toast.LENGTH_SHORT).show()
-        for(answer in answers) {
-            val model = QuestionAnswerModel(quizId, question.id, answer.id)
-            viewModel.addQuestionToQuiz(model)
-                .observe(this) {
-                    it.let { resource ->
-                        when (resource.status) {
-                            Status.SUCCESS -> {}
-                            Status.ERROR -> {}
-                            Status.LOADING -> {}
-                        }
-                    }
-                }
-        }
-    }
+//    private fun addQuestionToQuiz(question: QuestionModel, answers: List<AnswerModel>) {
+//        //Toast.makeText(applicationContext, "Adding question ${answers.size}", Toast.LENGTH_SHORT).show()
+//        for(answer in answers) {
+//            val model = QuestionAnswerModel(quizId, question.id, answer.id)
+//            viewModel.addQuestionToQuiz(model)
+//                .observe(this) {
+//                    it.let { resource ->
+//                        when (resource.status) {
+//                            Status.SUCCESS -> {}
+//                            Status.ERROR -> {}
+//                            Status.LOADING -> {}
+//                        }
+//                    }
+//                }
+//        }
+//    }
 
     private fun updateQuestion() {
         if(currentQuestionPosition == questionsAnswers.size) {
-            dialog = QuizResultsDialog(this, applicationContext.getString(R.string.congratulations), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", computeScore())
+            dialog = QuizResultsDialog(this, applicationContext.getString(R.string.congratulations), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", score)
             dialog.show(this.supportFragmentManager, "Quiz results")
             currentQuestionPosition++
         } else {
-            binding.score.text = computeScore().toString()
+            binding.score.text = score.toString()
             binding.questionNumber.text = "${selectedAnswers.size + 1}/${questionsAnswers.size}"
 
             if(type == "MultipleChoice") {
@@ -250,39 +257,34 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
 
             override fun onFinish() {
                 binding.quizTime.text = "00:00"
-                dialog = QuizResultsDialog(this@QuestionActivity, applicationContext.getString(R.string.timeout), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", computeScore())
+                dialog = QuizResultsDialog(this@QuestionActivity, applicationContext.getString(R.string.timeout), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", score)
                 dialog.show(this@QuestionActivity.supportFragmentManager, "Quiz results")
             }
         }.start()
     }
 
-    private fun computeScore(): Double {
-        var score = 0.0
-        val answersForOneQuestion = selectedAnswers.listIterator()
-        while (answersForOneQuestion.hasNext()) {
-            val index = answersForOneQuestion.nextIndex()
-
-            // Get total correct answers
-            var totalCorrectAnswers = 0
-            for(answer in questionsAnswers[index].answers) {
-                if(answer.correct)
-                    totalCorrectAnswers++
-            }
-
-            // Get actual number of correct answers
-            var selectedCorrectAnswers = 0
-            for(answer in answersForOneQuestion.next()) {
-                if(answer.correct)
-                    selectedCorrectAnswers++
-            }
-            score += selectedCorrectAnswers.toDouble() / totalCorrectAnswers.toDouble()
-        }
-
-        return score
-    }
-
     override fun onClick(name: String) {
         dialog.dismiss()
-        finish()
+
+        val model = QuizReportPostModel(
+            username = sessionManager.getUserName()!!,
+            quizType = type!!,
+            score = score,
+            numberOfQuestions = questionsNumber,
+            subjectId = subjectId!!,
+            difficulty = difficulty!!
+        )
+        viewModel.addUserReport(model)
+            .observe(this) {
+                    it.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                finish()
+                            }
+                            Status.ERROR -> {}
+                            Status.LOADING -> {}
+                        }
+                    }
+                }
     }
 }

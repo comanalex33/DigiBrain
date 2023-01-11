@@ -60,6 +60,41 @@ namespace DigiBrainServer.Controllers
             return Ok((AnswerResponseModel)answer);
         }
 
+        [HttpPost]
+        [Route("multiple/")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<List<AnswerResponseModel>>> AddMultipleAnswer(List<AnswerViewModel> answers)
+        {
+            var addedAnswers = new List<AnswerResponseModel>();
+            var index = 0;
+            foreach (var model in answers)
+            {
+                var answerCheck = _context.Answer.Where(item => item.Text == model.Text && item.QuestionId == model.QuestionId && item.Position == model.Position).FirstOrDefault();
+                if (answerCheck != null)
+                {
+                    return BadRequest(new { 
+                        message = "An answer with this text already exists for this question: " + model.QuestionId.ToString(),
+                        invalidFields = index.ToString()});
+                }
+
+                long id = _context.Answer.Count() + 1;
+                answerCheck = await _context.Answer.FindAsync(id);
+                while (answerCheck != null)
+                {
+                    id++;
+                    answerCheck = await _context.Answer.FindAsync(id);
+                }
+
+                AnswerModel answer = new(id, model.Text, model.Position, model.Correct, model.QuestionId);
+                _context.Answer.Add(answer);
+                addedAnswers.Add((AnswerResponseModel)answer);
+                index++;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(addedAnswers);
+        }
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<AnswerResponseModel>> DeleteAnswer(long id)

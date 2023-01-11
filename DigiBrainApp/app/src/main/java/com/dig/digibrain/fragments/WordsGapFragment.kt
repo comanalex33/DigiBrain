@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dig.digibrain.R
 import com.dig.digibrain.adapters.WordsGapAdapter
 import com.dig.digibrain.databinding.FragmentWordsGapBinding
+import com.dig.digibrain.models.postModels.quiz.QuizStatusModel
 import com.dig.digibrain.models.quiz.AnswerModel
 import com.dig.digibrain.models.quiz.QuestionModel
 import com.dig.digibrain.utils.Helper
@@ -51,6 +52,10 @@ class WordsGapFragment(var question: QuestionModel, var answers: List<AnswerMode
             newTextList.addAll(element.trim().split("\\s+".toRegex()).toList())
         }
         return newTextList
+    }
+
+    override fun getScore(): Double {
+        return adapter.getScore()
     }
 
     override fun answerQuestion(): Boolean {

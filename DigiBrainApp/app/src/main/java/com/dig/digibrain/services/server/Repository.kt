@@ -2,6 +2,9 @@ package com.dig.digibrain.services.server
 
 import com.dig.digibrain.models.LoginModel
 import com.dig.digibrain.models.RegisterModel
+import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
+import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
+import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
 import com.dig.digibrain.models.postModels.subject.ChapterPostModel
 import com.dig.digibrain.models.postModels.subject.LessonPostModel
 import com.dig.digibrain.models.postModels.subject.SubjectPostModel
@@ -35,8 +38,16 @@ class Repository(private val apiService: ApiService) {
     suspend fun addSubject(authHeader: String, model: SubjectPostModel) = apiService.addSubject(authHeader, model)
 
     // Quiz
+    // --GET--
     suspend fun getRandomQuestions(number: Int, difficulty: String, type: String, languageId: Long) = apiService.getRandomQuestions(number, difficulty, type, languageId)
+    suspend fun getRandomQuestionsForSubject(subjectId: Long, number: Int, difficulty: String, type: String, languageId: Long) = apiService.getRandomQuestionsForSubject(subjectId, number, difficulty, type, languageId)
     suspend fun getQuestionAnswers(questionId: Long) = apiService.getQuestionAnswers(questionId)
+    suspend fun getUserReports(username: String) = apiService.getUserReports(username)
+    // --POST--
     suspend fun createQuizForUser(username: String) = apiService.createQuizForUser(username)
     suspend fun addQuestionToQuiz(model: QuestionAnswerModel) = apiService.addQuestionToQuiz(model)
+    suspend fun createQuestion(authHeader: String, model: QuestionPostModel) = apiService.createQuestion(authHeader, model)
+    suspend fun addMultipleAnswers(authHeader: String, answers: List<AnswerPostModel>) = apiService.addMultipleAnswers(authHeader, answers)
+    suspend fun addQuestionToSubjects(authHeader: String, questionId: Long, subjectIds: List<Long>) = apiService.addQuestionToSubjects(authHeader, questionId, subjectIds)
+    suspend fun addUserReport(model: QuizReportPostModel) = apiService.addUserReport(model)
 }

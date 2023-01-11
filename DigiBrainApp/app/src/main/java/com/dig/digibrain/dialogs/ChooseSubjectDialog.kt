@@ -65,7 +65,7 @@ class ChooseSubjectDialog(
 
         binding.addButton.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
         binding.addButton.setOnClickListener {
-            listener.addSubject()
+            listener.add()
             dialog!!.dismiss()
         }
 
@@ -80,9 +80,7 @@ class ChooseSubjectDialog(
         binding.errorMessage.visibility = View.GONE
     }
 
-    override fun addSubject() {
-
-    }
+    override fun add() {}
 
     fun addListener(listener: ISubjectChanged) {
         this.listener = listener

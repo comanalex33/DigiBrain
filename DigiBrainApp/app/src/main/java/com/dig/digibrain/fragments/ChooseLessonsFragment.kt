@@ -1,23 +1,22 @@
-package com.dig.digibrain.activities
+package com.dig.digibrain.fragments
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.SeekBar
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
-import com.dig.digibrain.databinding.ActivityQuizBinding
+import com.dig.digibrain.activities.AddQuestionToLessonsActivity
+import com.dig.digibrain.databinding.FragmentChooseLessonsBinding
 import com.dig.digibrain.dialogs.ChooseClassDialog
 import com.dig.digibrain.dialogs.ChooseDomainDialog
 import com.dig.digibrain.dialogs.ChooseSubjectDialog
-import com.dig.digibrain.dialogs.ChooseTypeDialog
 import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.interfaces.IDomainChanged
-import com.dig.digibrain.interfaces.IQuizTypeChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
-import com.dig.digibrain.models.QuizTypeModel
 import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
@@ -27,9 +26,9 @@ import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
 
-class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjectChanged, IQuizTypeChanged {
+class ChooseLessonsFragment : Fragment(), IClassChanged, IDomainChanged, ISubjectChanged {
 
-    private lateinit var binding: ActivityQuizBinding
+    private lateinit var binding: FragmentChooseLessonsBinding
     private lateinit var viewModel: LearnViewModel
     private lateinit var sessionManager: SessionManager
 
@@ -38,94 +37,53 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
     private var isUniversity: Boolean = false
     private var selectedDomain: DomainModel? = null
     private var selectedSubject: SubjectModel? = null
-    private var selectedDifficulty: Int = 1
-    private var selectedQuizType: QuizTypeModel? = null
 
     private var domainClickable: Boolean = false
     private var subjectClickable: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityQuizBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentChooseLessonsBinding.inflate(layoutInflater)
 
-        sessionManager = SessionManager(applicationContext)
         setupViewModel()
-        setupVisibility()
-
-
-        binding.backArrow.setOnClickListener {
-            finish()
-        }
+        sessionManager = SessionManager(requireContext())
 
         binding.chooseClassButton.setOnClickListener {
             val dialog = ChooseClassDialog(selectedClass, isUniversity)
             dialog.addListener(this)
-            dialog.show(this.supportFragmentManager, "Choose class")
+            dialog.show(this.childFragmentManager, "Choose class")
         }
 
         binding.chooseDomainButton.setOnClickListener {
             if(domainClickable) {
-                val dialog = ChooseDomainDialog(application, selectedDomain, selectedClass!!, isUniversity, 2)
+                val dialog = ChooseDomainDialog(requireActivity().application, selectedDomain, selectedClass!!, isUniversity, 2)
                 dialog.addListener(this)
                 dialog.setViewModel(viewModel)
-                dialog.show(this.supportFragmentManager, "Choose domain")
+                dialog.show(this.childFragmentManager, "Choose domain")
             }
         }
 
         binding.chooseSubjectButton.setOnClickListener {
             if(subjectClickable) {
                 selectedClass?.apply {
-                    val dialog = ChooseSubjectDialog(application, false, selectedSubject, selectedClassModel, isUniversity)
-                    dialog.addListener(this@QuizActivity)
+                    val dialog = ChooseSubjectDialog(requireActivity().application, false, selectedSubject, selectedClassModel, isUniversity)
+                    dialog.addListener(this@ChooseLessonsFragment)
                     dialog.setViewModel(viewModel)
-                    dialog.show(this@QuizActivity.supportFragmentManager, "Choose subject")
+                    dialog.show(this@ChooseLessonsFragment.childFragmentManager, "Choose subject")
                 }
             }
         }
 
-        binding.searchButton.setOnClickListener {
-            if(selectedClass != null && selectedSubject != null && selectedQuizType != null) {
-                val intent = Intent(this, QuestionActivity::class.java)
-
-                val bundle = Bundle()
-                bundle.putLong("subjectId", selectedSubject!!.id)
-                bundle.putString("difficulty", getDifficulty())
-                bundle.putString("type", selectedQuizType!!.key)
-                intent.putExtras(bundle)
-
-                startActivity(intent)
-            } else {
-                // TODO - Message if not all the fields completed
+        binding.addButton.setOnClickListener {
+            selectedSubject?.apply {
+                (activity as AddQuestionToLessonsActivity).addSubject(selectedSubject!!, selectedDomain, selectedClassModel!!)
+                Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
             }
         }
 
-        binding.chooseDifficultySeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                selectedDifficulty = p1
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
-        })
-
-        binding.chooseTypeButton.setOnClickListener {
-            val dialog = ChooseTypeDialog(application, selectedQuizType)
-            dialog.addListener(this)
-            dialog.show(this.supportFragmentManager, "Choose type")
-        }
-
-        binding.addQuestionButton.setOnClickListener {
-            val intent = Intent(applicationContext, AddQuestionActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    private fun setupVisibility() {
-        if(sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher") {
-            binding.addQuestionButton.visibility = View.VISIBLE
-        }
+        return binding.root
     }
 
     private fun setupViewModel() {
@@ -180,46 +138,15 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
         selectedSubject = null
     }
 
-    override fun changeDomain(value: DomainModel) {
-        selectedDomain = value
-
-        // Enable subject selection
-        subjectClickable = true
-        setViewClickable(binding.chooseSubjectButton, true)
-
-        // Update text fields
-        binding.chooseDomainText.text = "${resources.getString(R.string.domain)}:"
-        binding.chooseDomainValue.text = value.name
-
-        // Initialize subject text fields
-        binding.chooseSubjectText.text = resources.getString(R.string.choose_subject)
-        binding.chooseSubjectValue.text = ""
-        selectedSubject = null
-
-        getClassByNumberAndDomain()
-    }
-
-    override fun disableErrorMessage() {}
-
-    override fun add() {}
-
-    override fun changeSubject(value: SubjectModel) {
-        selectedSubject = value
-
-        // Update text fields
-        binding.chooseSubjectText.text = "${resources.getString(R.string.subject)}:"
-        binding.chooseSubjectValue.text = value.name
-    }
-
     private fun setViewClickable(view: View, isClickable: Boolean) {
         if(isClickable) {
             view.backgroundTintList = AppCompatResources.getColorStateList(
-                applicationContext,
+                requireContext(),
                 R.color.gray
             )
         } else {
             view.backgroundTintList = AppCompatResources.getColorStateList(
-                applicationContext,
+                requireContext(),
                 R.color.light_gray
             )
         }
@@ -255,18 +182,38 @@ class QuizActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubjec
         }
     }
 
-    override fun changeQuizType(value: QuizTypeModel) {
-        selectedQuizType = value
+    override fun changeDomain(value: DomainModel) {
+        selectedDomain = value
 
-        binding.chooseTypeText.text = "${resources.getString(R.string.type)}:"
-        binding.chooseTypeValue.text = value.name
+        // Enable subject selection
+        subjectClickable = true
+        setViewClickable(binding.chooseSubjectButton, true)
+
+        // Update text fields
+        binding.chooseDomainText.text = "${resources.getString(R.string.domain)}:"
+        binding.chooseDomainValue.text = value.name
+
+        // Initialize subject text fields
+        binding.chooseSubjectText.text = resources.getString(R.string.choose_subject)
+        binding.chooseSubjectValue.text = ""
+        selectedSubject = null
+
+        getClassByNumberAndDomain()
     }
 
-    private fun getDifficulty(): String {
-        if(selectedDifficulty == 0)
-            return "Easy"
-        if(selectedDifficulty == 1)
-            return "Medium"
-        return "Hard"
+    override fun changeSubject(value: SubjectModel) {
+        selectedSubject = value
+
+        // Update text fields
+        binding.chooseSubjectText.text = "${resources.getString(R.string.subject)}:"
+        binding.chooseSubjectValue.text = value.name
+    }
+
+    override fun disableErrorMessage() {
+        TODO("Not yet implemented")
+    }
+
+    override fun add() {
+        TODO("Not yet implemented")
     }
 }

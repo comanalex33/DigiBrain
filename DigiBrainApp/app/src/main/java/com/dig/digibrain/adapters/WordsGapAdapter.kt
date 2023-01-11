@@ -12,13 +12,17 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
+import com.dig.digibrain.models.postModels.quiz.QuizStatusModel
 import com.dig.digibrain.models.quiz.AnswerModel
+import kotlinx.coroutines.selects.select
 
 class WordsGapAdapter(var context: Context, private var arrayList: List<String>, var answers: List<AnswerModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var spinnerAnswers = mutableMapOf<Int, CorrectAnswerModel>()
     private var questionAnswered = false
     private var failedTry = false
+
+    private var score: Double = 0.0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == 0) {
@@ -53,6 +57,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
                             R.color.green
                         )
                         holder.spinner.setSelection(spinnerAnswers[position]!!.answerSpinnerPosition)
+                        score += 1.0 / answers.size
                     } else {
                         holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                             context,
@@ -129,6 +134,10 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
         return false
     }
 
+    fun getScore(): Double {
+        return score
+    }
+
     private fun allSpinnersCompleted(): Boolean {
         val it = arrayList.listIterator()
         while(it.hasNext()) {
@@ -143,7 +152,13 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
     }
 
     fun getSelectedAnswers(): List<AnswerModel> {
-        return answers
+        val selectedAnswers = mutableListOf<AnswerModel>()
+        for((_, spinnerAnswer) in spinnerAnswers) {
+            val model = spinnerAnswer.answerModel
+            model.correct = spinnerAnswer.correct
+            selectedAnswers.add(model)
+        }
+        return selectedAnswers
     }
 
     fun getAnswersText(): List<String> {

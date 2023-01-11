@@ -275,6 +275,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
                 }
             }
         }
+
     }
 
     // Refuse to delete account

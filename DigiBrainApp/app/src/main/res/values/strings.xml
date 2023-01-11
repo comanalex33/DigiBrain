@@ -68,4 +68,7 @@
     <string name="lesson_title">Lesson title</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="choose_chapter">Choose chapter ...</string>
+    <string name="choose_lessons">Choose lessons ...</string>
+    <string name="save">Save</string>
 </resources>

@@ -3,15 +3,17 @@ using System;
 using DigiBrainServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DigiBrainServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230111152431_Questions refers to Subjects now")]
+    partial class QuestionsreferstoSubjectsnow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,36 +229,6 @@ namespace DigiBrainServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("QuizQuestion");
-                });
-
-            modelBuilder.Entity("DigiBrainServer.Models.QuizReportModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Difficulty")
-                        .HasColumnType("text");
-
-                    b.Property<int>("NumberOfQuestions")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("QuizType")
-                        .HasColumnType("text");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("double precision");
-
-                    b.Property<long>("SubjectId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuizReport");
                 });
 
             modelBuilder.Entity("DigiBrainServer.Models.RoleModel", b =>

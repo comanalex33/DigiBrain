@@ -19,6 +19,8 @@ class MultipleChoiceAnswerAdapter(var context: Context, private var singleAnswer
     private var questionAnswered = false
     private var selectedAnswers = mutableListOf<AnswerModel>()
 
+    private var score: Double = 0.0
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = if(singleAnswer) {
             LayoutInflater.from(context).inflate(R.layout.card_single_choice_answer, parent, false)
@@ -35,6 +37,9 @@ class MultipleChoiceAnswerAdapter(var context: Context, private var singleAnswer
 
         if(questionAnswered) {
             if(answer.correct) {
+                if(holder.answerButton.isChecked) {
+                    score += 1.0 / numberOfCorrectAnswers()
+                }
                 holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                     context,
                     R.color.green
@@ -45,6 +50,7 @@ class MultipleChoiceAnswerAdapter(var context: Context, private var singleAnswer
                     context,
                     R.color.red
                 )
+                score -= 1.0 / (arrayList.size - numberOfCorrectAnswers())
             }
             if(holder.answerButton.isChecked) {
                 selectedAnswers.add(answer)
@@ -78,6 +84,22 @@ class MultipleChoiceAnswerAdapter(var context: Context, private var singleAnswer
             return true
         }
         return false
+    }
+
+    fun getScore(): Double {
+        if(score < 0) {
+            return 0.0
+        }
+        return score
+    }
+
+    private fun numberOfCorrectAnswers(): Int {
+        var correctAnswers = 0
+        for(answer in arrayList) {
+            if(answer.correct)
+                correctAnswers++
+        }
+        return correctAnswers
     }
 
     fun getSelectedAnswers(): List<AnswerModel> {
