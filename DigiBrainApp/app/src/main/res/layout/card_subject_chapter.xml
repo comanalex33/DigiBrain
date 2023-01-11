@@ -51,25 +51,43 @@
             android:layout_margin="@dimen/_10sdp"
             android:visibility="visible">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/lessons_recycler_view"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/chapter_content_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="13dp" />
-
-            <TextView
-                android:id="@+id/chapter_no_content"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_content"
-                android:textColor="@color/red"
-                android:textSize="@dimen/_15sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/lessons_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/chapter_no_content"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_content"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/_15sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/chapter_add_lesson_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_28sdp"
+                android:src="@drawable/ic_add"
+                app:layout_constraintTop_toBottomOf="@id/chapter_content_content"
+                android:background="@drawable/curve_shape_no_border"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

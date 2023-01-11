@@ -22,6 +22,7 @@ import com.dig.digibrain.viewModels.LearnViewModel
 
 class ChooseSubjectDialog(
     var application: Application,
+    var modifyCapabilities: Boolean,
     var currentSubject: SubjectModel?,
     var classModel: ClassModel?,
     var atUniversity: Boolean): DialogFragment(), ISubjectChanged {
@@ -62,6 +63,12 @@ class ChooseSubjectDialog(
             }
         }
 
+        binding.addButton.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
+        binding.addButton.setOnClickListener {
+            listener.addSubject()
+            dialog!!.dismiss()
+        }
+
         return binding.root
     }
 
@@ -71,6 +78,10 @@ class ChooseSubjectDialog(
 
     override fun disableErrorMessage() {
         binding.errorMessage.visibility = View.GONE
+    }
+
+    override fun addSubject() {
+
     }
 
     fun addListener(listener: ISubjectChanged) {

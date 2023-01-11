@@ -22,10 +22,11 @@
             android:textColor="@color/red"
             android:gravity="center"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/recycler_view"/>
+            app:layout_constraintBottom_toTopOf="@id/lesson_title"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <EditText
+            android:id="@+id/lesson_title"
+            android:hint="@string/lesson_title"
             android:scrollbars="vertical"
             android:fadeScrollbars="false"
             android:layout_marginTop="@dimen/_10sdp"
@@ -35,38 +36,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintHeight_max="@dimen/_360sdp"
-            app:layout_constraintBottom_toTopOf="@+id/select_button"
+            app:layout_constraintBottom_toTopOf="@+id/lesson_text_box"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/lesson_text_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/add_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/lesson_text"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:gravity="top"
+                android:inputType="text|textMultiLine"
+                app:layout_constraintHeight_max="@dimen/_360sdp"
+                app:layout_constraintBottom_toTopOf="@+id/add_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/select_button"
+            android:id="@+id/add_button"
             android:layout_width="0dp"
             android:layout_marginEnd="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:layout_height="wrap_content"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/purple_700"
-            android:text="@string/select"
+            android:text="@string/add"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_percent="0.4" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/add_button"
-            android:layout_width="0dp"
-            android:visibility="gone"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/green"
-            android:text="@string/add"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent="0.4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

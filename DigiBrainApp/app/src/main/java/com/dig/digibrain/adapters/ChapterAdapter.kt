@@ -1,5 +1,7 @@
 package com.dig.digibrain.adapters
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -8,17 +10,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.CardSubjectChapterBinding
+import com.dig.digibrain.databinding.DialogAddLessonBinding
+import com.dig.digibrain.dialogs.AddLessonDialog
+import com.dig.digibrain.interfaces.IAddLesson
 import com.dig.digibrain.interfaces.IChapterChanged
+import com.dig.digibrain.interfaces.ILessonSelected
 import com.dig.digibrain.models.subject.ChapterModel
+import com.dig.digibrain.models.subject.LessonModel
 
-class ChapterAdapter(var context: Context, private var arrayList: List<ChapterModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, private var arrayList: List<ChapterModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>(), IAddLesson {
 
     private lateinit var binding: CardSubjectChapterBinding
     private lateinit var listener: IChapterChanged
+
+    var chapterLessons = mutableMapOf<Long, List<LessonModel>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         binding = CardSubjectChapterBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -33,6 +44,12 @@ class ChapterAdapter(var context: Context, private var arrayList: List<ChapterMo
         val chapterItem = arrayList[position]
 
         (holder as ChapterViewHolder).initializeUIComponents(chapterItem)
+
+        holder.addLesson.setOnClickListener {
+            val dialog = AddLessonDialog(chapterItem.id)
+            dialog.addListener(this)
+            dialog.show((context as AppCompatActivity).supportFragmentManager, "Add lesson")
+        }
 
         holder.card.setOnClickListener {
             if(holder.chapterContent.visibility == View.VISIBLE) {
@@ -51,6 +68,10 @@ class ChapterAdapter(var context: Context, private var arrayList: List<ChapterMo
         this.listener = listener
     }
 
+    fun addChapterLessons(chapterId: Long, lessons: List<LessonModel>) {
+        chapterLessons[chapterId] = lessons
+    }
+
     inner class ChapterViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
 
         var card: CardView = myView.findViewById(R.id.chapter_card_view)
@@ -59,13 +80,20 @@ class ChapterAdapter(var context: Context, private var arrayList: List<ChapterMo
         var expandArrow: ImageView = myView.findViewById(R.id.chapter_expand)
         var chapterContent: View = myView.findViewById(R.id.chapter_content)
         var noContent: View = myView.findViewById(R.id.chapter_no_content)
+        var addLesson: View = myView.findViewById(R.id.chapter_add_lesson_button)
 
         fun initializeUIComponents(model: ChapterModel) {
             chapterName.text = "${model.number}. ${model.name}"
             listener.getLessons(model.id, recyclerView, noContent)
 
+            addLesson.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
             chapterContent.visibility = View.GONE
+            expandArrow.setImageResource(R.drawable.ic_expand_more)
         }
+    }
+
+    override fun addLesson(chapterId: Long, title: String, text: String) {
+        listener.addLesson(chapterId, title, text, this)
     }
 
 }

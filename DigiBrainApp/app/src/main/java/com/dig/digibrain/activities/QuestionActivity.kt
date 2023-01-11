@@ -12,6 +12,7 @@ import com.dig.digibrain.databinding.ActivityQuestionBinding
 import com.dig.digibrain.dialogs.QuizResultsDialog
 import com.dig.digibrain.fragments.MultipleChoiceQuestionFragment
 import com.dig.digibrain.fragments.QuestionFragment
+import com.dig.digibrain.fragments.WordsGapFragment
 import com.dig.digibrain.interfaces.ItemClickListener
 import com.dig.digibrain.models.quiz.AnswerModel
 import com.dig.digibrain.models.quiz.QuestionAnswerModel
@@ -37,7 +38,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
     var nextQuestion = false
     var quizId: Long = 0
 
-    private val quizMinutes: Long = 2
+    private val quizMinutes: Long = 4
     private val quizSeconds: Long = 0
 
     var questionsAnswers = listOf<QuestionsAnswersList>()
@@ -50,6 +51,14 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         setContentView(binding.root)
 
         setupViewModel()
+
+//        supportFragmentManager.beginTransaction()
+//            .replace(
+//                binding.containerFragment.id, WordsGapFragment(
+//                    QuestionModel(1, "WordsGap", "Medium", "Aici este bine __ si asa vreau sa o fac __", 2)
+//                )
+//            )
+//            .commit()
 
         val bundle = intent.extras
         if(bundle != null) {
@@ -204,14 +213,25 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
             binding.score.text = computeScore().toString()
             binding.questionNumber.text = "${selectedAnswers.size + 1}/${questionsAnswers.size}"
 
-            supportFragmentManager.beginTransaction()
-                .replace(
-                    binding.containerFragment.id, MultipleChoiceQuestionFragment(
-                        questionsAnswers[currentQuestionPosition].question,
-                        questionsAnswers[currentQuestionPosition].answers
+            if(type == "MultipleChoice") {
+                supportFragmentManager.beginTransaction()
+                    .replace(
+                        binding.containerFragment.id, MultipleChoiceQuestionFragment(
+                            questionsAnswers[currentQuestionPosition].question,
+                            questionsAnswers[currentQuestionPosition].answers
+                        )
                     )
-                )
-                .commit()
+                    .commit()
+            } else if(type == "WordsGap") {
+                supportFragmentManager.beginTransaction()
+                    .replace(
+                        binding.containerFragment.id, WordsGapFragment(
+                            questionsAnswers[currentQuestionPosition].question,
+                            questionsAnswers[currentQuestionPosition].answers
+                        )
+                    )
+                    .commit()
+            }
             currentQuestionPosition++
         }
     }

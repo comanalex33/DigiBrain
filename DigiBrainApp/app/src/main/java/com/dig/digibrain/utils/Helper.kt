@@ -15,6 +15,9 @@ class Helper {
         fun String.decodeBase64(): String {
             return Base64.decode(this, Base64.DEFAULT).decodeToString()
         }
+        fun String.splitKeeping(str: String): List<String> {
+            return this.split(str).flatMap {listOf(it, str)}.dropLast(1).filterNot {it.isEmpty()}
+        }
 
         fun ViewGroup.forAllChildren(forOneChild: (v: View) -> Unit) {
             forOneChild(this)
