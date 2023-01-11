@@ -41,7 +41,7 @@ namespace DigiBrainServer.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<SubjectResponseModel>> AddSubject(SubjectViewModel subjectModel)
         {
-            var subjectCheck = _context.Subject.Where(item => item.Name.Equals(subjectModel.Name)).FirstOrDefault();
+            var subjectCheck = _context.Subject.Where(item => item.Name.Equals(subjectModel.Name) && item.ClassId == subjectModel.ClassId).FirstOrDefault();
             if (subjectCheck != null)
             {
                 return BadRequest(new { message = "Subject already exists" });

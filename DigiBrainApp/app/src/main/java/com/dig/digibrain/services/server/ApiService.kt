@@ -19,6 +19,20 @@ interface ApiService {
     @POST("api/Auth/register")
     suspend fun register(@Body model: RegisterModel): UserModel
 
+    // User
+    // --GET--
+    @GET("api/users/{username}")
+    suspend fun getUserDetailsByUsername(@Path("username") username: String): UserModel
+    // --PUT--
+    @PUT("api/users/{username}/classes/{classId}")
+    suspend fun updateClass(
+        @Header("Authorization") authHeader : String,
+        @Path("username") username: String,
+        @Path("classId") classId: Long): UserModel
+    // --DELETE--
+    @DELETE("api/users/{username}")
+    suspend fun deleteAccount(@Header("Authorization") authHeader : String, @Path("username") username: String): UserModel
+
     // Theory
     //--GET--
     @GET("api/classes/domains")
@@ -27,12 +41,16 @@ interface ApiService {
         @Query("AtUniversity") atUniversity: Boolean,
         @Query("LanguageId") languageId: Long
     ): List<DomainModel>
+    @GET("api/domains/{id}")
+    suspend fun getDomainById(@Path("id") id: Long): DomainModel
     @GET("api/classes")
     suspend fun getClassByNumberAndDomain(
         @Query("Number") number: Int,
         @Query("AtUniversity") atUniversity: Boolean,
         @Query("DomainId") DomainId: Long
     ): ClassModel
+    @GET("/api/classes/{id}")
+    suspend fun getClassById(@Path("id") id: Long): ClassModel
     @GET("api/subjects/class/{classId}")
     suspend fun getSubjectsForClass(@Path("classId") classId: Long): List<SubjectModel>
     @GET("api/chapters/subject/{subjectId}")

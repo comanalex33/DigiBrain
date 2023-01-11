@@ -13,6 +13,9 @@ class ViewModelFactory(private val apiService: ApiService): ViewModelProvider.Fa
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             return RegisterViewModel(Repository(apiService)) as T
         }
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            return ProfileViewModel(Repository(apiService)) as T
+        }
         if (modelClass.isAssignableFrom(LearnViewModel::class.java)) {
             return LearnViewModel(Repository(apiService)) as T
         }
