@@ -19,6 +19,12 @@ class Helper {
             return this.split(str).flatMap {listOf(it, str)}.dropLast(1).filterNot {it.isEmpty()}
         }
 
+        fun String.countMatches(substring: String): Int {
+            return ("$this.").split(substring)
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray().size - 1
+        }
+
         fun ViewGroup.forAllChildren(forOneChild: (v: View) -> Unit) {
             forOneChild(this)
             for (cx in 0 until childCount) {

@@ -37,6 +37,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.1" />
 
+        <ImageView
+            android:id="@+id/add_question_button"
+            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_28sdp"
+            android:background="@drawable/curve_shape_no_border"
+            android:src="@drawable/ic_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

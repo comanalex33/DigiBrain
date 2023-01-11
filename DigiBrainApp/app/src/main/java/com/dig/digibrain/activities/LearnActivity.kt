@@ -169,7 +169,7 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
 
     override fun disableErrorMessage() {}
 
-    override fun addSubject() {
+    override fun add() {
         val intent = Intent(this, AddSubjectActivity::class.java)
 
         val bundle = Bundle()

@@ -4,6 +4,9 @@ import com.dig.digibrain.models.LoginModel
 import com.dig.digibrain.models.RegisterModel
 import com.dig.digibrain.models.TokenModel
 import com.dig.digibrain.models.UserModel
+import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
+import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
+import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
 import com.dig.digibrain.models.postModels.subject.ChapterPostModel
 import com.dig.digibrain.models.postModels.subject.LessonPostModel
 import com.dig.digibrain.models.postModels.subject.SubjectPostModel
@@ -66,6 +69,7 @@ interface ApiService {
     suspend fun addSubject(@Header("Authorization") authHeader : String, @Body model: SubjectPostModel): SubjectModel
 
     // Quiz
+    // --GET--
     @GET("api/questions")
     suspend fun getRandomQuestions(
         @Query("Number") number: Int,
@@ -73,10 +77,30 @@ interface ApiService {
         @Query("Type") type: String,
         @Query("LanguageId") languageId: Long
     ): List<QuestionModel>
+    @GET("api/questions/subject/{id}")
+    suspend fun getRandomQuestionsForSubject(
+        @Path("id") subjectId: Long,
+        @Query("Number") number: Int,
+        @Query("Difficulty") difficulty: String,
+        @Query("Type") type: String,
+        @Query("LanguageId") languageId: Long
+    ): List<QuestionModel>
     @GET("api/answers/questions/{questionId}")
     suspend fun getQuestionAnswers(@Path("questionId") questionId: Long): List<AnswerModel>
+    @GET("api/reports/users/{username}")
+    suspend fun getUserReports(@Path("username") username: String): List<QuizReportModel>
+    // --POST--
     @POST("api/quizes/users/{username}")
     suspend fun createQuizForUser(@Path("username") username: String): QuizModel
     @POST("api/quizes")
     suspend fun addQuestionToQuiz(@Body model: QuestionAnswerModel): QuizQuestionModel
+    @POST("api/questions")
+    suspend fun createQuestion(@Header("Authorization") authHeader : String, @Body model: QuestionPostModel): QuestionModel
+    @POST("api/answers/multiple")
+    suspend fun addMultipleAnswers(@Header("Authorization") authHeader : String, @Body answers: List<AnswerPostModel>): List<AnswerModel>
+    @POST("api/questions/{id}/subjects")
+    suspend fun addQuestionToSubjects(@Header("Authorization") authHeader : String, @Path("id") questionId: Long, @Body subjectIds: List<Long>): SubjectQuestionModel
+    @POST("api/reports")
+    suspend fun addUserReport(@Body model: QuizReportPostModel): QuizReportModel
+
 }

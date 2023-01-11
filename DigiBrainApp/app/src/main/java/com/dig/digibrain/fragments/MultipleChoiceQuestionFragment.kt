@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dig.digibrain.adapters.MultipleChoiceAnswerAdapter
 import com.dig.digibrain.databinding.FragmentMultipleChoiceQuestionBinding
 import com.dig.digibrain.interfaces.ItemClickListener
+import com.dig.digibrain.models.postModels.quiz.QuizStatusModel
 import com.dig.digibrain.models.quiz.AnswerModel
 import com.dig.digibrain.models.quiz.QuestionModel
 
@@ -59,6 +60,10 @@ class MultipleChoiceQuestionFragment(var question: QuestionModel, var answers: L
                 correctAnswers++
         }
         return correctAnswers
+    }
+
+    override fun getScore(): Double {
+        return adapter.getScore()
     }
 
     override fun answerQuestion(): Boolean {

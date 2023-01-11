@@ -23,10 +23,12 @@ namespace DigiBrainServer.Models
 
         public DbSet<AnswerModel> Answer { get; set; }
 
-        public DbSet<LessonQuestionModel> LessonQuestion { get; set; }
+        public DbSet<SubjectQuestionModel> LessonQuestion { get; set; }
 
         public DbSet<QuizModel> Quiz { get; set; }
         
         public DbSet<QuizQuestionModel> QuizQuestion { get; set; }
+
+        public DbSet<QuizReportModel> QuizReport { get; set; }
     }
 }
