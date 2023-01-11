@@ -8,28 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dig.digibrain.R
-import com.dig.digibrain.activities.LearnActivity
-import com.dig.digibrain.adapters.DomainAdapter
 import com.dig.digibrain.adapters.SpacingItemDecorator
 import com.dig.digibrain.adapters.SubjectAdapter
-import com.dig.digibrain.databinding.DialogChooseDomainBinding
 import com.dig.digibrain.databinding.DialogChooseSubjectBinding
-import com.dig.digibrain.interfaces.IClassChanged
-import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
 import com.dig.digibrain.models.subject.ClassModel
-import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnViewModel
 
 class ChooseSubjectDialog(
     var application: Application,
+    var modifyCapabilities: Boolean,
     var currentSubject: SubjectModel?,
     var classModel: ClassModel?,
     var atUniversity: Boolean): DialogFragment(), ISubjectChanged {
@@ -70,6 +63,12 @@ class ChooseSubjectDialog(
             }
         }
 
+        binding.addButton.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
+        binding.addButton.setOnClickListener {
+            listener.addSubject()
+            dialog!!.dismiss()
+        }
+
         return binding.root
     }
 
@@ -79,6 +78,10 @@ class ChooseSubjectDialog(
 
     override fun disableErrorMessage() {
         binding.errorMessage.visibility = View.GONE
+    }
+
+    override fun addSubject() {
+
     }
 
     fun addListener(listener: ISubjectChanged) {
@@ -91,7 +94,7 @@ class ChooseSubjectDialog(
 
     private fun setSubjects(subjects: List<SubjectModel>) {
         subjectAdapter = SubjectAdapter(
-            activity as LearnActivity,
+            application.applicationContext,
             application,
             this,
             currentSubject,
@@ -138,25 +141,5 @@ class ChooseSubjectDialog(
         } else {
             setMessageForNoSubjects(resources.getString(R.string.no_subjects_defined_for_this_class))
         }
-    }
-
-    private fun getSubjectsForRecyclerView(list: List<SubjectModel>): List<SubjectModel> {
-        val filteredList = ArrayList<SubjectModel>()
-//        for(subject in list) {
-//            if(subject.atUniversity == atUniversity) {
-//                if(atUniversity || classNumber >= 8) {
-//                    selectedDomain?.apply {
-//                        if (subject.domainId == this.id && subject.classNumber == classNumber) {
-//                            filteredList.add(subject)
-//                        }
-//                    }
-//                } else {
-//                    if (subject.classNumber == classNumber) {
-//                        filteredList.add(subject)
-//                    }
-//                }
-//            }
-//        }
-        return filteredList
     }
 }

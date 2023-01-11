@@ -18,6 +18,7 @@ import com.dig.digibrain.interfaces.ISubjectChanged
 import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
+import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnViewModel
@@ -28,6 +29,7 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
 
     private lateinit var binding: ActivityLearnBinding
     private lateinit var viewModel: LearnViewModel
+    private lateinit var sessionManager: SessionManager
 
     private var selectedClass: Int? = null
     private var selectedClassModel: ClassModel? = null
@@ -44,6 +46,7 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
         setContentView(binding.root)
 
         setupViewModel()
+        sessionManager = SessionManager(applicationContext)
 
         binding.backArrow.setOnClickListener {
             finish()
@@ -67,7 +70,7 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
         binding.chooseSubjectButton.setOnClickListener {
             if(subjectClickable) {
                 selectedClass?.apply {
-                    val dialog = ChooseSubjectDialog(application, selectedSubject, selectedClassModel, isUniversity)
+                    val dialog = ChooseSubjectDialog(application, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", selectedSubject, selectedClassModel, isUniversity)
                     dialog.addListener(this@LearnActivity)
                     dialog.setViewModel(viewModel)
                     dialog.show(this@LearnActivity.supportFragmentManager, "Choose subject")
@@ -166,6 +169,17 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
     }
 
     override fun disableErrorMessage() {}
+
+    override fun addSubject() {
+        val intent = Intent(this, AddSubjectActivity::class.java)
+
+        val bundle = Bundle()
+        bundle.putLong("classId", selectedClassModel!!.id)
+        intent.putExtras(bundle)
+
+        startActivity(intent)
+        finish()
+    }
 
     override fun changeSubject(value: SubjectModel) {
         selectedSubject = value

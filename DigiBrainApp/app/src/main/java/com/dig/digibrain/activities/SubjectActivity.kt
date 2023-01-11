@@ -13,9 +13,16 @@ import com.dig.digibrain.adapters.ChapterAdapter
 import com.dig.digibrain.adapters.LessonAdapter
 import com.dig.digibrain.adapters.SpacingItemDecorator
 import com.dig.digibrain.databinding.ActivitySubjectBinding
+import com.dig.digibrain.dialogs.AddChapterDialog
+import com.dig.digibrain.interfaces.IAddChapter
+import com.dig.digibrain.interfaces.IAddLesson
 import com.dig.digibrain.interfaces.IChapterChanged
 import com.dig.digibrain.interfaces.ILessonSelected
+import com.dig.digibrain.models.postModels.subject.ChapterPostModel
+import com.dig.digibrain.models.postModels.subject.LessonPostModel
+import com.dig.digibrain.models.subject.ChapterModel
 import com.dig.digibrain.models.subject.LessonModel
+import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnViewModel
@@ -23,10 +30,14 @@ import com.dig.digibrain.viewModels.SubjectViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
 
 
-class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
+class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, IAddChapter {
 
     private lateinit var binding: ActivitySubjectBinding
     private lateinit var viewModel: SubjectViewModel
+    private lateinit var sessionManager: SessionManager
+    private lateinit var chapterAdapter: ChapterAdapter
+
+    var chapterList: MutableList<ChapterModel>? = null
 
     var subjectId: Long = 0
     var subjectName: String? = ""
@@ -40,6 +51,8 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
         setContentView(binding.root)
 
         setupViewModel()
+        sessionManager = SessionManager(applicationContext)
+        setupVisibility()
 
         val bundle = intent.extras
         if(bundle != null) {
@@ -76,9 +89,21 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
             finish()
         }
 
+        binding.addChapterButton.setOnClickListener {
+            val dialog = AddChapterDialog()
+            dialog.addListener(this)
+            dialog.show(this.supportFragmentManager, "Add chapter")
+        }
+
         getChapters()
 
         // TODO - loading screen if data not get yet
+    }
+
+    private fun setupVisibility() {
+        if(sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher") {
+            binding.addChapterButton.visibility = View.VISIBLE
+        }
     }
 
     private fun setupViewModel() {
@@ -98,12 +123,16 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
                                 if(resource.data.isNotEmpty()) {
                                     binding.recyclerView.visibility = View.VISIBLE
                                     binding.subjectNoContent.visibility = View.GONE
+                                    chapterList = resource.data.toMutableList()
 
-                                    val adapter = ChapterAdapter(this, resource.data)
-                                    adapter.addListener(this)
+//                                    val adapter = ChapterAdapter(this, resource.data)
+//                                    adapter.addListener(this)
+
+                                    chapterAdapter = ChapterAdapter(this, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", chapterList!!)
+                                    chapterAdapter.addListener(this)
 
                                     binding.recyclerView.layoutManager = LinearLayoutManager(this)
-                                    binding.recyclerView.adapter = adapter
+                                    binding.recyclerView.adapter = chapterAdapter
                                 } else {
                                     binding.recyclerView.visibility = View.GONE
                                     binding.subjectNoContent.visibility = View.VISIBLE
@@ -130,6 +159,7 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
 
                                     val adapter = LessonAdapter(this, resource.data)
                                     adapter.addListener(this)
+                                    chapterAdapter.addChapterLessons(chapterId, resource.data)
 
                                     recyclerView.layoutManager = LinearLayoutManager(this)
                                     recyclerView.adapter = adapter
@@ -155,5 +185,52 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected {
         intent.putExtras(bundle)
 
         startActivity(intent)
+    }
+
+    override fun addChapter(name: String) {
+        val authToken: String? = sessionManager.getBearerAuthToken()
+
+        if(authToken != null && chapterList != null && subjectId != 0L) {
+            val model = ChapterPostModel(name, chapterList!!.size.toLong() + 1, subjectId)
+            viewModel.addChapter(authToken, model).observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            chapterList!!.add(resource.data!!)
+                            chapterAdapter.notifyDataSetChanged()
+                        }
+                        Status.ERROR -> {
+
+                        }
+                        Status.LOADING -> {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun addLesson(chapterId: Long, title: String, text: String, adapter: ChapterAdapter) {
+        val authToken: String? = sessionManager.getBearerAuthToken()
+
+        if(authToken != null) {
+            val model = LessonPostModel(title, text, chapterId)
+            viewModel.addLesson(authToken, model).observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            adapter.notifyDataSetChanged()
+                        }
+                        Status.ERROR -> {
+
+                        }
+                        Status.LOADING -> {
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -5,4 +5,5 @@ import com.dig.digibrain.models.subject.SubjectModel
 interface ISubjectChanged {
     fun changeSubject(value: SubjectModel)
     fun disableErrorMessage()
+    fun addSubject()
 }

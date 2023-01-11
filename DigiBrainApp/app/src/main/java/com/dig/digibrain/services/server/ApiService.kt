@@ -4,12 +4,12 @@ import com.dig.digibrain.models.LoginModel
 import com.dig.digibrain.models.RegisterModel
 import com.dig.digibrain.models.TokenModel
 import com.dig.digibrain.models.UserModel
+import com.dig.digibrain.models.postModels.subject.ChapterPostModel
+import com.dig.digibrain.models.postModels.subject.LessonPostModel
+import com.dig.digibrain.models.postModels.subject.SubjectPostModel
+import com.dig.digibrain.models.quiz.*
 import com.dig.digibrain.models.subject.*
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -20,6 +20,7 @@ interface ApiService {
     suspend fun register(@Body model: RegisterModel): UserModel
 
     // Theory
+    //--GET--
     @GET("api/classes/domains")
     suspend fun getDomainsForClass(
         @Query("Number") number: Int,
@@ -38,4 +39,26 @@ interface ApiService {
     suspend fun getChaptersForSubject(@Path("subjectId") subjectId: Long): List<ChapterModel>
     @GET("api/lessons/chapter/{chapterId}")
     suspend fun getLessonsForChapter(@Path("chapterId") chapterId: Long): List<LessonModel>
+    //--POST--
+    @POST("api/chapters")
+    suspend fun addChapter(@Header("Authorization") authHeader : String, @Body model: ChapterPostModel): ChapterModel
+    @POST("api/lessons")
+    suspend fun addLesson(@Header("Authorization") authHeader : String, @Body model: LessonPostModel): LessonModel
+    @POST("api/subjects")
+    suspend fun addSubject(@Header("Authorization") authHeader : String, @Body model: SubjectPostModel): SubjectModel
+
+    // Quiz
+    @GET("api/questions")
+    suspend fun getRandomQuestions(
+        @Query("Number") number: Int,
+        @Query("Difficulty") difficulty: String,
+        @Query("Type") type: String,
+        @Query("LanguageId") languageId: Long
+    ): List<QuestionModel>
+    @GET("api/answers/questions/{questionId}")
+    suspend fun getQuestionAnswers(@Path("questionId") questionId: Long): List<AnswerModel>
+    @POST("api/quizes/users/{username}")
+    suspend fun createQuizForUser(@Path("username") username: String): QuizModel
+    @POST("api/quizes")
+    suspend fun addQuestionToQuiz(@Body model: QuestionAnswerModel): QuizQuestionModel
 }
