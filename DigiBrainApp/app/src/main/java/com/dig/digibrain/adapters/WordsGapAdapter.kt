@@ -105,7 +105,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
         var spinner: Spinner = myView.findViewById(R.id.words_gap_blank)
 
         fun initializeUIComponents(position: Int) {
-            val dataAdapter = ArrayAdapter(context, R.layout.spinner_item, getAnswersText())
+            val dataAdapter = ArrayAdapter(context, R.layout.quiz_spinner_item, getAnswersText())
             spinner.adapter = dataAdapter
             spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
