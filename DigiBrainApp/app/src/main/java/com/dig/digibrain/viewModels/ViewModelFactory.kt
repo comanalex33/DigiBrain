@@ -34,6 +34,9 @@ class ViewModelFactory(private val apiService: ApiService): ViewModelProvider.Fa
         if (modelClass.isAssignableFrom(ReviewLessonsViewModel::class.java)) {
             return  ReviewLessonsViewModel(Repository(apiService)) as T
         }
+        if (modelClass.isAssignableFrom(StatisticsViewModel::class.java)) {
+            return  StatisticsViewModel(Repository(apiService)) as T
+        }
         throw java.lang.IllegalArgumentException("Unknown class name")
     }
 }

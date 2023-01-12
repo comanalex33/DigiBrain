@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityLoginBinding
@@ -111,7 +112,11 @@ class LoginActivity : AppCompatActivity() {
                 binding.username.setBackgroundResource(R.drawable.red_border)
                 binding.usernameHolder.startAnimation(animation)
             } else {
-                binding.username.setBackgroundResource(R.color.gray)
+                binding.username.setBackgroundResource(R.drawable.curve_shape)
+                binding.username.backgroundTintList = AppCompatResources.getColorStateList(
+                    applicationContext,
+                    R.color.gray
+                )
             }
         }
         passwordField?.let {
@@ -119,7 +124,11 @@ class LoginActivity : AppCompatActivity() {
                 binding.password.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder.startAnimation(animation)
             } else {
-                binding.password.setBackgroundResource(R.color.gray)
+                binding.username.setBackgroundResource(R.drawable.curve_shape)
+                binding.username.backgroundTintList = AppCompatResources.getColorStateList(
+                    applicationContext,
+                    R.color.gray
+                )
             }
         }
     }
