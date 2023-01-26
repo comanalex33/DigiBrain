@@ -16,6 +16,7 @@
         android:theme="@style/Theme.DigiBrainApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".activities.StatisticsActivity"
             android:exported="false">

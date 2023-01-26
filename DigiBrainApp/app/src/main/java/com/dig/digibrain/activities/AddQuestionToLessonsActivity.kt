@@ -81,6 +81,7 @@ class AddQuestionToLessonsActivity : AppCompatActivity() {
                             Status.SUCCESS -> {
                                 val intent = Intent(applicationContext, QuizActivity::class.java)
                                 startActivity(intent)
+                                finish()
                             }
                             Status.ERROR -> {
                                 Toast.makeText(applicationContext, resource.message, Toast.LENGTH_SHORT).show()

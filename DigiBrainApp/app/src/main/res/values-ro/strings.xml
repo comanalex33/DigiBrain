@@ -105,4 +105,10 @@
     <string name="add_subject">Adauga subiect</string>
     <string name="subject_title">Titlu subiect</string>
     <string name="choose_icon">Alege iconita</string>
+    <string name="role">Rol</string>
+    <string name="account_info">Informatii cont</string>
+    <string name="update">Actualizeaza</string>
+    <string name="delete">Sterge</string>
+    <string name="hi">Salut</string>
+    <string name="all">Toate</string>
 </resources>

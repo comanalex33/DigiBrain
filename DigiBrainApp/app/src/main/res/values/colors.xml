@@ -11,6 +11,7 @@
     <color name="white_black">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
     <color name="gray">#D3D1D1</color>
+    <color name="dark_gray">#959494</color>
     <color name="light_gray">#F3F2F2</color>
     <color name="blue_light">#2EC5F5</color>
     <color name="blue">#00698A</color>

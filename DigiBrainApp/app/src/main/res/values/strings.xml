@@ -104,4 +104,10 @@
     <string name="add_subject">Add subject</string>
     <string name="subject_title">Subject title</string>
     <string name="choose_icon">Choose icon</string>
+    <string name="role">Role</string>
+    <string name="account_info">Account info</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="hi">Hi</string>
+    <string name="all">All</string>
 </resources>

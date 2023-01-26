@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityProfileBinding
 import com.dig.digibrain.databinding.ActivitySettingsBinding
 import com.dig.digibrain.dialogs.AcceptDialog
@@ -100,13 +101,11 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
     }
 
     private fun getClass(email: String, classId: Long) {
-        val loadingDialog = LoadingDialog(this)
         viewModel.getClassById(classId)
             .observe(this) {
                 it?.let { resource ->
                     when (resource.status) {
                         Status.SUCCESS -> {
-                            loadingDialog.dismiss()
                             if(resource.data != null) {
                                 val classNumber = resource.data!!.number
                                 selectedClass = classNumber
@@ -118,10 +117,8 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
                             }
                         }
                         Status.ERROR -> {
-                            loadingDialog.dismiss()
                         }
                         Status.LOADING -> {
-                            loadingDialog.show()
                         }
                     }
                 }
@@ -189,7 +186,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
     private fun setClassStatus() {
         if(currentClass == selectedClass && currentDomain == selectedDomain && currentAtUniversity == atUniversity) {
             classChanged = false
-            binding.classNumber.setTextColor(Color.BLACK)
+            binding.classNumber.setTextColor(resources.getColor(R.color.dark_gray, theme))
         } else {
             classChanged = true
             binding.classNumber.setTextColor(Color.GREEN)
@@ -197,6 +194,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
     }
 
     private fun updateClassNumber() {
+
         if(classChanged) {
             val domainId = if(selectedDomain != null) selectedDomain!!.id else 0
             viewModel.getClassByNumberAndDomain(selectedClass!!, atUniversity, domainId)

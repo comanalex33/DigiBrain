@@ -76,7 +76,7 @@
         android:text="@string/no_data"
         android:textColor="@color/red"
         android:gravity="center"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout3"
+        app:layout_constraintEnd_toStartOf="@+id/legend_holder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quiz_report_header"/>
 
@@ -86,12 +86,12 @@
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_150sdp"
         android:layout_margin="@dimen/_15sdp"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout3"
+        app:layout_constraintEnd_toStartOf="@+id/legend_holder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quiz_report_header" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+        android:id="@+id/legend_holder"
         android:layout_width="0dp"
         android:layout_height="@dimen/_150sdp"
         android:layout_margin="@dimen/_15sdp"
@@ -164,7 +164,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/_20sdp"
-        app:layout_constraintTop_toBottomOf="@id/pie_chart"
+        app:layout_constraintTop_toBottomOf="@id/legend_holder"
         app:layout_constraintWidth_percent="0.9">
 
         <TextView

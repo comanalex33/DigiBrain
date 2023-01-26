@@ -39,6 +39,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun addChapter(authHeader: String, model: ChapterPostModel) = apiService.addChapter(authHeader, model)
     suspend fun addLesson(authHeader: String, model: LessonPostModel) = apiService.addLesson(authHeader, model)
     suspend fun addSubject(authHeader: String, model: SubjectPostModel) = apiService.addSubject(authHeader, model)
+    suspend fun getSubjectsForIds(subjectIds: List<Long>) = apiService.getSubjectsForIds(subjectIds)
 
     // Quiz
     // --GET--

@@ -88,9 +88,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         val username = sessionManager.getUserName()
         if(username != null) {
-            "Hi, $username".also { binding.titleText.text = it }
+            "${resources.getString(R.string.hi)}, $username".also { binding.titleText.text = it }
         } else {
-            "Hello".also { binding.titleText.text = it }
+            resources.getString(R.string.hi).also { binding.titleText.text = it }
         }
     }
 
@@ -136,5 +136,6 @@ class MainActivity : AppCompatActivity() {
         binding.profileText.text = resources.getString(R.string.profile)
         binding.statsText.text = resources.getString(R.string.statistics)
         binding.settingsText.text = resources.getString(R.string.settings)
+        setupUI()
     }
 }

@@ -1,18 +1,20 @@
 package com.dig.digibrain.fragments
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.dig.digibrain.R
 import com.dig.digibrain.activities.SettingsActivity
-import com.dig.digibrain.databinding.DialogLanguagesBinding
 import com.dig.digibrain.dialogs.ChooseLanguageDialog
 import com.dig.digibrain.interfaces.ILanguageChanged
 import com.dig.digibrain.models.LanguageModel
@@ -20,10 +22,9 @@ import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.SettingsViewModel
-import com.dig.digibrain.viewModels.StatisticsViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
-import com.maltaisn.iconpack.defaultpack.createDefaultIconPack
 import java.util.*
+
 
 class SettingsFragment : PreferenceFragmentCompat(), ILanguageChanged {
 

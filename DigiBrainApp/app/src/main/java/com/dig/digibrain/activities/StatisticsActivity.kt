@@ -36,6 +36,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
     private var totalScore: Float? = null
     private var maximumScore: Float? = null
+    private var subjectCategories = mutableListOf<String>()
+    private var subjectCategoryIds = mutableListOf(0L)
 
     private var multipleChoiceTotal: Int? = null
     private var multipleChoiceScore: Float? = null
@@ -54,12 +56,14 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         getUserReports()
 
-        val adapter = ArrayAdapter(this, R.layout.spinner_item, listOf("Default"))
+        subjectCategories.add(resources.getString(R.string.all))
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, subjectCategories)
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.subjectSpinner.adapter = adapter
         binding.subjectSpinner.onItemSelectedListener = this
 
-        val defaultPosition = adapter.getPosition("Default")
+        val defaultPosition = adapter.getPosition(resources.getString(R.string.all))
         binding.subjectSpinner.setSelection(defaultPosition)
 
         binding.backArrow.setOnClickListener {
@@ -84,19 +88,20 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                         when (resource.status) {
                             Status.SUCCESS -> {
                                 reports = resource.data
+                                reports?.apply {
+                                    getSubjects(this)
+                                }
+
                                 totalScore = getTotalScore().toFloat()
                                 maximumScore = getMaximumScore().toFloat()
 
-                                multipleChoiceTotal = getTotalQuestions("MultipleChoice")
-                                multipleChoiceScore = getTotalScore("MultipleChoice").toFloat()
-                                wordsGapTotal = getTotalQuestions("WordsGap")
-                                wordsGapScore = getTotalScore("WordsGap").toFloat()
-                                trueFalseTotal = getTotalQuestions("TrueFalse")
-                                trueFalseScore = getTotalScore("TrueFalse").toFloat()
+                                multipleChoiceTotal = getTotalQuestions("MultipleChoice", 0L)
+                                multipleChoiceScore = getTotalScore("MultipleChoice", 0L).toFloat()
+                                wordsGapTotal = getTotalQuestions("WordsGap", 0L)
+                                wordsGapScore = getTotalScore("WordsGap", 0L).toFloat()
+                                trueFalseTotal = getTotalQuestions("TrueFalse", 0L)
+                                trueFalseScore = getTotalScore("TrueFalse", 0L).toFloat()
                                 setupCharts()
-
-                                if(resource.data!!.isNotEmpty())
-                                    setUpVisibility()
                             }
                             Status.ERROR -> {}
                             Status.LOADING -> {}
@@ -106,16 +111,30 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         }
     }
 
-    private fun setUpVisibility() {
-        binding.pieChartNoContent.visibility = View.GONE
-        binding.multipleChoiceNoData.visibility = View.GONE
-        binding.wordsGapNoData.visibility = View.GONE
-        binding.trueFalseNoData.visibility = View.GONE
+    private fun getSubjects(reports: List<QuizReportModel>) {
+        val subjectIds = mutableListOf<Long>()
+        for(report in reports) {
+            if(!subjectIds.contains(report.subjectId))
+                subjectIds.add(report.subjectId)
+        }
+        viewModel.getSubjectsForIds(subjectIds)
+            .observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            resource.data?.apply {
+                                for(subject in resource.data) {
+                                    subjectCategories.add(subject.name)
+                                    subjectCategoryIds.add(subject.id)
+                                }
 
-        binding.pieChart.visibility = View.VISIBLE
-        binding.multipleChoicePieChart.visibility = View.VISIBLE
-        binding.wordsGapPieChart.visibility = View.VISIBLE
-        binding.trueFalsePieChart.visibility = View.VISIBLE
+                            }
+                        }
+                        Status.ERROR -> {}
+                        Status.LOADING -> {}
+                    }
+                }
+            }
     }
 
     private fun setupCharts() {
@@ -124,10 +143,10 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         setUpDesignPie(binding.wordsGapPieChart)
         setUpDesignPie(binding.trueFalsePieChart)
 
-        updateChart(binding.pieChart, totalScore!!, maximumScore!! - totalScore!!)
-        updateChart(binding.multipleChoicePieChart, multipleChoiceScore!!, multipleChoiceTotal!!.toFloat() - multipleChoiceScore!!)
-        updateChart(binding.wordsGapPieChart, wordsGapScore!!, wordsGapTotal!!.toFloat() - wordsGapScore!!)
-        updateChart(binding.trueFalsePieChart, trueFalseScore!!, trueFalseTotal!!.toFloat() - trueFalseScore!!)
+        updateChart(binding.pieChart, binding.pieChartNoContent, totalScore!!, maximumScore!! - totalScore!!)
+        updateChart(binding.multipleChoicePieChart, binding.multipleChoiceNoData, multipleChoiceScore!!, multipleChoiceTotal!!.toFloat() - multipleChoiceScore!!)
+        updateChart(binding.wordsGapPieChart, binding.wordsGapNoData, wordsGapScore!!, wordsGapTotal!!.toFloat() - wordsGapScore!!)
+        updateChart(binding.trueFalsePieChart, binding.trueFalseNoData, trueFalseScore!!, trueFalseTotal!!.toFloat() - trueFalseScore!!)
 
         binding.multipleChoiceTotalValue.text = multipleChoiceTotal.toString()
         binding.multipleChoiceScoreValue.text = multipleChoiceScore.toString()
@@ -162,41 +181,79 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
     private fun getTotalScore(): Double {
         var score = 0.0
-        for(report in reports!!) {
-            score += report.score
-        }
+        if(reports != null)
+            for(report in reports!!) {
+                score += report.score
+            }
+        return score
+    }
+
+    private fun getTotalScore(subjectId: Long): Double {
+        var score = 0.0
+        if(reports != null)
+            for(report in reports!!) {
+                if(report.subjectId == subjectId)
+                    score += report.score
+            }
         return score
     }
 
     private fun getMaximumScore(): Double {
         var score = 0.0
-        for(report in reports!!) {
-            score += report.numberOfQuestions
-        }
-        return (score * 100.0).roundToInt() / 100.0
-    }
-
-    private fun getTotalQuestions(type: String): Int {
-        var count = 0
-        for(report in reports!!) {
-            if(report.quizType == type) {
-                count += report.numberOfQuestions
+        if(reports != null)
+            for(report in reports!!) {
+                score += report.numberOfQuestions
             }
-        }
-        return count
-    }
-
-    private fun getTotalScore(type: String): Double {
-        var score = 0.0
-        for(report in reports!!) {
-            if(report.quizType == type) {
-                score += report.score
-            }
-        }
         return score
     }
 
-    private fun updateChart(pie: PieChart, value1: Float, value2: Float) {
+    private fun getMaximumScore(subjectId: Long): Double {
+        var score = 0.0
+        if(reports != null)
+            for(report in reports!!) {
+                if(report.subjectId == subjectId)
+                    score += report.numberOfQuestions
+            }
+        return score
+    }
+
+    private fun getTotalQuestions(type: String, subjectId: Long): Int {
+        var count = 0
+        if(reports != null)
+            for(report in reports!!) {
+                if(report.quizType == type) {
+                    if(subjectId == 0L)
+                        count += report.numberOfQuestions
+                    else if(report.subjectId == subjectId)
+                        count += report.numberOfQuestions
+                }
+            }
+        return count
+    }
+
+    private fun getTotalScore(type: String, subjectId: Long): Double {
+        var score = 0.0
+        if(reports != null)
+            for(report in reports!!) {
+                if(report.quizType == type) {
+                    if(subjectId == 0L)
+                        score += report.score
+                    else if(report.subjectId == subjectId)
+                        score += report.score
+                }
+            }
+        return score
+    }
+
+    private fun updateChart(pie: PieChart, noData: View, value1: Float, value2: Float) {
+        if(value1 + value2 == 0f) {
+            pie.visibility = View.GONE
+            noData.visibility = View.VISIBLE
+        } else {
+            pie.visibility = View.VISIBLE
+            noData.visibility = View.GONE
+        }
+
         val entries = ArrayList<PieEntry>()
         entries.add(PieEntry(value1))
         entries.add(PieEntry(value2))
@@ -220,7 +277,31 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        if(p2 == 0) {
+            totalScore = getTotalScore().toFloat()
+            maximumScore = getMaximumScore().toFloat()
+        } else {
+            totalScore = getTotalScore(subjectCategoryIds[p2]).toFloat()
+            maximumScore = getMaximumScore(subjectCategoryIds[p2]).toFloat()
+        }
+        multipleChoiceTotal = getTotalQuestions("MultipleChoice", subjectCategoryIds[p2])
+        multipleChoiceScore = getTotalScore("MultipleChoice", subjectCategoryIds[p2]).toFloat()
+        wordsGapTotal = getTotalQuestions("WordsGap", subjectCategoryIds[p2])
+        wordsGapScore = getTotalScore("WordsGap", subjectCategoryIds[p2]).toFloat()
+        trueFalseTotal = getTotalQuestions("TrueFalse", subjectCategoryIds[p2])
+        trueFalseScore = getTotalScore("TrueFalse", subjectCategoryIds[p2]).toFloat()
 
+        binding.multipleChoiceTotalValue.text = multipleChoiceTotal.toString()
+        binding.multipleChoiceScoreValue.text = multipleChoiceScore.toString()
+        binding.wordsGapTotalValue.text = wordsGapTotal.toString()
+        binding.wordsGapScoreValue.text = wordsGapScore.toString()
+        binding.trueFalseTotalValue.text = trueFalseTotal.toString()
+        binding.trueFalseScoreValue.text = trueFalseScore.toString()
+
+        updateChart(binding.pieChart, binding.pieChartNoContent, totalScore!!, maximumScore!! - totalScore!!)
+        updateChart(binding.multipleChoicePieChart, binding.multipleChoiceNoData, multipleChoiceScore!!, multipleChoiceTotal!!.toFloat() - multipleChoiceScore!!)
+        updateChart(binding.wordsGapPieChart, binding.wordsGapNoData, wordsGapScore!!, wordsGapTotal!!.toFloat() - wordsGapScore!!)
+        updateChart(binding.trueFalsePieChart, binding.trueFalseNoData, trueFalseScore!!, trueFalseTotal!!.toFloat() - trueFalseScore!!)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {

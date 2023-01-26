@@ -21,6 +21,23 @@ namespace DigiBrainServer.Controllers
             _context = context;
         }
 
+        [HttpPost]
+        [Route("ids")]
+        public async Task<ActionResult<IEnumerable<SubjectResponseModel>>> GetSubjectsForIds(List<long> subjectIds)
+        {
+            var responseSubjects = new List<SubjectResponseModel>();
+            foreach(var subjectId in subjectIds)
+            {
+                var subject = await _context.Subject.FindAsync(subjectId);
+                if(subject != null)
+                {
+                    responseSubjects.Add((SubjectResponseModel)subject);
+                }
+            }
+
+            return Ok(responseSubjects);
+        }
+
         [HttpGet]
         [Route("class/{classId}/languages/{languageId}")]
         public async Task<ActionResult<IEnumerable<SubjectResponseModel>>> GetSubjectForClass(long classId, long languageId)

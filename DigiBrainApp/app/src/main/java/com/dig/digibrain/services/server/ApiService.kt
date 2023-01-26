@@ -68,6 +68,8 @@ interface ApiService {
     suspend fun addLesson(@Header("Authorization") authHeader : String, @Body model: LessonPostModel): LessonModel
     @POST("api/subjects")
     suspend fun addSubject(@Header("Authorization") authHeader : String, @Body model: SubjectPostModel): SubjectModel
+    @POST("api/subjects/ids")
+    suspend fun getSubjectsForIds(@Body subjectIds: List<Long>): List<SubjectModel>
 
     // Quiz
     // --GET--
