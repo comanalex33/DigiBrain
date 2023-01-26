@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     tools:context=".activities.SubjectActivity"
     android:weightSum="6"
     android:orientation="vertical">
@@ -11,7 +12,7 @@
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:background="@color/gray"
+      android:background="@color/blue"
       android:layout_weight="1">
 
     <ImageView
@@ -19,7 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/_5sdp"
-        android:src="@drawable/ic_back_arrow"
+        android:background="@drawable/ic_back_arrow"
+        android:backgroundTint="@color/white_black"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +33,7 @@
         android:layout_height="0dp"
         android:gravity="center_horizontal|bottom"
         android:text="Titlu"
-        android:textColor="@color/black"
+        android:textColor="@color/white_black"
         android:textSize="@dimen/_30sdp"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +47,7 @@
         android:gravity="center"
         android:layout_height="wrap_content"
         android:text="Class X"
-        android:textColor="@color/black"
+        android:textColor="@color/white_black"
         android:textSize="@dimen/_15sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subject_title" />
@@ -54,6 +56,7 @@
         android:id="@+id/subject_image"
         android:layout_width="@dimen/_45sdp"
         android:layout_height="@dimen/_45sdp"
+        android:backgroundTint="@color/white_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/subject_title"
@@ -99,6 +102,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="end|bottom"
+      android:backgroundTint="@color/yellow_black"
       android:src="@drawable/ic_add"
       android:layout_margin="@dimen/_10sdp"/>
 

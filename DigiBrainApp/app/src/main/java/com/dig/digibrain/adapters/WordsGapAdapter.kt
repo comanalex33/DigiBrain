@@ -12,9 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
-import com.dig.digibrain.models.postModels.quiz.QuizStatusModel
 import com.dig.digibrain.models.quiz.AnswerModel
-import kotlinx.coroutines.selects.select
 
 class WordsGapAdapter(var context: Context, private var arrayList: List<String>, var answers: List<AnswerModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -73,7 +71,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
                     if(spinnerAnswers[position]!!.answerSpinnerPosition == 0) {
                         holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                             context,
-                            R.color.yellow
+                            R.color.yellow_black
                         )
                     }
                     holder.spinner.setSelection(spinnerAnswers[position]!!.answerSpinnerPosition)
@@ -81,7 +79,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
                 if(!spinnerAnswers.containsKey(position)) {
                     holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                         context,
-                        R.color.yellow
+                        R.color.yellow_black
                     )
                 }
             }

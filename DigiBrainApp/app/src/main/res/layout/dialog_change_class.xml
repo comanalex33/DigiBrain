@@ -79,7 +79,7 @@
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/purple_700"
             android:text="@string/add"
-            android:textColor="@color/white"
+            android:textColor="@color/white_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.4" />

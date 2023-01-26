@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="5"
     android:orientation="vertical"
+    android:background="@color/blue_light"
     tools:context=".activities.AddSubjectActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,9 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Add subject"
+            android:text="@string/add_subject"
             android:textSize="@dimen/_40sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -43,6 +44,9 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_20sdp"
+            android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/white_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,9 +56,12 @@
                 android:id="@+id/subject_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_20sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:gravity="center"
-                android:hint="Subject title"
+                android:background="@drawable/curve_shape"
+                android:backgroundTint="@color/white_black"
+                android:hint="@string/subject_title"
                 android:textSize="@dimen/_16sdp"
                 android:inputType="textPersonName"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -77,10 +84,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/choose_icon"
-            android:text="Choose icon"
+            android:text="@string/choose_icon"
+            android:textColor="@color/white_black"
             android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/blue"
+            android:padding="@dimen/_8sdp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,6 +110,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/yellow_black"
             android:text="@string/add"
             android:textSize="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"

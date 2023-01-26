@@ -5,28 +5,28 @@
     <SwitchPreferenceCompat
         app:key="dark_mode"
         app:iconSpaceReserved="false"
-        app:title="Dark mode enabled"/>
+        app:title="@string/dark_mode" />
 
     <SwitchPreferenceCompat
         app:key="notifications"
         app:iconSpaceReserved="false"
-        app:title="Enable message notifications"/>
+        app:title="@string/notifications"/>
 
     <SwitchPreferenceCompat
         app:key="sound"
         app:iconSpaceReserved="false"
-        app:title="Sound"/>
+        app:title="@string/sound"/>
 
     <Preference
         app:key="language"
         app:layout="@layout/language_preference"
-        app:title="Language"
+        app:title="@string/language"
         app:icon="@drawable/flag_of_romania"/>
 
     <Preference
         app:key="feedback"
         app:iconSpaceReserved="false"
-        app:title="Learn more"
-        app:summary="Learn more about the app and it's features"/>
+        app:title="@string/learn_more"
+        app:summary="@string/learn_more_description"/>
 
 </PreferenceScreen>

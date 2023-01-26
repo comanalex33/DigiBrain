@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     android:padding="@dimen/_10sdp"
     tools:context=".activities.QuestionActivity">
 
@@ -12,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/score"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_17sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,7 +22,7 @@
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_17sdp"
         app:layout_constraintStart_toEndOf="@id/score_text"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,17 +31,18 @@
         android:id="@+id/question_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_17sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/quiz_time"
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_32sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,9 +63,9 @@
         app:layout_constraintHeight_percent="0.08"
         android:text="@string/check"
         android:textSize="@dimen/_20sdp"
-        android:textColor="@color/white"
+        android:textColor="@color/black_white"
         android:background="@drawable/curve_shape"
-        android:backgroundTint="@color/purple_700"
+        android:backgroundTint="@color/yellow_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

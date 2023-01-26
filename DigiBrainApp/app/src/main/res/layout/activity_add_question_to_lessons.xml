@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.AddQuestionToLessonsActivity">
 
@@ -15,16 +16,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60sdp"
             android:gravity="center"
-            android:text="Select what lessons are relevant for this question"
-            android:textColor="@color/black"
+            android:text="@string/select_what_lessons_are_relevant_for_this_question"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_15sdp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/question_text"
-            android:text="Care este asa?"
             android:textSize="@dimen/_15sdp"
-            android:textColor="@color/blue_light"
+            android:textColor="@color/yellow_black"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_width="match_parent"

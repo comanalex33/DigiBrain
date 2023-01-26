@@ -33,7 +33,7 @@ class MultipleChoiceQuestionFragment(var question: QuestionModel, var answers: L
     private fun setupAnswers() {
 
         // Shuffle answers
-        answers = answers.shuffled()
+//        answers = answers.shuffled()
 
         // Create adapter
         adapter = MultipleChoiceAnswerAdapter(requireContext(), numberOfCorrectAnswers() == 1, answers)

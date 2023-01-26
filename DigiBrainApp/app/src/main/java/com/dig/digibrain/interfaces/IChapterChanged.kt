@@ -6,5 +6,5 @@ import com.dig.digibrain.adapters.ChapterAdapter
 
 interface IChapterChanged {
     fun getLessons(chapterId: Long, recyclerView: RecyclerView, noContent: View)
-    fun addLesson(chapterId: Long, title: String, text: String, adapter: ChapterAdapter)
+    fun addLesson(chapterId: Long, title: String, text: String, adapter: ChapterAdapter, list: View, noList: View)
 }

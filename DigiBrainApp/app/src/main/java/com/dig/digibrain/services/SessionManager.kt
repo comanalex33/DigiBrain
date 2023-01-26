@@ -2,6 +2,7 @@ package com.dig.digibrain.services
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.dig.digibrain.models.TokenDataModel

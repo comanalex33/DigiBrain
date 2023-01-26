@@ -9,7 +9,7 @@
         android:id="@android:id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textAppearance="?android:attr/textAppearanceListItem"
         android:layout_marginStart="?android:attr/listPreferredItemPaddingLeft"
         app:layout_constraintBottom_toBottomOf="parent"

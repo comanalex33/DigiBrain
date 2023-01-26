@@ -33,25 +33,25 @@ class QuizResultsDialog(var listener: ItemClickListener, var status: String, var
                 requireContext(),
                 R.color.green
             )
-            binding.statusMessage.setTextColor(resources.getColor(R.color.black))
-            binding.questionNumberText.setTextColor(resources.getColor(R.color.black))
-            binding.questionsNumber.setTextColor(resources.getColor(R.color.black))
-            binding.totalTimeText.setTextColor(resources.getColor(R.color.black))
-            binding.totalTime.setTextColor(resources.getColor(R.color.black))
-            binding.scoreText.setTextColor(resources.getColor(R.color.black))
-            binding.score.setTextColor(resources.getColor(R.color.black))
+            binding.statusMessage.setTextColor(resources.getColor(R.color.black_white))
+            binding.questionNumberText.setTextColor(resources.getColor(R.color.black_white))
+            binding.questionsNumber.setTextColor(resources.getColor(R.color.black_white))
+            binding.totalTimeText.setTextColor(resources.getColor(R.color.black_white))
+            binding.totalTime.setTextColor(resources.getColor(R.color.black_white))
+            binding.scoreText.setTextColor(resources.getColor(R.color.black_white))
+            binding.score.setTextColor(resources.getColor(R.color.black_white))
         } else {
             binding.dialogCard.backgroundTintList = AppCompatResources.getColorStateList(
                 requireContext(),
                 R.color.red
             )
-            binding.statusMessage.setTextColor(resources.getColor(R.color.white))
-            binding.questionNumberText.setTextColor(resources.getColor(R.color.white))
-            binding.questionsNumber.setTextColor(resources.getColor(R.color.white))
-            binding.totalTimeText.setTextColor(resources.getColor(R.color.white))
-            binding.totalTime.setTextColor(resources.getColor(R.color.white))
-            binding.scoreText.setTextColor(resources.getColor(R.color.white))
-            binding.score.setTextColor(resources.getColor(R.color.white))
+            binding.statusMessage.setTextColor(resources.getColor(R.color.white_black))
+            binding.questionNumberText.setTextColor(resources.getColor(R.color.white_black))
+            binding.questionsNumber.setTextColor(resources.getColor(R.color.white_black))
+            binding.totalTimeText.setTextColor(resources.getColor(R.color.white_black))
+            binding.totalTime.setTextColor(resources.getColor(R.color.white_black))
+            binding.scoreText.setTextColor(resources.getColor(R.color.white_black))
+            binding.score.setTextColor(resources.getColor(R.color.white_black))
         }
 
         binding.statusMessage.text = status

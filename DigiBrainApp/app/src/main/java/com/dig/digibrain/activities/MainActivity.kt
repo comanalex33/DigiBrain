@@ -1,16 +1,26 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityMainBinding
 import com.dig.digibrain.services.SessionManager
+import com.dig.digibrain.services.server.ApiClient
+import com.dig.digibrain.utils.Status
+import com.dig.digibrain.viewModels.SettingsViewModel
+import com.dig.digibrain.viewModels.ViewModelFactory
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var sessionManager: SessionManager
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,9 +28,61 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         sessionManager = SessionManager(applicationContext)
+        setupViewModel()
+        updateLanguage()
 
         setupUI()
         handleActivity()
+    }
+
+    private fun updateLanguage() {
+        viewModel.getLanguages()
+            .observe(this) {
+                it.let { resource ->
+                    when (resource.status) {
+                        Status.SUCCESS -> {
+                            resource.data?.apply {
+                                val preferences = applicationContext.getSharedPreferences("application", Context.MODE_PRIVATE)
+                                val language = preferences.getString("language", "ro")
+                                if(language != null) {
+                                    for(lang in resource.data) {
+                                        if(lang.code == language) {
+                                            preferences.edit().putLong("languageId", lang.id).apply()
+                                            break
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Status.ERROR -> {}
+                        Status.LOADING -> {}
+                    }
+                }
+            }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiClient.getService())
+        )[SettingsViewModel::class.java]
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val language = applicationContext.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getString("language", null)
+
+        language?.apply {
+            val metrics = resources.displayMetrics
+            val configuration = resources.configuration
+            configuration.setLocale(Locale(language))
+            resources.updateConfiguration(configuration, metrics)
+            onConfigurationChanged(configuration)
+        }
+
+        updateLanguage()
     }
 
     private fun setupUI() {
@@ -64,5 +126,15 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, StatisticsActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        binding.learnText.text = resources.getString(R.string.learn)
+        binding.quizText.text = resources.getString(R.string.quiz)
+        binding.profileText.text = resources.getString(R.string.profile)
+        binding.statsText.text = resources.getString(R.string.statistics)
+        binding.settingsText.text = resources.getString(R.string.settings)
     }
 }

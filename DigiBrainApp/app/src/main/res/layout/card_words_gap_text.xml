@@ -3,6 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="@dimen/_35sdp"
     android:layout_margin="@dimen/_2sdp"
+    android:background="@color/blue_light"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -11,7 +12,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="TEST"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

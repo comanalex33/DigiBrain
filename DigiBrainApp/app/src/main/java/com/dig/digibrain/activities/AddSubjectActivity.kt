@@ -1,5 +1,6 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -80,11 +81,13 @@ class AddSubjectActivity : AppCompatActivity(), IconDialog.Callback {
         val authToken: String? = sessionManager.getBearerAuthToken()
 
         if(authToken != null) {
-            Toast.makeText(applicationContext, "Merge", Toast.LENGTH_SHORT).show()
+            val languageId = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+                .getLong("languageId", 2)
             val model = SubjectPostModel(
-                binding.subjectTitle.text.toString(),
-                selectedIconId!!.toLong(),
-                classId!!
+                name = binding.subjectTitle.text.toString(),
+                iconId = selectedIconId!!.toLong(),
+                classId = classId!!,
+                languageId = languageId
             )
             viewModel.addSubject(authToken, model)
                 .observe(this) {

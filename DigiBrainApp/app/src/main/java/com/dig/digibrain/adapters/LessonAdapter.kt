@@ -1,7 +1,6 @@
 package com.dig.digibrain.adapters
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,7 +12,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.CardSubjectLessonBinding
-import com.dig.digibrain.interfaces.IChapterChanged
 import com.dig.digibrain.interfaces.ILessonSelected
 import com.dig.digibrain.models.subject.LessonModel
 
@@ -39,10 +37,10 @@ class LessonAdapter(var context: Context, private var arrayList: List<LessonMode
 
         holder.card.setOnTouchListener { _, motionEvent ->
             if(motionEvent.action == MotionEvent.ACTION_DOWN) {
-                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.blue_light)
+                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.white)
                 true
             } else {
-                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.white)
+                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.blue_light)
             }
             false
         }

@@ -22,15 +22,18 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpGet]
-        [Route("class/{classId}")]
-        public async Task<ActionResult<IEnumerable<SubjectResponseModel>>> GetSubjectForClass(long classId)
+        [Route("class/{classId}/languages/{languageId}")]
+        public async Task<ActionResult<IEnumerable<SubjectResponseModel>>> GetSubjectForClass(long classId, long languageId)
         {
 
             var subjects = await _context.Subject.Where(item => item.ClassId == classId).ToListAsync();
             var responseSubjects = new List<SubjectResponseModel>();
             foreach (var subject in subjects)
             {
-                responseSubjects.Add((SubjectResponseModel)subject);
+                if (subject.LanguageId == languageId)
+                {
+                    responseSubjects.Add((SubjectResponseModel)subject);
+                }
             }
 
             return Ok(responseSubjects);
@@ -46,7 +49,19 @@ namespace DigiBrainServer.Controllers
             {
                 return BadRequest(new { message = "Subject already exists" });
             }
-            
+
+            var classCheck = await _context.Class.FindAsync(subjectModel.ClassId);
+            if (classCheck != null)
+            {
+                var domainCheck = await _context.Domain.FindAsync(classCheck.DomainId);
+                if(domainCheck != null)
+                {
+                    if(domainCheck.LanguageId != subjectModel.LanguageId)
+                    {
+                        return BadRequest(new { message = "Subject domain must have the language" });
+                    }
+                }
+            }
 
             long id = _context.Subject.Count() + 1;
             subjectCheck = await _context.Subject.FindAsync(id);
@@ -56,7 +71,7 @@ namespace DigiBrainServer.Controllers
                 subjectCheck = await _context.Subject.FindAsync(id);
             }
 
-            SubjectModel subject = new(id, subjectModel.Name, subjectModel.ClassId, subjectModel.IconId);
+            SubjectModel subject = new(id, subjectModel.Name, subjectModel.ClassId, subjectModel.IconId, subjectModel.LanguageId);
             _context.Subject.Add(subject);
             await _context.SaveChangesAsync();
 

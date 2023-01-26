@@ -95,7 +95,7 @@ class ChooseClassDialog(var currentClass: Int?, var isUniversity: Boolean): Dial
         return binding.root
     }
 
-    fun getClassNumberIfUniversity(number: String): Int {
+    private fun getClassNumberIfUniversity(number: String): Int {
         return when(number) {
             "I" -> 1
             "II" -> 2

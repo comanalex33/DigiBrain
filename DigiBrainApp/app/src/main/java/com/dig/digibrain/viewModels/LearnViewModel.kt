@@ -71,10 +71,10 @@ class LearnViewModel(private val repository: Repository): GetDomainsViewModel() 
         }
     }
 
-    fun getSubjectsForClass(classId: Long) = liveData(Dispatchers.IO) {
+    fun getSubjectsForClass(classId: Long, languageId: Long) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = repository.getSubjectsForClass(classId)))
+            emit(Resource.success(data = repository.getSubjectsForClass(classId, languageId)))
         } catch (throwable: Throwable) {
             when(throwable) {
                 is IOException -> {

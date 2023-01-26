@@ -1,9 +1,6 @@
 package com.dig.digibrain.services.server
 
-import com.dig.digibrain.models.LoginModel
-import com.dig.digibrain.models.RegisterModel
-import com.dig.digibrain.models.TokenModel
-import com.dig.digibrain.models.UserModel
+import com.dig.digibrain.models.*
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
 import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
@@ -36,6 +33,10 @@ interface ApiService {
     @DELETE("api/users/{username}")
     suspend fun deleteAccount(@Header("Authorization") authHeader : String, @Path("username") username: String): UserModel
 
+    // Language
+    @GET("api/languages")
+    suspend fun getLanguages(): List<LanguageModel>
+
     // Theory
     //--GET--
     @GET("api/classes/domains")
@@ -54,8 +55,8 @@ interface ApiService {
     ): ClassModel
     @GET("/api/classes/{id}")
     suspend fun getClassById(@Path("id") id: Long): ClassModel
-    @GET("api/subjects/class/{classId}")
-    suspend fun getSubjectsForClass(@Path("classId") classId: Long): List<SubjectModel>
+    @GET("api/subjects/class/{classId}/languages/{languageId}")
+    suspend fun getSubjectsForClass(@Path("classId") classId: Long, @Path("languageId") languageId: Long): List<SubjectModel>
     @GET("api/chapters/subject/{subjectId}")
     suspend fun getChaptersForSubject(@Path("subjectId") subjectId: Long): List<ChapterModel>
     @GET("api/lessons/chapter/{chapterId}")
@@ -99,7 +100,7 @@ interface ApiService {
     @POST("api/answers/multiple")
     suspend fun addMultipleAnswers(@Header("Authorization") authHeader : String, @Body answers: List<AnswerPostModel>): List<AnswerModel>
     @POST("api/questions/{id}/subjects")
-    suspend fun addQuestionToSubjects(@Header("Authorization") authHeader : String, @Path("id") questionId: Long, @Body subjectIds: List<Long>): SubjectQuestionModel
+    suspend fun addQuestionToSubjects(@Header("Authorization") authHeader : String, @Path("id") questionId: Long, @Body subjectIds: List<Long>): List<SubjectQuestionModel>
     @POST("api/reports")
     suspend fun addUserReport(@Body model: QuizReportPostModel): QuizReportModel
 

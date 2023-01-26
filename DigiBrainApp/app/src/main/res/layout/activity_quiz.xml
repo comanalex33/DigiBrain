@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_background"
     tools:context=".activities.QuizActivity"
     android:weightSum="10"
     android:orientation="vertical">
@@ -18,7 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/take_a_quiz"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_25sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_28sdp"
             android:background="@drawable/curve_shape_no_border"
+            android:backgroundTint="@color/yellow_black"
             android:src="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,12 +60,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_class_button"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/gray"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toTopOf="@+id/choose_domain_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.15"
@@ -75,9 +77,10 @@
                 android:id="@+id/choose_class_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/choose_class"
-                android:textSize="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_20sdp"
+                android:text="@string/choose_class"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -86,8 +89,8 @@
                 android:id="@+id/choose_class_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_20sdp"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/choose_class_text"
@@ -97,13 +100,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_domain_button"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/light_gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/choose_subject_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.15"
@@ -115,9 +118,10 @@
                 android:id="@+id/choose_domain_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/choose_domain"
-                android:textSize="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_20sdp"
+                android:text="@string/choose_domain"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -126,8 +130,8 @@
                 android:id="@+id/choose_domain_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_20sdp"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/choose_domain_text"
@@ -140,18 +144,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/choose_domain_text"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_subject_button"
-            android:clickable="false"
-            android:focusable="false"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/light_gray"
+            android:clickable="false"
+            android:focusable="false"
             app:layout_constraintBottom_toTopOf="@id/choose_difficulty"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.15"
@@ -163,9 +167,10 @@
                 android:id="@+id/choose_subject_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/choose_subject"
-                android:textSize="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_20sdp"
+                android:text="@string/choose_subject"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -174,8 +179,8 @@
                 android:id="@+id/choose_subject_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_20sdp"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/choose_subject_text"
@@ -185,13 +190,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_difficulty"
-            android:clickable="false"
-            android:focusable="false"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:backgroundTint="@color/light_gray"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_20sdp"
+            android:backgroundTint="@color/light_gray"
+            android:clickable="false"
+            android:focusable="false"
             app:layout_constraintBottom_toTopOf="@id/choose_type_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.15"
@@ -200,23 +205,22 @@
             app:layout_constraintWidth_percent="0.9">
 
             <TextView
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:text="@string/difficulty"
-                android:textSize="@dimen/_12sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/white_black"
+                android:textSize="@dimen/_11sdp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/seekbar_holder" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/seekbar_holder"
                 android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.7">
 
                 <SeekBar
                     android:id="@+id/choose_difficulty_seekbar"
@@ -227,29 +231,32 @@
                     android:progress="1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/easy"
-                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    android:textColor="@color/white_black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/medium"
-                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
+                    android:textColor="@color/white_black"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hard"
-                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    android:textColor="@color/white_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -257,12 +264,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_type_button"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/gray"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.15"
@@ -274,9 +281,10 @@
                 android:id="@+id/choose_type_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/choose_quiz_type"
-                android:textSize="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_20sdp"
+                android:text="@string/choose_quiz_type"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -285,8 +293,8 @@
                 android:id="@+id/choose_type_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_20sdp"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/choose_type_text"
@@ -305,11 +313,11 @@
             android:id="@+id/search_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="@string/search"
+            android:text="@string/start"
             android:textSize="@dimen/_24sdp"
-            android:textColor="@color/white"
+            android:textColor="@color/black_white"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/yellow_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"

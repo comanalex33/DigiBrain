@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     tools:context=".activities.StatisticsActivity">
 
     <ImageView
@@ -22,8 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="Statistics"
-        android:textColor="@color/black"
+        android:text="@string/statistics"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_30sdp"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,8 +42,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quiz report"
-            android:textColor="@color/black"
+            android:text="@string/quiz_report"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +61,7 @@
                 android:id="@+id/subject_spinner"
                 android:layout_width="@dimen/_80sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:background="@color/black" />
+                android:background="@color/black_white" />
 
         </androidx.cardview.widget.CardView>
 
@@ -72,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_margin="@dimen/_15sdp"
         android:layout_height="@dimen/_150sdp"
-        android:text="No data"
+        android:text="@string/no_data"
         android:textColor="@color/red"
         android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/constraintLayout3"
@@ -103,8 +104,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Legend"
-            android:textColor="@color/black"
+            android:text="@string/legend"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_15sdp"
             app:layout_constraintBottom_toTopOf="@+id/correct_color"
             app:layout_constraintTop_toTopOf="parent" />
@@ -125,8 +126,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Correct"
-            android:textColor="@color/black"
+            android:text="@string/correct"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toTopOf="@+id/wrong_color"
             app:layout_constraintTop_toBottomOf="@+id/correct_color" />
@@ -147,8 +148,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Wrong"
-            android:textColor="@color/black"
+            android:text="@string/wrong"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wrong_color" />
@@ -169,8 +170,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quiz Type report"
-            android:textColor="@color/black"
+            android:text="@string/quiz_type_report"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -181,22 +182,24 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiple_choice_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/right_border"
+        android:padding="@dimen/_6sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="@dimen/_10sdp"
         app:layout_constraintTop_toBottomOf="@id/numerical_report_header"
-        app:layout_constraintWidth_percent="0.5">
+        app:layout_constraintWidth_percent="0.33">
 
         <TextView
             android:id="@+id/multiple_choice_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Multiple Choice"
-            android:textColor="@color/black"
+            android:text="@string/multiple_choice"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_16sdp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -204,20 +207,20 @@
 
         <TextView
             android:id="@+id/multipleChoice_total_text"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_60sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Total number"
+            android:text="@string/total_number"
             android:gravity="center"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/multiple_choice_title"/>
+            android:textColor="@color/black_white"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/multiple_choice_total_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="5"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/multipleChoice_total_text"/>
@@ -227,9 +230,9 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Score"
+            android:text="@string/score"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             app:layout_constraintTop_toBottomOf="@id/multiple_choice_total_value"/>
 
         <TextView
@@ -237,7 +240,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="5"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/multiple_choice_score_text"/>
@@ -246,7 +249,7 @@
             android:id="@+id/multiple_choice_no_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No data"
+            android:text="@string/no_data"
             android:textColor="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -256,8 +259,8 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/multiple_choice_pie_chart"
             android:visibility="gone"
-            android:layout_width="@dimen/_130sdp"
-            android:layout_height="@dimen/_130sdp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -269,19 +272,105 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/right_border"
+        android:padding="@dimen/_6sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/multiple_choice_holder"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintTop_toBottomOf="@id/numerical_report_header"
+        app:layout_constraintWidth_percent="0.33">
+
+        <TextView
+            android:id="@+id/true_false_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/true_or_false"
+            android:textColor="@color/black_white"
+            android:textSize="@dimen/_16sdp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="10dp" />
+
+        <TextView
+            android:id="@+id/trueFalse_total_text"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/total_number"
+            android:gravity="center"
+            android:textColor="@color/black_white"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/true_false_total_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:textColor="@color/black_white"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/trueFalse_total_text"/>
+
+        <TextView
+            android:id="@+id/true_false_score_text"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/score"
+            android:gravity="center"
+            android:textColor="@color/black_white"
+            app:layout_constraintTop_toBottomOf="@id/true_false_total_value"/>
+
+        <TextView
+            android:id="@+id/true_false_score_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:textColor="@color/black_white"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/true_false_score_text"/>
+
+        <TextView
+            android:id="@+id/true_false_no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data"
+            android:textColor="@color/red"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/true_false_score_value"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/true_false_pie_chart"
+            android:visibility="gone"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/true_false_score_value" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/_6sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="@dimen/_10sdp"
         app:layout_constraintTop_toBottomOf="@id/numerical_report_header"
-        app:layout_constraintWidth_percent="0.5">
+        app:layout_constraintWidth_percent="0.33">
 
         <TextView
             android:id="@+id/words_gap_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Words Gap"
-            android:textColor="@color/black"
+            android:text="@string/words_gap"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_16sdp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -289,20 +378,20 @@
 
         <TextView
             android:id="@+id/words_gap_total_text"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_60sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Total number"
+            android:text="@string/total_number"
             android:gravity="center"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/words_gap_title"/>
+            android:textColor="@color/black_white"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/words_gap_total_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="5"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/words_gap_total_text"/>
@@ -312,9 +401,9 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Score"
+            android:text="@string/score"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             app:layout_constraintTop_toBottomOf="@id/words_gap_total_value"/>
 
         <TextView
@@ -322,7 +411,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="5"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/words_gap_score_text"/>
@@ -331,7 +420,7 @@
             android:id="@+id/words_gap_no_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No data"
+            android:text="@string/no_data"
             android:textColor="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -341,8 +430,8 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/words_gap_pie_chart"
             android:visibility="gone"
-            android:layout_width="@dimen/_130sdp"
-            android:layout_height="@dimen/_130sdp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

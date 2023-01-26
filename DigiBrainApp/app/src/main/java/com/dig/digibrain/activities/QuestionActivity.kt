@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.liveData
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityQuestionBinding
+import com.dig.digibrain.dialogs.LoadingDialog
 import com.dig.digibrain.dialogs.QuizResultsDialog
 import com.dig.digibrain.fragments.MultipleChoiceQuestionFragment
 import com.dig.digibrain.fragments.QuestionFragment
@@ -39,12 +40,15 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
     var subjectId: Long? = null
     var type: String? = null
     var nextQuestion = false
-    var questionsNumber = 2
+    var questionsNumber = 5
 
     var score: Double = 0.0
 
     private val quizMinutes: Long = 4
     private val quizSeconds: Long = 0
+
+    private var minutesLeft: Long = 4
+    private var secondsLeft: Long = 0
 
     var questionsAnswers = listOf<QuestionsAnswersList>()
     var selectedAnswers = mutableListOf<List<AnswerModel>>()
@@ -115,17 +119,25 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         )[QuestionViewModel::class.java]
     }
     private fun getQuizQuestions(number: Int) {
+        val loadingDialog = LoadingDialog(this)
         viewModel.getRandomQuestionsForSubject(subjectId!!, number, difficulty!!, type!!, 2)
             .observe(this) {
                 it.let { resource ->
                     when(resource.status) {
                         Status.SUCCESS -> {
+                            loadingDialog.dismiss()
                             if(resource.data != null) {
                                 getAnswers(resource.data)
                             }
                         }
-                        Status.ERROR -> { }
-                        Status.LOADING -> { }
+                        Status.ERROR -> {
+                            loadingDialog.dismiss()
+                            Toast.makeText(applicationContext, resource.message, Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        Status.LOADING -> {
+                            loadingDialog.show()
+                        }
                     }
                 }
             }
@@ -213,14 +225,18 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
 
     private fun updateQuestion() {
         if(currentQuestionPosition == questionsAnswers.size) {
-            dialog = QuizResultsDialog(this, applicationContext.getString(R.string.congratulations), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", score)
+            val f = DecimalFormat("00")
+            val totalTime = "${f.format(quizMinutes)}:${f.format(quizSeconds)}"
+            dialog = QuizResultsDialog(this, applicationContext.getString(R.string.congratulations), questionsAnswers.size, timeTaken(), score)
             dialog.show(this.supportFragmentManager, "Quiz results")
             currentQuestionPosition++
         } else {
             binding.score.text = score.toString()
             binding.questionNumber.text = "${selectedAnswers.size + 1}/${questionsAnswers.size}"
 
-            if(type == "MultipleChoice") {
+            if(type == "MultipleChoice" || type == "TrueFalse") {
+                if(type == "MultipleChoice")
+                    questionsAnswers[currentQuestionPosition].answers = questionsAnswers[currentQuestionPosition].answers.shuffled()
                 supportFragmentManager.beginTransaction()
                     .replace(
                         binding.containerFragment.id, MultipleChoiceQuestionFragment(
@@ -230,6 +246,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                     )
                     .commit()
             } else if(type == "WordsGap") {
+                questionsAnswers[currentQuestionPosition].answers = questionsAnswers[currentQuestionPosition].answers.shuffled()
                 supportFragmentManager.beginTransaction()
                     .replace(
                         binding.containerFragment.id, WordsGapFragment(
@@ -244,7 +261,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
     }
 
     private fun startTimer() {
-        object : CountDownTimer(quizMinutes * 60 * 100 + quizSeconds * 100, 1000) {
+        object : CountDownTimer(quizMinutes * 60 * 1000 + quizSeconds * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 if(currentQuestionPosition == questionsAnswers.size + 1) {
                     cancel()
@@ -252,12 +269,16 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                 val f = DecimalFormat("00")
                 val min = (millisUntilFinished / 60000) % 60;
                 val sec = (millisUntilFinished / 1000) % 60;
+                minutesLeft = min
+                secondsLeft = sec
                 binding.quizTime.text = "${f.format(min)}:${f.format(sec)}"
             }
 
             override fun onFinish() {
                 binding.quizTime.text = "00:00"
-                dialog = QuizResultsDialog(this@QuestionActivity, applicationContext.getString(R.string.timeout), questionsAnswers.size, "${quizMinutes}:${quizSeconds}", score)
+                val f = DecimalFormat("00")
+                val totalTime = "${f.format(quizMinutes)}:${f.format(quizSeconds)}"
+                dialog = QuizResultsDialog(this@QuestionActivity, applicationContext.getString(R.string.timeout), questionsAnswers.size, timeTaken(), score)
                 dialog.show(this@QuestionActivity.supportFragmentManager, "Quiz results")
             }
         }.start()
@@ -286,5 +307,20 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         }
                     }
                 }
+    }
+
+    private fun timeTaken(): String {
+        val minutesTaken: Long
+        val secondsTaken: Long
+
+        if(secondsLeft != 0L) {
+            minutesTaken = quizMinutes - minutesLeft - 1
+            secondsTaken = 60L - secondsLeft
+        } else {
+            minutesTaken = quizMinutes - minutesLeft
+            secondsTaken = 0L
+        }
+        val f = DecimalFormat("00")
+        return "${f.format(minutesTaken)}:${f.format(secondsTaken)}"
     }
 }

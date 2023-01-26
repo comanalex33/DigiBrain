@@ -23,13 +23,16 @@ class Repository(private val apiService: ApiService) {
     // --DELETE--
     suspend fun deleteAccount(authHeader: String, username: String) = apiService.deleteAccount(authHeader, username)
 
+    // Language
+    suspend fun getLanguages() = apiService.getLanguages()
+
     // Theory
     // --GET--
     suspend fun getDomainsForClass(number: Int, atUniversity: Boolean, languageId: Long) = apiService.getDomainsForClass(number, atUniversity, languageId)
     suspend fun getDomainById(id: Long) = apiService.getDomainById(id)
     suspend fun getClassByNumberAndDomain(number: Int, atUniversity: Boolean, domainId: Long) = apiService.getClassByNumberAndDomain(number, atUniversity, domainId)
     suspend fun getClassById(id: Long) = apiService.getClassById(id)
-    suspend fun getSubjectsForClass(classId: Long) = apiService.getSubjectsForClass(classId)
+    suspend fun getSubjectsForClass(classId: Long, languageId: Long) = apiService.getSubjectsForClass(classId, languageId)
     suspend fun getChaptersForSubject(subjectId: Long) = apiService.getChaptersForSubject(subjectId)
     suspend fun getLessonsForChapter(chapterId: Long) = apiService.getLessonsForChapter(chapterId)
     // --POST --

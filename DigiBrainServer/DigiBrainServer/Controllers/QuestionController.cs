@@ -20,7 +20,7 @@ namespace DigiBrainServer.Controllers
         {
             "MultipleChoice",
             "WordsGap",
-            "WrittenSolution"
+            "TrueFalse"
         };
         private readonly List<string> acceptedDifficulties = new()
         {

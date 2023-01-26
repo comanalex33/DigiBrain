@@ -1,5 +1,6 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -64,10 +65,25 @@ class AddQuestionActivity : AppCompatActivity(), IQuizTypeChanged {
                     "WordsGap" -> {
                         handleWordsGap()
                     }
+                    "TrueFalse" -> {
+                        handleTrueFalse()
+                    }
                     else -> {
-                        Toast.makeText(applicationContext, "Not implemented yet", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Wrong type", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+        }
+
+        binding.trueAnswerCorrect.setOnCheckedChangeListener { compoundButton, b ->
+            if(b) {
+                binding.falseAnswerCorrect.isChecked = false
+            }
+        }
+
+        binding.falseAnswerCorrect.setOnCheckedChangeListener { compoundButton, b ->
+            if(b) {
+                binding.trueAnswerCorrect.isChecked = false
             }
         }
 
@@ -159,12 +175,30 @@ class AddQuestionActivity : AppCompatActivity(), IQuizTypeChanged {
         createQuestion()
     }
 
+    private fun handleTrueFalse() {
+        // Check question is completed
+        if(binding.questionText.text.toString() == "") {
+            Toast.makeText(applicationContext, "Add question text", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Check if answer is selected
+        if(!binding.trueAnswerCorrect.isChecked && !binding.falseAnswerCorrect.isChecked) {
+            Toast.makeText(applicationContext, "Must select true or false", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        createQuestion()
+    }
+
     private fun createQuestion() {
+        val languageId = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getLong("languageId", 2)
         val questionPostModel = QuestionPostModel(
             type = selectedQuizType!!.key,
             difficulty = getDifficulty(),
             text = binding.questionText.text.toString(),
-            languageId = 2
+            languageId = languageId
         )
         val authToken: String? = sessionManager.getBearerAuthToken()
 
@@ -216,8 +250,13 @@ class AddQuestionActivity : AppCompatActivity(), IQuizTypeChanged {
                 if(positionCount >= 4)
                     answers.add(AnswerPostModel(binding.wordsGapAnswer4.text.toString(), 4, true, questionId))
             }
+            "TrueFalse" -> {
+                val trueAnswer = AnswerPostModel(resources.getString(R.string.trueWord), 0, binding.trueAnswerCorrect.isChecked, questionId)
+                val falseAnswer = AnswerPostModel(resources.getString(R.string.falseWord), 0, binding.falseAnswerCorrect.isChecked, questionId)
+                answers = mutableListOf(trueAnswer, falseAnswer)
+            }
             else -> {
-                Toast.makeText(applicationContext, "Not implemented yet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Wrong type", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -263,12 +302,25 @@ class AddQuestionActivity : AppCompatActivity(), IQuizTypeChanged {
 
         binding.addQuestionButton.visibility = View.VISIBLE
 
-        if(value.key == "MultipleChoice") {
-            binding.multipleChoiceAnswers.visibility = View.VISIBLE
-            binding.wordsGapAnswers.visibility = View.GONE
-        } else if (value.key == "WordsGap") {
-            binding.multipleChoiceAnswers.visibility = View.GONE
-            binding.wordsGapAnswers.visibility = View.VISIBLE
+        when(value.key) {
+            "MultipleChoice" -> {
+                binding.multipleChoiceAnswers.visibility = View.VISIBLE
+                binding.wordsGapAnswers.visibility = View.GONE
+                binding.trueFalseAnswers.visibility = View.GONE
+            }
+            "WordsGap" -> {
+                binding.multipleChoiceAnswers.visibility = View.GONE
+                binding.wordsGapAnswers.visibility = View.VISIBLE
+                binding.trueFalseAnswers.visibility = View.GONE
+            }
+            "TrueFalse" -> {
+                binding.multipleChoiceAnswers.visibility = View.GONE
+                binding.wordsGapAnswers.visibility = View.GONE
+                binding.trueFalseAnswers.visibility = View.VISIBLE
+            }
+            else -> {
+                Toast.makeText(applicationContext, "Wrong type", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

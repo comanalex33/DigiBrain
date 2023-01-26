@@ -28,8 +28,10 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
 
     private lateinit var binding: CardSubjectChapterBinding
     private lateinit var listener: IChapterChanged
+    private lateinit var list: View
+    private lateinit var noList: View
 
-    var chapterLessons = mutableMapOf<Long, List<LessonModel>>()
+    var chapterLessons = mutableMapOf<Long, MutableList<LessonModel>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         binding = CardSubjectChapterBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -69,7 +71,17 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
     }
 
     fun addChapterLessons(chapterId: Long, lessons: List<LessonModel>) {
-        chapterLessons[chapterId] = lessons
+        chapterLessons[chapterId] = lessons.toMutableList()
+    }
+
+    fun addChapterOneLesson(chapterId: Long, lesson: LessonModel) {
+        val list = chapterLessons[chapterId]
+        if(list == null) {
+            chapterLessons[chapterId] = mutableListOf(lesson)
+        } else {
+            list.add(lesson)
+            chapterLessons[chapterId] = list
+        }
     }
 
     inner class ChapterViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
@@ -89,11 +101,14 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
             addLesson.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
             chapterContent.visibility = View.GONE
             expandArrow.setImageResource(R.drawable.ic_expand_more)
+
+            list = recyclerView
+            noList = noContent
         }
     }
 
     override fun addLesson(chapterId: Long, title: String, text: String) {
-        listener.addLesson(chapterId, title, text, this)
+        listener.addLesson(chapterId, title, text, this, list, noList)
     }
 
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DigiBrainApp</string>
+
+    <!--    Authentication pages-->
+    <string name="username">Username</string>
+    <string name="create_account">Creaza cont</string>
+    <string name="email">Email</string>
+    <string name="password">Parola</string>
+    <string name="re_enter_password">Reintrodu Parola</string>
+    <string name="register">Creare cont</string>
+    <string name="login">Logare</string>
+    <string name="don_t_have_an_account">Nu ai cont?</string>
+    <string name="sign_up_button">CREAZA CONT</string>
+
+    <!--    Main page-->
+    <string name="learn">Invata</string>
+    <string name="quiz">Quiz</string>
+    <string name="profile">Profil</string>
+    <string name="statistics">Statistici</string>
+    <string name="settings">Setari</string>
+
+    <!--    Learn page-->
+    <string name="search">Cauta</string>
+    <string name="start">Start</string>
+    <string name="choose_subject">Alege subiect ...</string>
+    <string name="subject">Subiect</string>
+    <string name="choose_domain">Alege domeniu ...</string>
+    <string name="domain">Domeniu</string>
+    <string name="choose_class">Alege clasa ...</string>
+    <string name="class_">Clasa</string>
+    <string name="choose_what_you_want_to_learn">Alege ce vrei sa inveti</string>
+    <string name="select_class_number">Alege o clasa</string>
+    <string name="select_domain">Alege un domeniu</string>
+    <string name="select_subject">Alege un subiect</string>
+    <string name="select">Selecteaza</string>
+    <string name="no_domains_defined_for_this_class">Nu sunt domenii definite pentru aceasta clasa</string>
+    <string name="no_subjects_defined_for_this_class">Nu sunt subiecte definite pentru aceasta clasa</string>
+    <string name="title_activity_subject">SubjectActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Inainte</string>
+    <string name="previous">Inapoi</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="no_content">Niciun continut</string>
+    <string name="take_a_quiz">Quiz</string>
+    <string name="difficulty">Dificultate</string>
+    <string name="easy">Usor</string>
+    <string name="medium">Mediu</string>
+    <string name="hard">Greu</string>
+    <string name="choose_quiz_type">Alege un tip de quiz ...</string>
+    <string name="type">Tip</string>
+    <string name="select_type">Alege un tp</string>
+    <string name="score">Scor:</string>
+    <string name="time">Timp:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="check">Verifica</string>
+    <string name="ok">Ok</string>
+    <string name="total_time">Timp total:</string>
+    <string name="number_of_questions">Numar de intrebari:</string>
+    <string name="congratulations">Felicitari</string>
+    <string name="close">Inchide</string>
+    <string name="timeout">Timp expirat</string>
+    <string name="add">Adauga</string>
+    <string name="chapter_name">Nume capitol</string>
+    <string name="lesson_title">Titlu lectie</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
+    <string name="choose_chapter">Alege un capitol ...</string>
+    <string name="choose_lessons">Alege o lectie ...</string>
+    <string name="save">Salveaza</string>
+    <string name="choose_language">Alege limba</string>
+
+    <!--    Settings-->
+    <string name="dark_mode">Mod intunecat</string>
+    <string name="notifications">Notificari</string>
+    <string name="sound">Sunet</string>
+    <string name="language">Limba</string>
+    <string name="learn_more">Descopera mai multe</string>
+    <string name="learn_more_description">Descopera mai multe despre aplicatie si functionalitatile acesteia</string>
+    <string name="add_question">Adauga intrebare</string>
+    <string name="question">Intrebare</string>
+    <string name="answer_1">Raspuns 1</string>
+    <string name="correct">Corect</string>
+    <string name="answer_2">Raspuns 2</string>
+    <string name="answer_3">Raspuns 3</string>
+    <string name="answer_4">Raspuns 4</string>
+    <string name="position">Pozitie</string>
+    <string name="select_what_lessons_are_relevant_for_this_question">Selecteaza lectiile relevante pentru aceasta intrebare</string>
+    <string name="falseWord">Fals</string>
+    <string name="trueWord">Adevarat</string>
+    <string name="quiz_report">Raport quiz</string>
+    <string name="no_data">Fara date</string>
+    <string name="legend">Legenda</string>
+    <string name="wrong">Gresit</string>
+    <string name="quiz_type_report">Raport in functie de tipul de quiz</string>
+    <string name="multiple_choice">Raspuns multiplu</string>
+    <string name="total_number">Numar total</string>
+    <string name="true_or_false">Adevarat sau Fals</string>
+    <string name="words_gap">Cuvinte lipsa</string>
+    <string name="add_subject">Adauga subiect</string>
+    <string name="subject_title">Titlu subiect</string>
+    <string name="choose_icon">Alege iconita</string>
+</resources>

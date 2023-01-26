@@ -21,6 +21,7 @@
 
     <!--    Learn page-->
     <string name="search">Search</string>
+    <string name="start">Start</string>
     <string name="choose_subject">Choose subject ...</string>
     <string name="subject">Subject</string>
     <string name="choose_domain">Choose domain ...</string>
@@ -71,4 +72,36 @@
     <string name="choose_chapter">Choose chapter ...</string>
     <string name="choose_lessons">Choose lessons ...</string>
     <string name="save">Save</string>
+    <string name="choose_language">Choose language</string>
+    
+    <!--    Settings-->
+    <string name="dark_mode">Dark mode</string>
+    <string name="notifications">Notifications</string>
+    <string name="sound">Sound</string>
+    <string name="language">Language</string>
+    <string name="learn_more">Learn more</string>
+    <string name="learn_more_description">Learn more about the app and it\'s features</string>
+    <string name="add_question">Add question</string>
+    <string name="question">Question</string>
+    <string name="answer_1">Answer 1</string>
+    <string name="correct">Correct</string>
+    <string name="answer_2">Answer 2</string>
+    <string name="answer_3">Answer 3</string>
+    <string name="answer_4">Answer 4</string>
+    <string name="position">Position</string>
+    <string name="select_what_lessons_are_relevant_for_this_question">Select what lessons are relevant for this question</string>
+    <string name="falseWord">False</string>
+    <string name="trueWord">True</string>
+    <string name="quiz_report">Quiz report</string>
+    <string name="no_data">No data</string>
+    <string name="legend">Legend</string>
+    <string name="wrong">Wrong</string>
+    <string name="quiz_type_report">Quiz Type report</string>
+    <string name="multiple_choice">Multiple Choice</string>
+    <string name="total_number">Total number</string>
+    <string name="true_or_false">True or False</string>
+    <string name="words_gap">Words Gap</string>
+    <string name="add_subject">Add subject</string>
+    <string name="subject_title">Subject title</string>
+    <string name="choose_icon">Choose icon</string>
 </resources>

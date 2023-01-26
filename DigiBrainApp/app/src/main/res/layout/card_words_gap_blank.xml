@@ -11,7 +11,7 @@
     <Spinner
         android:id="@+id/words_gap_blank"
         android:inputType="text"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/white_black"
         android:popupBackground="@color/teal_700"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

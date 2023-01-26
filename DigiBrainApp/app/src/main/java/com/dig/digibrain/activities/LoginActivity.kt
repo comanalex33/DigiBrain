@@ -1,11 +1,14 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
@@ -17,6 +20,7 @@ import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LoginViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -30,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupSettings()
         setupViewModel()
         animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
         sessionManager = SessionManager(applicationContext)
@@ -46,6 +51,36 @@ class LoginActivity : AppCompatActivity() {
         binding.registerButton.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        binding.usernameHolder.hint = resources.getString(R.string.username)
+        binding.passwordHolder.hint = resources.getString(R.string.password)
+        binding.loginButton.text = resources.getString(R.string.login)
+        binding.noAccountText.text = resources.getString(R.string.don_t_have_an_account)
+        binding.registerButton.text = resources.getString(R.string.create_account)
+    }
+
+    private fun setupSettings() {
+        val darkMode = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getBoolean("darkMode", false)
+        if(darkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
+        val language = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getString("language", null)
+        language?.apply {
+            val metrics = resources.displayMetrics
+            val configuration = resources.configuration
+            configuration.setLocale(Locale(language))
+            resources.updateConfiguration(configuration, metrics)
+            onConfigurationChanged(configuration)
         }
     }
 

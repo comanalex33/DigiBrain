@@ -1,9 +1,11 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
@@ -59,7 +61,9 @@ class LearnActivity : AppCompatActivity(), IClassChanged, IDomainChanged, ISubje
 
         binding.chooseDomainButton.setOnClickListener {
             if(domainClickable) {
-                val dialog = ChooseDomainDialog(application, selectedDomain, selectedClass!!, isUniversity, 2)
+                val languageId = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+                    .getLong("languageId", 2)
+                val dialog = ChooseDomainDialog(application, selectedDomain, selectedClass!!, isUniversity, languageId)
                 dialog.addListener(this)
                 dialog.setViewModel(viewModel)
                 dialog.show(this.supportFragmentManager, "Choose domain")

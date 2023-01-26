@@ -5,7 +5,7 @@
     android:id="@+id/chapter_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/gray"
+    android:backgroundTint="@color/blue"
     android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_5sdp">
 
@@ -26,7 +26,7 @@
                 android:padding="@dimen/_8sdp"
                 android:paddingStart="@dimen/_15sdp"
                 android:text="Chapter 1"
-                android:textColor="@color/black"
+                android:textColor="@color/white_black"
                 android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +87,7 @@
                 android:layout_height="@dimen/_28sdp"
                 android:src="@drawable/ic_add"
                 app:layout_constraintTop_toBottomOf="@id/chapter_content_content"
+                android:backgroundTint="@color/yellow_black"
                 android:background="@drawable/curve_shape_no_border"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

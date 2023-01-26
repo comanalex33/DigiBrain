@@ -22,7 +22,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/congratulations"
             android:textSize="@dimen/_25sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/number_of_questions"
                 android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:gravity="center"/>
 
             <TextView
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_time"
                 android:textSize="@dimen/_16sdp"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:gravity="center"/>
 
             <TextView
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/score"
                 android:textSize="@dimen/_16sdp"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:gravity="center"/>
 
             <TextView
@@ -125,9 +125,9 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_height="wrap_content"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/yellow_black"
             android:text="@string/close"
-            android:textColor="@color/white"
+            android:textColor="@color/black_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/score_holder"

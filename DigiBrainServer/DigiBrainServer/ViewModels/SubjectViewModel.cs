@@ -10,6 +10,9 @@ namespace DigiBrainServer.ViewModels
         [Required(ErrorMessage = "Class required")]
         public long ClassId { get; set; }
 
+        [Required(ErrorMessage = "Language required")]
+        public long LanguageId { get; set; }
+
         [Required(ErrorMessage = "Icon required")]
         public long IconId { get; set; }
     }

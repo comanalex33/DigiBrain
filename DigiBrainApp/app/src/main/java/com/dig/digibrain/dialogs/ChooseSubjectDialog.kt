@@ -1,6 +1,7 @@
 package com.dig.digibrain.dialogs
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -112,7 +113,9 @@ class ChooseSubjectDialog(
     private fun updateSubjects() {
 
         if(classModel != null) {
-            viewModel.getSubjectsForClass(classModel!!.id).observe(this) {
+            val languageId = requireContext().getSharedPreferences("application", Context.MODE_PRIVATE)
+                .getLong("languageId", 2)
+            viewModel.getSubjectsForClass(classModel!!.id, languageId).observe(this) {
                 it.let { resource ->
                     when(resource.status) {
                         Status.SUCCESS -> {

@@ -37,7 +37,7 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
     private lateinit var sessionManager: SessionManager
     private lateinit var chapterAdapter: ChapterAdapter
 
-    var chapterList: MutableList<ChapterModel>? = null
+    private var chapterList: MutableList<ChapterModel>? = mutableListOf()
 
     var subjectId: Long = 0
     var subjectName: String? = ""
@@ -120,23 +120,20 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
                     when(resource.status) {
                         Status.SUCCESS -> {
                             if(resource.data != null) {
+
                                 if(resource.data.isNotEmpty()) {
                                     binding.recyclerView.visibility = View.VISIBLE
                                     binding.subjectNoContent.visibility = View.GONE
                                     chapterList = resource.data.toMutableList()
-
-//                                    val adapter = ChapterAdapter(this, resource.data)
-//                                    adapter.addListener(this)
-
-                                    chapterAdapter = ChapterAdapter(this, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", chapterList!!)
-                                    chapterAdapter.addListener(this)
-
-                                    binding.recyclerView.layoutManager = LinearLayoutManager(this)
-                                    binding.recyclerView.adapter = chapterAdapter
                                 } else {
                                     binding.recyclerView.visibility = View.GONE
                                     binding.subjectNoContent.visibility = View.VISIBLE
                                 }
+
+                                chapterAdapter = ChapterAdapter(this, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", chapterList!!)
+                                chapterAdapter.addListener(this)
+                                binding.recyclerView.layoutManager = LinearLayoutManager(this)
+                                binding.recyclerView.adapter = chapterAdapter
                             }
                         }
                         Status.ERROR -> {}
@@ -166,6 +163,13 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
                                 } else {
                                     recyclerView.visibility = View.GONE
                                     noContent.visibility = View.VISIBLE
+
+                                    val adapter = LessonAdapter(this, mutableListOf())
+                                    adapter.addListener(this)
+                                    chapterAdapter.addChapterLessons(chapterId, mutableListOf())
+
+                                    recyclerView.layoutManager = LinearLayoutManager(this)
+                                    recyclerView.adapter = adapter
                                 }
                             }
                         }
@@ -197,6 +201,10 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
                     when(resource.status) {
                         Status.SUCCESS -> {
                             chapterList!!.add(resource.data!!)
+                            if(binding.recyclerView.visibility == View.GONE) {
+                                binding.recyclerView.visibility = View.VISIBLE
+                                binding.subjectNoContent.visibility = View.GONE
+                            }
                             chapterAdapter.notifyDataSetChanged()
                         }
                         Status.ERROR -> {
@@ -211,7 +219,7 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
         }
     }
 
-    override fun addLesson(chapterId: Long, title: String, text: String, adapter: ChapterAdapter) {
+    override fun addLesson(chapterId: Long, title: String, text: String, adapter: ChapterAdapter, list: View, noList: View) {
         val authToken: String? = sessionManager.getBearerAuthToken()
 
         if(authToken != null) {
@@ -220,6 +228,11 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
                 it.let { resource ->
                     when(resource.status) {
                         Status.SUCCESS -> {
+                            adapter.addChapterOneLesson(chapterId, resource.data!!)
+                            if(list.visibility == View.GONE) {
+                                list.visibility = View.VISIBLE
+                                noList.visibility = View.GONE
+                            }
                             adapter.notifyDataSetChanged()
                         }
                         Status.ERROR -> {

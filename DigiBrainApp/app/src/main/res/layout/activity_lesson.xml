@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     tools:context=".activities.LessonActivity">
 
     <ImageView
@@ -29,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_25sdp"/>
 
@@ -37,7 +38,7 @@
             android:id="@+id/lesson_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_12sdp"
             android:layout_margin="@dimen/_10sdp"/>
 

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="5"
+    android:background="@color/blue_light"
     android:orientation="vertical"
     tools:context=".activities.AddSubjectActivity">
 
@@ -27,10 +28,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Add question"
-            android:textSize="@dimen/_40sdp"
-            android:textColor="@color/black"
+            android:gravity="right"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:text="@string/add_question"
+            android:textSize="@dimen/_25sdp"
+            android:textColor="@color/black_white"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -47,7 +50,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:gravity="top"
-            android:hint="Question"
+            android:hint="@string/question"
             android:inputType="text|textMultiLine"
             app:layout_constraintHeight_max="@dimen/_360sdp" />
 
@@ -64,17 +67,16 @@
         android:layout_marginEnd="@dimen/_20sdp">
 
         <TextView
-            android:layout_width="0dp"
-            app:layout_constraintWidth_percent="0.2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:text="@string/difficulty"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/seekbar_holder" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/seekbar_holder"
             android:layout_width="0dp"
             app:layout_constraintWidth_percent="0.7"
             android:layout_height="wrap_content"
@@ -97,6 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/easy"
+                android:textColor="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -104,6 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/medium"
+                android:textColor="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -112,6 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hard"
+                android:textColor="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -147,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_20sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/choose_type_text"
@@ -174,7 +179,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 1"
+                android:hint="@string/answer_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -199,8 +204,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Correct"
-                    android:textColor="@color/black"
+                    android:text="@string/correct"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +225,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 2"
+                android:hint="@string/answer_2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -246,8 +251,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Correct"
-                    android:textColor="@color/black"
+                    android:text="@string/correct"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -267,7 +272,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 3"
+                android:hint="@string/answer_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -293,8 +298,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Correct"
-                    android:textColor="@color/black"
+                    android:text="@string/correct"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -314,7 +319,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 4"
+                android:hint="@string/answer_4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -340,8 +345,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Correct"
-                    android:textColor="@color/black"
+                    android:text="@string/correct"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -372,7 +377,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 1"
+                android:hint="@string/answer_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -392,7 +397,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_white"
                     android:textSize="@dimen/_20sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -401,8 +406,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textColor="@color/black"
+                    android:text="@string/position"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -422,7 +427,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 2"
+                android:hint="@string/answer_2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -442,7 +447,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_white"
                     android:textSize="@dimen/_20sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -451,8 +456,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textColor="@color/black"
+                    android:text="@string/position"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -472,7 +477,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 3"
+                android:hint="@string/answer_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -492,7 +497,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_white"
                     android:textSize="@dimen/_20sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -501,8 +506,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textColor="@color/black"
+                    android:text="@string/position"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -522,7 +527,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:hint="Answer 4"
+                android:hint="@string/answer_4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -542,7 +547,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="4"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_white"
                     android:textSize="@dimen/_20sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -551,12 +556,103 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textColor="@color/black"
+                    android:text="@string/position"
+                    android:textColor="@color/black_white"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/words_gap_answer_4_correct" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/true_false_answers"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2.5"
+        android:orientation="vertical"
+        android:weightSum="4">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/true_answer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="@string/trueWord"
+                android:textSize="@dimen/_20sdp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.6" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/true_answer">
+
+                <RadioButton
+                    android:id="@+id/true_answer_correct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/false_answer"
+                android:layout_margin="@dimen/_10sdp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="@string/falseWord"
+                android:textSize="@dimen/_20sdp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.6" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/false_answer">
+
+                <RadioButton
+                    android:id="@+id/false_answer_correct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -575,6 +671,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/yellow_black"
             android:text="@string/add"
             android:textSize="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"

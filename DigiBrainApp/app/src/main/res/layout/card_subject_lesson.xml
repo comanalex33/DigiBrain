@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/blue_light"
+    app:cardCornerRadius="@dimen/_8sdp"
     android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_5sdp">
 
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/_8sdp"
             android:text="Lesson"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

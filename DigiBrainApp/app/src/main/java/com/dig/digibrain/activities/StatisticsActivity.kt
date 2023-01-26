@@ -23,6 +23,8 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import java.text.DecimalFormat
+import kotlin.math.roundToInt
 
 class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
@@ -39,6 +41,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private var multipleChoiceScore: Float? = null
     private var wordsGapTotal: Int? = null
     private var wordsGapScore: Float? = null
+    private var trueFalseTotal: Int? = null
+    private var trueFalseScore: Float? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +91,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                                 multipleChoiceScore = getTotalScore("MultipleChoice").toFloat()
                                 wordsGapTotal = getTotalQuestions("WordsGap")
                                 wordsGapScore = getTotalScore("WordsGap").toFloat()
+                                trueFalseTotal = getTotalQuestions("TrueFalse")
+                                trueFalseScore = getTotalScore("TrueFalse").toFloat()
                                 setupCharts()
 
                                 if(resource.data!!.isNotEmpty())
@@ -104,25 +110,31 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         binding.pieChartNoContent.visibility = View.GONE
         binding.multipleChoiceNoData.visibility = View.GONE
         binding.wordsGapNoData.visibility = View.GONE
+        binding.trueFalseNoData.visibility = View.GONE
 
         binding.pieChart.visibility = View.VISIBLE
         binding.multipleChoicePieChart.visibility = View.VISIBLE
         binding.wordsGapPieChart.visibility = View.VISIBLE
+        binding.trueFalsePieChart.visibility = View.VISIBLE
     }
 
     private fun setupCharts() {
         setUpDesignPie(binding.pieChart)
         setUpDesignPie(binding.multipleChoicePieChart)
         setUpDesignPie(binding.wordsGapPieChart)
+        setUpDesignPie(binding.trueFalsePieChart)
 
         updateChart(binding.pieChart, totalScore!!, maximumScore!! - totalScore!!)
         updateChart(binding.multipleChoicePieChart, multipleChoiceScore!!, multipleChoiceTotal!!.toFloat() - multipleChoiceScore!!)
         updateChart(binding.wordsGapPieChart, wordsGapScore!!, wordsGapTotal!!.toFloat() - wordsGapScore!!)
+        updateChart(binding.trueFalsePieChart, trueFalseScore!!, trueFalseTotal!!.toFloat() - trueFalseScore!!)
 
         binding.multipleChoiceTotalValue.text = multipleChoiceTotal.toString()
         binding.multipleChoiceScoreValue.text = multipleChoiceScore.toString()
         binding.wordsGapTotalValue.text = wordsGapTotal.toString()
         binding.wordsGapScoreValue.text = wordsGapScore.toString()
+        binding.trueFalseTotalValue.text = trueFalseTotal.toString()
+        binding.trueFalseScoreValue.text = trueFalseScore.toString()
     }
 
     private fun setUpDesignPie(pie: PieChart) {
@@ -132,8 +144,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             setExtraOffsets(5f, 10f, 5f, 5f)
             dragDecelerationFrictionCoef = 0.95f
             isDrawHoleEnabled = true
-            setHoleColor(Color.WHITE)
-            setTransparentCircleColor(Color.WHITE)
+            setHoleColor(resources.getColor(R.color.blue_light))
+            setTransparentCircleColor(resources.getColor(R.color.blue_light))
             setTransparentCircleAlpha(110)
             holeRadius = 58f
             transparentCircleRadius = 61f
@@ -143,7 +155,7 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             isHighlightPerTapEnabled = true
             animateY(1400, Easing.EaseInOutQuad)
             legend.isEnabled = false
-            setEntryLabelColor(Color.WHITE)
+            setEntryLabelColor(resources.getColor(R.color.blue_light))
             setEntryLabelTextSize(7f)
         }
     }
@@ -161,7 +173,7 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         for(report in reports!!) {
             score += report.numberOfQuestions
         }
-        return score
+        return (score * 100.0).roundToInt() / 100.0
     }
 
     private fun getTotalQuestions(type: String): Int {
@@ -200,7 +212,7 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(15f)
         data.setValueTypeface(Typeface.DEFAULT_BOLD)
-        data.setValueTextColor(Color.BLACK)
+        data.setValueTextColor(Color.WHITE)
         pie.data = data
 
         pie.highlightValues(null)

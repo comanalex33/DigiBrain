@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ReviewAddedLessonsFragment">
 
@@ -27,6 +28,7 @@
             app:layout_constraintWidth_percent="0.5"
             app:layout_constraintHeight_percent="0.1"
             android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/yellow_black"
             android:text="@string/save"
             android:textSize="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_50sdp"

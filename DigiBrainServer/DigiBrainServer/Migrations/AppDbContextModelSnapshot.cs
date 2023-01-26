@@ -298,6 +298,9 @@ namespace DigiBrainServer.Migrations
                     b.Property<long>("IconId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("LanguageId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 

@@ -38,9 +38,9 @@ class ChooseTypeDialog(var application: Application, var currentType: QuizTypeMo
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         val quizTypes = listOf(
-            QuizTypeModel(name = "Multiple Choice", key = "MultipleChoice", iconId = R.drawable.ic_multiple_choice),
-            QuizTypeModel(name = "Words gap", key = "WordsGap", iconId = R.drawable.ic_words_gap),
-            QuizTypeModel(name = "Written solution", key = "WrittenSolution", iconId = R.drawable.ic_written_solution)
+            QuizTypeModel(name = resources.getString(R.string.multiple_choice), key = "MultipleChoice", iconId = R.drawable.ic_multiple_choice),
+            QuizTypeModel(name = resources.getString(R.string.words_gap), key = "WordsGap", iconId = R.drawable.ic_words_gap),
+            QuizTypeModel(name = resources.getString(R.string.true_or_false), key = "TrueFalse", iconId = R.drawable.ic_true_false)
         )
 
         setQuizTypes(quizTypes)
