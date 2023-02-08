@@ -43,4 +43,34 @@ class LoginViewModel(private val repository: Repository): ViewModel() {
             }
         }
     }
+
+    fun getObjectStorageInfo(authHeader: String) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getObjectStorageInfo(authHeader)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(Resource.error(
+                        data = null,
+                        message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(Resource.error(
+                            data = null,
+                            message = errorModel.message,
+                            invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(Resource.error(
+                            data = null,
+                            message = "Error occurred!"))
+                    }
+                }
+            }
+        }
+    }
 }

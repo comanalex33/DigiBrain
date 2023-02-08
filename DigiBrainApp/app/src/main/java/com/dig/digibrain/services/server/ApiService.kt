@@ -9,6 +9,7 @@ import com.dig.digibrain.models.postModels.subject.LessonPostModel
 import com.dig.digibrain.models.postModels.subject.SubjectPostModel
 import com.dig.digibrain.models.quiz.*
 import com.dig.digibrain.models.subject.*
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface ApiService {
@@ -18,6 +19,8 @@ interface ApiService {
     suspend fun login(@Body model: LoginModel): TokenModel
     @POST("api/Auth/register")
     suspend fun register(@Body model: RegisterModel): UserModel
+    @GET("api/Auth/object-storage-info")
+    suspend fun getObjectStorageInfo(@Header("Authorization") authHeader : String): ObjectStorageInfoModel
 
     // User
     // --GET--
@@ -29,6 +32,11 @@ interface ApiService {
         @Header("Authorization") authHeader : String,
         @Path("username") username: String,
         @Path("classId") classId: Long): UserModel
+    @Multipart
+    @PUT("api/users/{username}/profile-image")
+    suspend fun changeProfilePicture(
+        @Path("username") username: String,
+        @Part file: MultipartBody.Part): UserModel
     // --DELETE--
     @DELETE("api/users/{username}")
     suspend fun deleteAccount(@Header("Authorization") authHeader : String, @Path("username") username: String): UserModel

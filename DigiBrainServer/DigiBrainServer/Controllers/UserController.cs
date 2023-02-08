@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using DigiBrainServer.Services;
 
 namespace DigiBrainServer.Controllers
 {
@@ -15,10 +17,12 @@ namespace DigiBrainServer.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<UserModel> _userManager;
+        private readonly SecretsModel _secretsManager;
         private readonly AppDbContext _context;
-        public UserController(UserManager<UserModel> userManager, AppDbContext context)
+        public UserController(UserManager<UserModel> userManager, AppDbContext context, SecretsModel secretsManager)
         {
             _userManager = userManager;
+            _secretsManager = secretsManager;
             _context = context;
         }
 
@@ -166,9 +170,38 @@ namespace DigiBrainServer.Controllers
             return Ok((UserResponseModel)user);
         }
 
+        [HttpPut("{username}/profile-image")]
+        public async Task<ActionResult<UserResponseModel>> UpdateProfileImage(string username, IFormFile file)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    Message = "This used does not exist"
+                });
+            }
+
+            var s3Handler = new S3Service(_secretsManager);
+            var fileName = await s3Handler.UploadToS3(file);
+            if (fileName == null)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    Message = "File already exists"
+                });
+            }
+            else
+            {
+                user.ProfileImageName = fileName;
+                await _userManager.UpdateAsync(user);
+                return Ok((UserResponseModel)user);
+            }
+        }
+
         [HttpDelete]
         [Route("{username}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,student,teacher")]
         public async Task<ActionResult<UserResponseModel>> DeleteUser(string username)
         {
             var user = await _userManager.FindByNameAsync(username);
@@ -179,6 +212,16 @@ namespace DigiBrainServer.Controllers
                     Message = "User does not exists"
                 });
             }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentUser.Id != user.Id)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Not allowed to modify this user's data"
+                });
+            }
+
             var result = await _userManager.DeleteAsync(user);
             if (result == null)
             {
