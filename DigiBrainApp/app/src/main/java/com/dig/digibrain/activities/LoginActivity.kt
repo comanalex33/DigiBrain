@@ -106,8 +106,7 @@ class LoginActivity : AppCompatActivity() {
                             if(!connectionStatus) {
                                 Toast.makeText(applicationContext, "Authentication could not be performed", Toast.LENGTH_SHORT).show()
                             } else {
-                                val intent = Intent(this, MainActivity::class.java)
-                                startActivity(intent)
+                                getObjectStorageInfo()
                             }
                         }
                     }
@@ -120,6 +119,30 @@ class LoginActivity : AppCompatActivity() {
                         changeEditTextStatus(usernameField = false, passwordField = false)
                         binding.errorMessage.text = ""
                         loadingDialog.show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getObjectStorageInfo() {
+        val authToken: String? = sessionManager.getBearerAuthToken()
+        if(authToken != null) {
+            viewModel.getObjectStorageInfo(authToken).observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            if(resource.data != null) {
+                                sessionManager.setObjectStorageInfo(resource.data)
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                        Status.ERROR -> {
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                        }
+                        Status.LOADING -> {}
                     }
                 }
             }

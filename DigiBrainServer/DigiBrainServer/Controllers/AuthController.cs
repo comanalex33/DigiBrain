@@ -1,6 +1,7 @@
 ﻿using DigiBrainServer.Models;
 using DigiBrainServer.ResponseModels;
 using DigiBrainServer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,18 @@ namespace DigiBrainServer.Controllers
             _userModel = userModel;
             _roleManager = roleManager;
             _secretsManager = secretsManager;
+        }
+
+        [HttpGet]
+        [Route("object-storage-info")]
+        [Authorize(Roles = "admin,student,teacher")]
+        public ActionResult<ObjectStorageModel> GetObjectStorageInfo()
+        {
+            return Ok(new ObjectStorageModel(
+                _secretsManager.S3ReadAccessKey,
+                _secretsManager.S3ReadSecretKey,
+                _secretsManager.S3BucketName,
+                _secretsManager.S3BucketRegion));
         }
 
         [HttpPost]
@@ -124,6 +137,8 @@ namespace DigiBrainServer.Controllers
             }
 
             var user = await AddUser(model, false);
+            var userModel = await _userModel.FindByNameAsync(model.Username);
+            await _userModel.AddToRoleAsync(userModel, "student");
 
             return user;
         }

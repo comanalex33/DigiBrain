@@ -1,6 +1,7 @@
 package com.dig.digibrain.services.server
 
 import com.dig.digibrain.models.LoginModel
+import com.dig.digibrain.models.ObjectStorageInfoModel
 import com.dig.digibrain.models.RegisterModel
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
@@ -9,17 +10,21 @@ import com.dig.digibrain.models.postModels.subject.ChapterPostModel
 import com.dig.digibrain.models.postModels.subject.LessonPostModel
 import com.dig.digibrain.models.postModels.subject.SubjectPostModel
 import com.dig.digibrain.models.quiz.QuestionAnswerModel
+import okhttp3.MultipartBody
+import retrofit2.http.Header
 
 class Repository(private val apiService: ApiService) {
     // Authentication
     suspend fun login(loginModel: LoginModel) = apiService.login(loginModel)
     suspend fun register(registerModel: RegisterModel) = apiService.register(registerModel)
+    suspend fun getObjectStorageInfo(authHeader : String) = apiService.getObjectStorageInfo(authHeader)
 
     // User
     // --GET--
     suspend fun getUserDetailsByUsername(username: String) = apiService.getUserDetailsByUsername(username)
     // --PUT--
     suspend fun updateClass(authHeader: String, username: String, id: Long) = apiService.updateClass(authHeader, username, id)
+    suspend fun changeProfilePicture(username: String, file: MultipartBody.Part) = apiService.changeProfilePicture(username, file)
     // --DELETE--
     suspend fun deleteAccount(authHeader: String, username: String) = apiService.deleteAccount(authHeader, username)
 
