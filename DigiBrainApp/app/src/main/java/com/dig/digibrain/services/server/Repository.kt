@@ -59,4 +59,8 @@ class Repository(private val apiService: ApiService) {
     suspend fun addMultipleAnswers(authHeader: String, answers: List<AnswerPostModel>) = apiService.addMultipleAnswers(authHeader, answers)
     suspend fun addQuestionToSubjects(authHeader: String, questionId: Long, subjectIds: List<Long>) = apiService.addQuestionToSubjects(authHeader, questionId, subjectIds)
     suspend fun addUserReport(model: QuizReportPostModel) = apiService.addUserReport(model)
+
+    // Learn Path
+    // --GET--
+    suspend fun getLearnPaths() = apiService.getLearnPaths()
 }

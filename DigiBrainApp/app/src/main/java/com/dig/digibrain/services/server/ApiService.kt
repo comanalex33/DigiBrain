@@ -1,6 +1,7 @@
 package com.dig.digibrain.services.server
 
 import com.dig.digibrain.models.*
+import com.dig.digibrain.models.learnPaths.LearnPathModel
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
 import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
@@ -10,6 +11,7 @@ import com.dig.digibrain.models.postModels.subject.SubjectPostModel
 import com.dig.digibrain.models.quiz.*
 import com.dig.digibrain.models.subject.*
 import okhttp3.MultipartBody
+import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
@@ -114,4 +116,11 @@ interface ApiService {
     @POST("api/reports")
     suspend fun addUserReport(@Body model: QuizReportPostModel): QuizReportModel
 
+    // Learn Path
+    // --GET--
+    @GET("api/learn-paths")
+    suspend fun getLearnPaths(): List<LearnPathModel>
+
+    @GET("api/learn-paths")
+    fun getLearnPaths2(): Call<List<LearnPathModel>>
 }

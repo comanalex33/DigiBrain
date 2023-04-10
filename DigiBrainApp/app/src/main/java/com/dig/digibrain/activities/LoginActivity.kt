@@ -43,7 +43,8 @@ class LoginActivity : AppCompatActivity() {
             if (checkLoginFields()) {
                 val loginModel = LoginModel(
                     username = binding.username.text.toString(),
-                    password = binding.password.text.toString())
+                    password = binding.password.text.toString()
+                )
                 setupObserver(loginModel)
             }
         }
@@ -67,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setupSettings() {
         val darkMode = this.getSharedPreferences("application", Context.MODE_PRIVATE)
             .getBoolean("darkMode", false)
-        if(darkMode) {
+        if (darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -87,7 +88,8 @@ class LoginActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(ApiClient.getService()))[LoginViewModel::class.java]
+            ViewModelFactory(ApiClient.getService())
+        )[LoginViewModel::class.java]
     }
 
     private fun setupObserver(loginModel: LoginModel) {
@@ -101,10 +103,14 @@ class LoginActivity : AppCompatActivity() {
                         binding.errorMessage.text = ""
                         changeEditTextStatus(usernameField = false, passwordField = false)
 
-                        if(resource.data != null) {
+                        if (resource.data != null) {
                             val connectionStatus = sessionManager.setAuthToken(resource.data.token)
-                            if(!connectionStatus) {
-                                Toast.makeText(applicationContext, "Authentication could not be performed", Toast.LENGTH_SHORT).show()
+                            if (!connectionStatus) {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Authentication could not be performed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } else {
                                 getObjectStorageInfo()
                             }
@@ -127,12 +133,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getObjectStorageInfo() {
         val authToken: String? = sessionManager.getBearerAuthToken()
-        if(authToken != null) {
+        if (authToken != null) {
             viewModel.getObjectStorageInfo(authToken).observe(this) {
                 it.let { resource ->
-                    when(resource.status) {
+                    when (resource.status) {
                         Status.SUCCESS -> {
-                            if(resource.data != null) {
+                            if (resource.data != null) {
                                 sessionManager.setObjectStorageInfo(resource.data)
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
@@ -149,24 +155,27 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkLoginFields() : Boolean {
+    private fun checkLoginFields(): Boolean {
         changeEditTextStatus(usernameField = false, passwordField = false)
 
         var emptyFeilds = false
-        if(binding.username.text.toString() == ""){
+        if (binding.username.text.toString() == "") {
             changeEditTextStatus(usernameField = true)
             emptyFeilds = true
         }
-        if(binding.password.text.toString() == "") {
+        if (binding.password.text.toString() == "") {
             changeEditTextStatus(passwordField = true)
             emptyFeilds = true
         }
         return !emptyFeilds
     }
 
-    private fun changeEditTextStatus(usernameField: Boolean? = null, passwordField: Boolean? = null) {
+    private fun changeEditTextStatus(
+        usernameField: Boolean? = null,
+        passwordField: Boolean? = null
+    ) {
         usernameField?.let {
-            if(it) {
+            if (it) {
                 binding.username.setBackgroundResource(R.drawable.red_border)
                 binding.usernameHolder.startAnimation(animation)
             } else {
@@ -178,7 +187,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         passwordField?.let {
-            if(it) {
+            if (it) {
                 binding.password.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder.startAnimation(animation)
             } else {

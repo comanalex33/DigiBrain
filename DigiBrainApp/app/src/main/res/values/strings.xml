@@ -73,7 +73,7 @@
     <string name="choose_lessons">Choose lessons ...</string>
     <string name="save">Save</string>
     <string name="choose_language">Choose language</string>
-    
+
     <!--    Settings-->
     <string name="dark_mode">Dark mode</string>
     <string name="notifications">Notifications</string>
@@ -110,4 +110,5 @@
     <string name="delete">Delete</string>
     <string name="hi">Hi</string>
     <string name="all">All</string>
+    <string name="learn_path">Learn Path</string>
 </resources>

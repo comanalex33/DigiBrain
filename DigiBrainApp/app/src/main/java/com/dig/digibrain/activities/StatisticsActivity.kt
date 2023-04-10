@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityStatisticsBinding
@@ -23,8 +22,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
-import java.text.DecimalFormat
-import kotlin.math.roundToInt
 
 class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 

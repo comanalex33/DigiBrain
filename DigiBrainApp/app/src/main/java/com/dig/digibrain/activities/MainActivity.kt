@@ -122,6 +122,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.learningPathButton.setOnClickListener {
+            val intent = Intent(this, LearnPathActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.statsButton.setOnClickListener {
             val intent = Intent(this, StatisticsActivity::class.java)
             startActivity(intent)
