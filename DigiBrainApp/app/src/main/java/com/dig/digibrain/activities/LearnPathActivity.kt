@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.dig.digibrain.adapters.LearnPathAdapter
 import com.dig.digibrain.adapters.ViewPagerAdapter
 import com.dig.digibrain.databinding.ActivityLearnPathBinding
+import com.dig.digibrain.dialogs.BottomSheetDialog
 import com.dig.digibrain.fragments.LearnPathTabFragment
 import com.dig.digibrain.models.learnPaths.LearnPathModel
 import com.dig.digibrain.services.server.ApiClient
@@ -51,6 +52,11 @@ class LearnPathActivity : AppCompatActivity() {
 
         binding.backArrow.setOnClickListener {
             finish()
+        }
+
+        binding.filterButton.setOnClickListener {
+            val dialog = BottomSheetDialog()
+            dialog.show(supportFragmentManager, "Filter learn paths")
         }
     }
 
