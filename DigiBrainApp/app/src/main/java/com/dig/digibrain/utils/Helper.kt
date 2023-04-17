@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.dig.digibrain.models.TokenDataModel
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Helper {
     companion object {
@@ -23,6 +25,23 @@ class Helper {
             return ("$this.").split(substring)
                 .dropLastWhile { it.isEmpty() }
                 .toTypedArray().size - 1
+        }
+
+        fun String.getInitials(): String {
+            val words = this.split(" ")
+            return when {
+                words.size == 1 -> words[0].substring(0, 1)
+                words.size >= 2 -> words[0].substring(0, 1) + words[1].substring(0, 1)
+                else -> ""
+            }
+        }
+
+        fun convertTimestampToDateFormat(timestamp: String): String {
+            val utcDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault())
+            utcDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            val date = utcDateFormat.parse(timestamp)
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            return dateFormat.format(date)
         }
 
         fun ViewGroup.forAllChildren(forOneChild: (v: View) -> Unit) {

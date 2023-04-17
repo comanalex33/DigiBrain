@@ -63,4 +63,5 @@ class Repository(private val apiService: ApiService) {
     // Learn Path
     // --GET--
     suspend fun getLearnPaths() = apiService.getLearnPaths()
+    suspend fun getLearnPathDetails(id: Long) = apiService.getLearnPathDetails(id)
 }

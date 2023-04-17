@@ -45,4 +45,71 @@ class LearnPathViewModel(private val repository: Repository): ViewModel() {
             }
         }
     }
+
+    fun getSubjectsForIds(subjectIds: List<Long>) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getSubjectsForIds(subjectIds)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(
+                        Resource.error(
+                            data = null,
+                            message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = errorModel.message,
+                                invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = "Error occurred!"))
+                    }
+                }
+            }
+        }
+    }
+
+    fun getClassById(id: Long) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getClassById(id)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(
+                        Resource.error(
+                            data = null,
+                            message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = errorModel.message,
+                                invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = "Error occurred!"))
+                    }
+
+                }
+            }
+        }
+    }
 }

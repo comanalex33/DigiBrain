@@ -1,6 +1,7 @@
 package com.dig.digibrain.services.server
 
 import com.dig.digibrain.models.*
+import com.dig.digibrain.models.learnPaths.LearnPathExpandedModel
 import com.dig.digibrain.models.learnPaths.LearnPathModel
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
@@ -120,7 +121,6 @@ interface ApiService {
     // --GET--
     @GET("api/learn-paths")
     suspend fun getLearnPaths(): List<LearnPathModel>
-
-    @GET("api/learn-paths")
-    fun getLearnPaths2(): Call<List<LearnPathModel>>
+    @GET("api/learn-paths/{id}")
+    suspend fun getLearnPathDetails(@Path("id") id: Long): LearnPathExpandedModel
 }

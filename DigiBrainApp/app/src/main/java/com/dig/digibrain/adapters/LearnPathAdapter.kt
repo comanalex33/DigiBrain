@@ -1,16 +1,24 @@
 package com.dig.digibrain.adapters
 
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
+import com.dig.digibrain.activities.LearnPathDetailsActivity
 import com.dig.digibrain.databinding.CardLearnPathBinding
-import com.dig.digibrain.models.learnPaths.LearnPathModel
+import com.dig.digibrain.models.learnPaths.LearnPathDetailedModel
+import com.dig.digibrain.utils.Helper
+import com.dig.digibrain.utils.Helper.Companion.convertTimestampToDateFormat
+import com.dig.digibrain.utils.Helper.Companion.getInitials
+import java.text.SimpleDateFormat
+import java.util.*
 
-class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPathModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPathDetailedModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding: CardLearnPathBinding
 
@@ -27,6 +35,16 @@ class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPa
         val learnPathItem = arrayList[position]
 
         (holder as LearnPathViewHolder).initializeUIComponents(learnPathItem)
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, LearnPathDetailsActivity::class.java)
+
+            val bundle = Bundle()
+            bundle.putParcelable("learnPath", learnPathItem)
+            intent.putExtras(bundle)
+
+            context.startActivity(intent)
+        }
     }
 
     inner class LearnPathViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
@@ -34,11 +52,13 @@ class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPa
         var titleText: TextView = myView.findViewById(R.id.learn_path_title)
         var authorText: TextView = myView.findViewById(R.id.learn_path_author)
         var dateText: TextView = myView.findViewById(R.id.learn_path_date)
+        var titleInitials: TextView = myView.findViewById(R.id.learn_path_initials)
 
-        fun initializeUIComponents(model: LearnPathModel) {
+        fun initializeUIComponents(model: LearnPathDetailedModel) {
             titleText.text = model.title
             authorText.text = model.author
-            dateText.text = model.date.toString()
+            dateText.text = Helper.convertTimestampToDateFormat(model.date)
+            titleInitials.text = model.title.getInitials()
         }
     }
 }
