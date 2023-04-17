@@ -2,6 +2,7 @@
 using DigiBrainServer.ResponseModels;
 using DigiBrainServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,10 +17,12 @@ namespace DigiBrainServer.Controllers
     public class LearnPathController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<UserModel> _userManager;
 
-        public LearnPathController(AppDbContext context)
+        public LearnPathController(AppDbContext context, UserManager<UserModel> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -82,6 +85,133 @@ namespace DigiBrainServer.Controllers
             return Ok(new PathLearnDetailsResponse((PathLearnResponseModel)learningPath, responseSections));
         }
 
+        [HttpGet]
+        [Route("users/{username}/status")]
+        public async Task<ActionResult<IEnumerable<PathLearnStatusModel>>> GetStatusForUser(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This used does not exist"
+                });
+            }
+
+            var learnPathStatusList = await _context.PathLearnStatus.Where(item => item.Username == username).ToListAsync();
+            return Ok(learnPathStatusList);
+        }
+
+        [HttpPost]
+        [Route("{id}/users/{username}/status")]
+        [Authorize(Roles = "admin,student,teacher")]
+        public async Task<ActionResult<PathLearnStatusModel>> AddLearnPathStatus(long id, string username)
+        {
+            var learnPath = await _context.PathLearn.FindAsync(id);
+            if (learnPath == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learning path does not exist"
+                });
+            }
+            learnPath.Started++;    // Increase the number of users that started this learning path
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This used does not exist"
+                });
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentUser.Id != user.Id)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Not allowed to modify this user's data"
+                });
+            }
+
+            var learnPathStatus = await _context.PathLearnStatus.Where(item => item.Username == username && item.PathLearnId == id).FirstOrDefaultAsync();
+            if(learnPathStatus != null)
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    Message = "Status already exists for this user and learn path"
+                });
+            }
+
+            long newId = _context.PathLearnStatus.Count() + 1;
+            var modelCheck = await _context.PathLearnStatus.FindAsync(newId);
+            while (modelCheck != null)
+            {
+                newId++;
+                modelCheck = await _context.PathLearnStatus.FindAsync(newId);
+            }
+
+            PathLearnStatusModel model = new(newId, username, id, 1, 1, 1, false);
+            _context.PathLearnStatus.Add(model);
+            _context.PathLearn.Update(learnPath);
+            await _context.SaveChangesAsync();
+
+            return Ok(model);
+        }
+
+        [HttpPut]
+        [Route("{id}/users/{username}/status")]
+        [Authorize(Roles = "admin,student,teacher")]
+        public async Task<ActionResult<PathLearnStatusModel>> UpdateLearnPathStatus(long id, string username, PathLearnStatusViewModel model)
+        {
+            var learnPath = await _context.PathLearn.FindAsync(id);
+            if (learnPath == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learning path does not exist"
+                });
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This used does not exist"
+                });
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentUser.Id != user.Id)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Not allowed to modify this user's data"
+                });
+            }
+
+            var learnPathStatus = await _context.PathLearnStatus.Where(item => item.PathLearnId == id).FirstOrDefaultAsync();
+            if (learnPathStatus == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "No status found for this learn  path"
+                });
+            }
+
+            learnPathStatus.SectionNumber = model.SectionNumber;
+            learnPathStatus.LessonNumber = model.LessonNumber;
+            learnPathStatus.TheoryNumber = model.TheoryNumber;
+            learnPathStatus.Finished = model.Finished;
+
+            _context.PathLearnStatus.Update(learnPathStatus);
+            await _context.SaveChangesAsync();
+
+            return Ok(learnPathStatus);
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<PathLearnResponseModel>> AddLearnPath(PathLearnViewModel model)
@@ -100,7 +230,7 @@ namespace DigiBrainServer.Controllers
                 modelCheck = await _context.PathLearn.FindAsync(id);
             }
 
-            PathLearnModel learnPath = new(id, model.Title, model.Description, model.Author, DateTime.Now, model.SubjectId, model.ImageName);
+            PathLearnModel learnPath = new(id, model.Title, model.Description, model.Author, DateTime.Now, 0, model.SubjectId, model.ImageName);
             _context.PathLearn.Add(learnPath);
             await _context.SaveChangesAsync();
 

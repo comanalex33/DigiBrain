@@ -9,6 +9,7 @@ namespace DigiBrainServer.ResponseModels
         public string Description { get; set; }
         public string Author { get; set; }
         public DateTime Date { get; set; }
+        public long Started { get; set; }
         public long SubjectId { get; set; }
         public string ImageName { get; set; }
     }

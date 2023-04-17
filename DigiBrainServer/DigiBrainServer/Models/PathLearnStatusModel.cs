@@ -6,18 +6,22 @@ namespace DigiBrainServer.Models
         public long Id { get; set; }
         public string Username { get; set; }
         public long PathLearnId { get; set; }
-        public long SectionId { get; set; }
-        public long LessonId { get; set; }
+        public long SectionNumber { get; set; }
+        public long LessonNumber { get; set; }
+        public long TheoryNumber { get; set; }
+        public bool Finished { get; set; }
 
         public PathLearnStatusModel() { }
 
-        public PathLearnStatusModel(long Id, string Username, long PathLearnId, long SectionId, long LessonId)
+        public PathLearnStatusModel(long Id, string Username, long PathLearnId, long SectionNumber, long LessonNumber, long TheoryNumber, bool Finished)
         {
             this.Id = Id;
             this.Username = Username;
             this.PathLearnId = PathLearnId;
-            this.SectionId = SectionId;
-            this.LessonId = LessonId;
+            this.SectionNumber = SectionNumber;
+            this.LessonNumber = LessonNumber;
+            this.TheoryNumber = TheoryNumber;
+            this.Finished = Finished;
         }
     }
 }
