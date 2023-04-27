@@ -3,6 +3,8 @@ package com.dig.digibrain.services.server
 import com.dig.digibrain.models.*
 import com.dig.digibrain.models.learnPaths.LearnPathExpandedModel
 import com.dig.digibrain.models.learnPaths.LearnPathModel
+import com.dig.digibrain.models.learnPaths.LearnPathStatusModel
+import com.dig.digibrain.models.learnPaths.LearnPathStatusUpdateModel
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
 import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
@@ -50,6 +52,10 @@ interface ApiService {
 
     // Theory
     //--GET--
+    @GET("api/classes/all")
+    suspend fun getAllClasses(): List<ClassModel>
+    @GET("api/domains")
+    suspend fun getAllDomains(): List<DomainModel>
     @GET("api/classes/domains")
     suspend fun getDomainsForClass(
         @Query("Number") number: Int,
@@ -123,4 +129,19 @@ interface ApiService {
     suspend fun getLearnPaths(): List<LearnPathModel>
     @GET("api/learn-paths/{id}")
     suspend fun getLearnPathDetails(@Path("id") id: Long): LearnPathExpandedModel
+    @GET("api/learn-paths/users/{username}/status")
+    suspend fun getLearnPathsStatusForUsername(@Path("username") username: String): List<LearnPathStatusModel>
+    // --POST--
+    @POST("api/learn-paths/{id}/users/{username}/status")
+    suspend fun startLearnPath(
+        @Header("Authorization") authHeader : String,
+        @Path("id") id: Long,
+        @Path("username") username: String): LearnPathStatusModel
+    // --PUT--
+    @PUT("api/learn-paths/{id}/users/{username}/status")
+    suspend fun updateLearnPathStatus(
+        @Header("Authorization") authHeader : String,
+        @Path("id") id: Long,
+        @Path("username") username: String,
+        @Body model: LearnPathStatusUpdateModel): LearnPathStatusModel
 }

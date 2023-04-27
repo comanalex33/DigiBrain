@@ -46,6 +46,40 @@ class LearnPathViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
+    fun getLearnPathsStatusForUsername(username: String) = liveData(
+        Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getLearnPathsStatusForUsername(username)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(
+                        Resource.error(
+                            data = null,
+                            message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = errorModel.message,
+                                invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = "Error occurred!"))
+                    }
+                }
+            }
+        }
+    }
+
     fun getSubjectsForIds(subjectIds: List<Long>) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -79,10 +113,10 @@ class LearnPathViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    fun getClassById(id: Long) = liveData(Dispatchers.IO) {
+    fun getAllClasses() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = repository.getClassById(id)))
+            emit(Resource.success(data = repository.getAllClasses()))
         } catch (throwable: Throwable) {
             when(throwable) {
                 is IOException -> {
@@ -107,7 +141,39 @@ class LearnPathViewModel(private val repository: Repository): ViewModel() {
                                 data = null,
                                 message = "Error occurred!"))
                     }
+                }
+            }
+        }
+    }
 
+    fun getAllDomains() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getAllDomains()))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(
+                        Resource.error(
+                            data = null,
+                            message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = errorModel.message,
+                                invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(
+                            Resource.error(
+                                data = null,
+                                message = "Error occurred!"))
+                    }
                 }
             }
         }

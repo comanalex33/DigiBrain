@@ -58,6 +58,7 @@ dependencies {
     implementation "com.maltaisn:icondialog:3.3.0"
     implementation "com.maltaisn:iconpack-default:1.1.0"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'org.sufficientlysecure:html-textview:4.0'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

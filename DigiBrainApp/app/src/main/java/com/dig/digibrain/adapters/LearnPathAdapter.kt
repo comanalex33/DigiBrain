@@ -12,13 +12,14 @@ import com.dig.digibrain.R
 import com.dig.digibrain.activities.LearnPathDetailsActivity
 import com.dig.digibrain.databinding.CardLearnPathBinding
 import com.dig.digibrain.models.learnPaths.LearnPathDetailedModel
+import com.dig.digibrain.models.learnPaths.LearnPathStatusModel
 import com.dig.digibrain.utils.Helper
 import com.dig.digibrain.utils.Helper.Companion.convertTimestampToDateFormat
 import com.dig.digibrain.utils.Helper.Companion.getInitials
 import java.text.SimpleDateFormat
 import java.util.*
 
-class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPathDetailedModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPathDetailedModel>, var userStatus: List<LearnPathStatusModel>?, var preview: Boolean, var finished: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding: CardLearnPathBinding
 
@@ -41,10 +42,32 @@ class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPa
 
             val bundle = Bundle()
             bundle.putParcelable("learnPath", learnPathItem)
-            intent.putExtras(bundle)
+            bundle.putBoolean("preview", preview)
+            bundle.putBoolean("finished", finished)
 
+            // Send status if exists
+            val status = getLearnPathStatus(learnPathItem.id)
+            status?.apply {
+                bundle.putLong("sectionNumber", this.sectionNumber)
+                bundle.putLong("lessonNumber", this.lessonNumber)
+                bundle.putLong("theoryNumber", this.theoryNumber)
+            }
+
+            intent.putExtras(bundle)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
+    }
+
+    private fun getLearnPathStatus(learnPathId: Long): LearnPathStatusModel? {
+        if(userStatus != null) {
+            for(status in userStatus!!) {
+                if(status.pathLearnId == learnPathId) {
+                    return status
+                }
+            }
+        }
+        return null
     }
 
     inner class LearnPathViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
@@ -53,12 +76,14 @@ class LearnPathAdapter(var context: Context, private var arrayList: List<LearnPa
         var authorText: TextView = myView.findViewById(R.id.learn_path_author)
         var dateText: TextView = myView.findViewById(R.id.learn_path_date)
         var titleInitials: TextView = myView.findViewById(R.id.learn_path_initials)
+        var numberOfViews: TextView = myView.findViewById(R.id.number_of_views)
 
         fun initializeUIComponents(model: LearnPathDetailedModel) {
             titleText.text = model.title
             authorText.text = model.author
             dateText.text = Helper.convertTimestampToDateFormat(model.date)
             titleInitials.text = model.title.getInitials()
+            numberOfViews.text = model.started.toString()
         }
     }
 }

@@ -3,6 +3,8 @@ using DigiBrainServer.ResponseModels;
 using DigiBrainServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +34,20 @@ namespace DigiBrainServer.Controllers
             }
 
             return Ok((DomainResponseModel)domain);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DomainResponseModel>>> GetDomains()
+        {
+            var domains = await _context.Domain.ToListAsync();
+
+            var responseDomains = new List<DomainResponseModel>();
+            foreach (var domain in domains)
+            {
+                responseDomains.Add((DomainResponseModel)domain);
+            }
+
+            return Ok(responseDomains);
         }
 
         [HttpPost]

@@ -34,14 +34,29 @@
             android:textSize="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_25sdp"/>
 
-        <TextView
+<!--        <TextView-->
+<!--            android:id="@+id/lesson_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textColor="@color/black_white"-->
+<!--            android:textSize="@dimen/_12sdp"-->
+<!--            android:layout_margin="@dimen/_10sdp"/>-->
+
+<!--        <org.sufficientlysecure.htmltextview.HtmlTextView-->
+<!--            android:id="@+id/lesson_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textColor="@color/black_white"-->
+<!--            android:textSize="@dimen/_12sdp"-->
+<!--            android:layout_margin="@dimen/_10sdp"/>-->
+
+        <WebView
             android:id="@+id/lesson_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black_white"
             android:textSize="@dimen/_12sdp"
             android:layout_margin="@dimen/_10sdp"/>
-
 
     </LinearLayout>
 

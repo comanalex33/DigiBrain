@@ -6,6 +6,7 @@ class LearnPathExpandedModel(
     var description: String,
     var author: String,
     var date: String,
+    var started: Long,
     var subjectId: Long,
     var imageName: String?,
     var sections: List<LearnPathSection>)

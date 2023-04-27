@@ -7,13 +7,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.DialogLearnPathLessonDetailsBinding
 import com.dig.digibrain.dialogs.LearnPathLessonDialog
 import com.dig.digibrain.models.learnPaths.*
 
-class LearnPathDetailsAdapter(var context: Context, var sectionNumber: Int, private var learnPathExpandedModel: LearnPathExpandedModel, var preview: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LearnPathDetailsAdapter(
+    var context: Context,
+    private var learnPathExpandedModel: LearnPathExpandedModel,
+    var sectionPosition: Int,
+    var sectionNumber: Long,
+    var lessonNumber: Long,
+    var theoryNumber: Long,
+    var preview: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_LESSON = 0
     private val VIEW_TYPE_THEORY = 1
@@ -126,7 +134,7 @@ class LearnPathDetailsAdapter(var context: Context, var sectionNumber: Int, priv
 
     private fun getSection(): LearnPathSection? {
         for(section in learnPathExpandedModel.sections) {
-            if(section.number == sectionNumber)
+            if(section.number == sectionPosition)
                 return section
         }
         return null
@@ -160,8 +168,13 @@ class LearnPathDetailsAdapter(var context: Context, var sectionNumber: Int, priv
             val section = getSection()
             section?.apply {
                 for(lesson in this.lessons) {
-                    if (itemCount == position)
+                    if (itemCount == position) {
+                        if(!preview)
+                            if(this.number < sectionNumber.toInt() ||
+                                (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
+                                this@LearnPathLessonViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
                         return lesson
+                    }
                     itemCount = 1 + lesson.quiz.size + lesson.theory.size
                 }
             }
@@ -194,6 +207,14 @@ class LearnPathDetailsAdapter(var context: Context, var sectionNumber: Int, priv
                     }
                     for(theory in lesson.theory) {
                         if(theory.number == lessonPosition) {
+                            if(!preview) {
+                                if(this.number < sectionNumber.toInt() ||
+                                    (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()) ||
+                                    (this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number < theoryNumber.toInt()))
+                                    this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number == theoryNumber.toInt())
+                                    this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
+                            }
                             return theory
                         }
                     }
@@ -229,6 +250,13 @@ class LearnPathDetailsAdapter(var context: Context, var sectionNumber: Int, priv
                     }
                     for(quiz in lesson.quiz) {
                         if(quiz.number == lessonPosition) {
+                            if(!preview) {
+                                if(this.number < sectionNumber.toInt() ||
+                                    (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
+                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theoryNumber == 0L)
+                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
+                            }
                             return quiz
                         }
                     }

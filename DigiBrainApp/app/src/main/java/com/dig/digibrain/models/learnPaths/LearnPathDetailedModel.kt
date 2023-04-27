@@ -9,6 +9,7 @@ class LearnPathDetailedModel(
     var description: String,
     var author: String,
     var date: String,
+    var started: Long,
     var subject: String?,
     var classNumber: Long,
     var imageName: String?
@@ -20,6 +21,7 @@ class LearnPathDetailedModel(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readLong(),
         parcel.readString(),
         parcel.readLong(),
         parcel.readString()
@@ -31,6 +33,7 @@ class LearnPathDetailedModel(
         parcel.writeString(description)
         parcel.writeString(author)
         parcel.writeString(date)
+        parcel.writeLong(started)
         parcel.writeString(subject)
         parcel.writeLong(classNumber)
         parcel.writeString(imageName)

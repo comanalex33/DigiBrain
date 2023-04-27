@@ -323,7 +323,7 @@ namespace DigiBrainServer.Controllers
             var modelCheck = _context.PathLessonTheory.Where(item => item.PathLessonId == model.PathLessonId && item.Number == model.Number).FirstOrDefault();
             if (modelCheck != null)
             {
-                return BadRequest(new { message = "Learn path lesson quiz with this number already exists" });
+                return BadRequest(new { message = "Learn path lesson theory with this number already exists" });
             }
 
             long id = _context.PathLessonTheory.Count() + 1;
