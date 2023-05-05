@@ -4,15 +4,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.dig.digibrain.R
-import com.dig.digibrain.databinding.DialogLearnPathLessonDetailsBinding
 import com.dig.digibrain.dialogs.LearnPathLessonDialog
 import com.dig.digibrain.models.learnPaths.*
+import com.dig.digibrain.utils.Helper
 
 class LearnPathDetailsAdapter(
     var context: Context,
@@ -55,7 +59,7 @@ class LearnPathDetailsAdapter(
                 val model = holder.initializeUIComponents(position)
 
                 if(!preview) {
-                    holder.itemView.setOnClickListener {
+                    holder.view.setOnClickListener {
                         model?.apply {
                             val lesson = getLessonById(this.pathLessonId)
                             val dialog = LearnPathLessonDialog(lesson = lesson, theory = this)
@@ -64,6 +68,11 @@ class LearnPathDetailsAdapter(
                                 (context as AppCompatActivity).supportFragmentManager,
                                 "Learn Path theory details"
                             )
+
+                            if(holder.view.id == R.id.done_view)
+                                dialog.setupUI(R.color.yellow, "Start again")
+                            if(holder.view.id == R.id.future_view)
+                                dialog.setupUI(R.color.gray, "Blocked")
                         }
                     }
                 }
@@ -184,18 +193,104 @@ class LearnPathDetailsAdapter(
 
     inner class LearnPathTheoryViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
 
-        var theoryTitle: TextView = myView.findViewById(R.id.learn_path_theory_title)
+        var view: View = myView.findViewById(R.id.future_view)
+        var parent: ConstraintLayout = myView.findViewById(R.id.parent_view)
+
+        var doneView: View = myView.findViewById(R.id.done_view)
+        var currentView: View = myView.findViewById(R.id.current_view)
+        var futureView: View = myView.findViewById(R.id.future_view)
+
+        var gifImage: ImageView = myView.findViewById(R.id.gif_image)
 
         fun initializeUIComponents(position: Int): LearnPathTheory? {
-            val model = getTheory(position)
+            setupVisibility(future = true)
+            val (model, vars) = getTheory(position)
+            val (pos, len) = vars
             model?.apply {
-                theoryTitle.text = this.title
+                // Get position
+                val place = getPosition(len, pos)
+
+                // Set position
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(parent)
+
+                when(place) {
+                    -1 -> {
+                        constraintSet.connect(
+                            view.id,
+                            ConstraintSet.START,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.START
+                        )
+                        constraintSet.clear(view.id, ConstraintSet.END)
+
+                        gifImage.visibility = View.VISIBLE
+
+                        constraintSet.connect(
+                            gifImage.id,
+                            ConstraintSet.END,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.END
+                        )
+                        constraintSet.clear(gifImage.id, ConstraintSet.START)
+
+                        putGif()
+                    }
+                    1 -> {
+                        constraintSet.connect(
+                            view.id,
+                            ConstraintSet.END,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.END
+                        )
+                        constraintSet.clear(view.id, ConstraintSet.START)
+
+                        gifImage.visibility = View.VISIBLE
+
+                        constraintSet.connect(
+                            gifImage.id,
+                            ConstraintSet.START,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.START
+                        )
+                        constraintSet.clear(gifImage.id, ConstraintSet.END)
+
+                        putGif()
+                    }
+                    0 -> {
+                        constraintSet.connect(
+                            view.id,
+                            ConstraintSet.START,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.START
+                        )
+                        constraintSet.connect(
+                            view.id,
+                            ConstraintSet.END,
+                            ConstraintSet.PARENT_ID,
+                            ConstraintSet.END
+                        )
+                    }
+                }
+
+                constraintSet.applyTo(parent)
+
             }
             return model
         }
 
-        private fun getTheory(position: Int): LearnPathTheory? {
+        private fun putGif() {
+            Glide.with(context)
+                .asGif()
+                .load(Helper.getAllGIFs().random())
+                .into(gifImage)
+        }
+
+        private fun getTheory(position: Int): Pair<LearnPathTheory?, Pair<Int, Int>> {
             var itemCount = 0
+            var pos = 0
+            var len = 0
+
             val section = getSection()
             section?.apply {
                 for(lesson in this.lessons) {
@@ -206,22 +301,67 @@ class LearnPathDetailsAdapter(
                         continue
                     }
                     for(theory in lesson.theory) {
+
+                        pos++
+                        len = lesson.theory.size
+                        if(lesson.quiz.isNotEmpty())
+                            len++
                         if(theory.number == lessonPosition) {
                             if(!preview) {
                                 if(this.number < sectionNumber.toInt() ||
                                     (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()) ||
-                                    (this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number < theoryNumber.toInt()))
-                                    this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
-                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number == theoryNumber.toInt())
-                                    this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
+                                    (this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number < theoryNumber.toInt())) {
+                                    view = doneView
+                                    setupVisibility(done = true)
+                                }
+                                    //this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number == theoryNumber.toInt()) {
+                                    view = currentView
+                                    setupVisibility(current = true)
+                                }
+                                    //this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
                             }
-                            return theory
+                            return Pair(theory, Pair(pos, len))
                         }
                     }
                     itemCount += lesson.theory.size + lesson.quiz.size
                 }
             }
-            return null
+            return Pair(null, Pair(0, 0))
+        }
+
+        private fun getPosition(sequenceLength: Int, target: Int): Int {
+            if(target < 1 || target > sequenceLength)
+                return -2
+            if(target == 1 || target == sequenceLength)
+                return 0
+
+            var position = 0
+            var increment = 1
+
+            for (i in 2 until sequenceLength) {
+                position += increment
+
+                if(i == target)
+                    break
+
+                if(position == 1)
+                    increment = -1
+                if(position == -1)
+                    increment = 1
+            }
+
+            return position
+        }
+
+        private fun setupVisibility(done: Boolean = false, current: Boolean = false, future: Boolean = false) {
+            val doneVisibility = if (!done) View.GONE else View.VISIBLE
+            val currentVisibility = if (!current) View.GONE else View.VISIBLE
+            val futureVisibility = if (!future) View.GONE else View.VISIBLE
+
+            doneView.visibility = doneVisibility
+            currentView.visibility = currentVisibility
+            futureView.visibility = futureVisibility
         }
     }
 

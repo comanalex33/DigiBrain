@@ -11,7 +11,7 @@ import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ItemCheckBoxBinding
 import com.dig.digibrain.models.subject.SubjectModel
 
-class LearnPathFilterSubjectAdapter(var context: Context, private var arrayList: List<SubjectModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LearnPathFilterSubjectAdapter(var context: Context, private var arrayList: List<SubjectModel>, var selectedSubjectsIds: List<Long>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding: ItemCheckBoxBinding
 
@@ -50,6 +50,11 @@ class LearnPathFilterSubjectAdapter(var context: Context, private var arrayList:
 
         fun initializeUIComponents(model: SubjectModel) {
             subject.text = model.name
+
+            if(selectedSubjectsIds.contains(model.id)) {
+                subject.isChecked = true
+                selectedSubjects.add(model.id)
+            }
 
             itemView.backgroundTintList = AppCompatResources.getColorStateList(
                 context,

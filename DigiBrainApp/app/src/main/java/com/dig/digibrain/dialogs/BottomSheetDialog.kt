@@ -42,6 +42,9 @@ class BottomSheetDialog(
     private var classes: List<ClassModel> = mutableListOf()
     private var domains: List<DomainModel> = mutableListOf()
 
+    private var selectedSubjectsIds = mutableListOf<Long>()
+    private var selectedName = ""
+
     private var filteredSubjects: MutableList<SubjectModel> = subjects.toMutableList()
 
     override fun onCreateView(
@@ -57,6 +60,12 @@ class BottomSheetDialog(
         dialog?.window?.setGravity(Gravity.BOTTOM)
         dialog?.window?.setWindowAnimations(R.style.DialogAnimation)
 
+        // Setup default name
+        if(selectedName != "") {
+            val editable = binding.learnPathName.text
+            editable!!.replace(0, editable.length, selectedName)
+        }
+
         // Handle filter options expand
         handleExpandable(filter = binding.classFilter, filterContent = binding.classFilterContent, filterExpand = binding.classFilterExpand)
         handleExpandable(filter = binding.subjectFilter, filterContent = binding.subjectFilterContent, filterExpand = binding.subjectFilterExpand)
@@ -64,7 +73,7 @@ class BottomSheetDialog(
 
         // Set subjects in RecyclerView
         binding.subjectFilterContent.layoutManager = GridLayoutManager(activity, 2)
-        adapter = LearnPathFilterSubjectAdapter(requireContext(), filteredSubjects)
+        adapter = LearnPathFilterSubjectAdapter(requireContext(), filteredSubjects, selectedSubjectsIds)
         binding.subjectFilterContent.adapter = adapter
 
         binding.searchButton.setOnClickListener {
@@ -76,7 +85,7 @@ class BottomSheetDialog(
                 }
             }
             listener.applyFilter(subjectIds = selectedSubjectIds, name = binding.learnPathName.text.toString())
-
+            dialog?.dismiss()
         }
 
         // Handle class filter update
@@ -131,9 +140,6 @@ class BottomSheetDialog(
             }
         }
 
-        // Create API call to get all the classes
-        // Based on what class you select, filter the subjects in the list. Start with class 2 for example
-
         return binding.root
     }
 
@@ -167,6 +173,11 @@ class BottomSheetDialog(
 
     fun setDomains(domains: List<DomainModel>) {
         this.domains = domains
+    }
+
+    fun setSelected(subjectsIds: List<Long>, name: String) {
+        this.selectedSubjectsIds = subjectsIds.toMutableList()
+        this.selectedName = name
     }
 
     private fun handleExpandable(filter: View, filterContent: View, filterExpand: View) {
@@ -223,7 +234,7 @@ class BottomSheetDialog(
                     filteredSubjects.add(subject)
             }
         }
-        adapter = LearnPathFilterSubjectAdapter(requireContext(), filteredSubjects)
+        adapter = LearnPathFilterSubjectAdapter(requireContext(), filteredSubjects, selectedSubjectsIds)
         binding.subjectFilterContent.adapter = adapter
     }
 

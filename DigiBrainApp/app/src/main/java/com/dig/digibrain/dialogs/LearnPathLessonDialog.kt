@@ -19,9 +19,15 @@ import com.dig.digibrain.models.learnPaths.LearnPathLesson
 import com.dig.digibrain.models.learnPaths.LearnPathQuiz
 import com.dig.digibrain.models.learnPaths.LearnPathTheory
 
-class LearnPathLessonDialog(var lesson: LearnPathLesson?, var theory: LearnPathTheory? = null, var quiz: LearnPathQuiz? = null): DialogFragment() {
+class LearnPathLessonDialog(
+    var lesson: LearnPathLesson?,
+    var theory: LearnPathTheory? = null,
+    var quiz: LearnPathQuiz? = null): DialogFragment() {
 
     private lateinit var binding: DialogLearnPathLessonDetailsBinding
+
+    private var backgroundColor = R.color.green
+    private var buttonText = "Start"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,16 +43,18 @@ class LearnPathLessonDialog(var lesson: LearnPathLesson?, var theory: LearnPathT
 
         theory?.apply {
             binding.startButton.setOnClickListener {
-                val intent = Intent(requireContext(), LessonActivity::class.java)
+                if(backgroundColor != R.color.gray) {
+                    val intent = Intent(requireContext(), LessonActivity::class.java)
 
-                val bundle = Bundle()
-                bundle.putString("lessonTitle", this.title)
-                bundle.putString("lessonContent", this.text)
-                intent.putExtras(bundle)
+                    val bundle = Bundle()
+                    bundle.putString("lessonTitle", this.title)
+                    bundle.putString("lessonContent", this.text)
+                    intent.putExtras(bundle)
 
-                startActivity(intent)
+                    startActivity(intent)
 
-                dialog?.dismiss()
+                    dialog?.dismiss()
+                }
             }
         }
 
@@ -69,5 +77,39 @@ class LearnPathLessonDialog(var lesson: LearnPathLesson?, var theory: LearnPathT
             )
             binding.startButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.yellow))
         }
+
+        binding.card.backgroundTintList = AppCompatResources.getColorStateList(
+            requireContext(),
+            backgroundColor
+        )
+
+        binding.startButton.text = buttonText
+        when(backgroundColor) {
+            R.color.yellow -> {
+                binding.startButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.yellow))
+            }
+            R.color.gray -> {
+                binding.startButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
+                binding.startButton.isClickable = false
+            }
+
+        }
+
+        if (backgroundColor == R.color.gray)
+            binding.startButton.isClickable = false
+    }
+
+    fun setupUI(backgroundColor: Int, buttonText: String) {
+//        binding.card.backgroundTintList = AppCompatResources.getColorStateList(
+//            requireContext(),
+//            backgroundColor
+//        )
+//
+//        binding.startButton.text = buttonText
+//
+//        if (backgroundColor == R.color.gray)
+//            binding.startButton.isClickable = false
+        this.backgroundColor = backgroundColor
+        this.buttonText = buttonText
     }
 }

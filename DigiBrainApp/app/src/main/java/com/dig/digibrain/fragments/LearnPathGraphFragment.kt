@@ -30,7 +30,7 @@ class LearnPathGraphFragment(
 
         adapter = LearnPathDetailsAdapter(
             context = requireContext(),
-            learnPathExpandedModel = expandedLearnPath,
+            learnPathExpandedModel = sortedLearnPathDetails(),
             sectionPosition = 1,
             sectionNumber = sectionNumber,
             lessonNumber = lessonNumber,
@@ -63,5 +63,19 @@ class LearnPathGraphFragment(
         this.preview = preview
         adapter.changeVisibility(preview)
         adapter.notifyDataSetChanged()
+    }
+
+    private fun sortedLearnPathDetails(): LearnPathExpandedModel {
+        val sortedLearnPath = expandedLearnPath
+        sortedLearnPath.sections = sortedLearnPath.sections.sortedBy { it.number }
+
+        for(section in sortedLearnPath.sections) {
+            section.lessons = section.lessons.sortedBy { it.number }
+            for(lesson in section.lessons) {
+                lesson.theory = lesson.theory.sortedBy { it.number }
+            }
+        }
+
+        return sortedLearnPath
     }
 }

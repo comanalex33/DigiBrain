@@ -485,15 +485,6 @@
         </LinearLayout>
     </ScrollView>
 
-<!--    <Spinner-->
-<!--        android:id="@+id/subjects_spinner"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:spinnerMode="dropdown"-->
-<!--        tools:listitem="@layout/item_subject_spinner"-->
-<!--        android:background="@drawable/blue_outline"-->
-<!--        android:popupBackground="@drawable/blue_outline"/>-->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/search_button_holder"
         android:layout_width="match_parent"

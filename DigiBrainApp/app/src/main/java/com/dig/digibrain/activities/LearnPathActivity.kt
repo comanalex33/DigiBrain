@@ -2,6 +2,7 @@ package com.dig.digibrain.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.adapters.ViewPagerAdapter
@@ -33,14 +34,14 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
 
     private var learnPaths: List<LearnPathModel> = mutableListOf()
     private var detailedLearnPaths = mutableListOf<LearnPathDetailedModel>()
+    private var filteredLearnPaths = mutableListOf<LearnPathDetailedModel>()
     private var userStatus = mutableListOf<LearnPathStatusModel>()
+
+    private var selectedSubjectsIds = mutableListOf<Long>()
+    private var selectedName = ""
 
     private var currentClass: Int = 2
     private var isUniversity: Boolean = false
-
-    private lateinit var all_fragment: LearnPathTabFragment
-    private lateinit var started_fragment: LearnPathTabFragment
-    private lateinit var done_fragment: LearnPathTabFragment
 
     private val ALL_FRAGMENT = "All"
     private val STARTED_FRAGMENT = "Started"
@@ -65,8 +66,13 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
             val dialog = BottomSheetDialog(subjects, currentClass, isUniversity, this)
             dialog.setClasses(classes)
             dialog.setDomains(domains)
+            dialog.setSelected(selectedSubjectsIds, selectedName)
             dialog.show(supportFragmentManager, "Filter learn paths")
         }
+
+        binding.classFilterValue.text = "2"
+        binding.subjectFilter.visibility = View.GONE
+        binding.nameFilter.visibility = View.GONE
     }
 
     private fun setupViewModel() {
@@ -110,6 +116,7 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
                                 subjects = resource.data
 
                                 detailedLearnPaths = getDetailedLearnPaths(learnPaths).toMutableList()
+                                filteredLearnPaths = detailedLearnPaths
                                 getLearnPathsForUser(detailedLearnPaths)
                             }
                         }
@@ -132,18 +139,9 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
                                     val adapter = ViewPagerAdapter(supportFragmentManager)
                                     userStatus = resource.data.toMutableList()
 
-                                    // Add 'All' fragment
-                                    var learnPaths = splitLearnPaths(detailedLearnPaths, resource.data, ALL_FRAGMENT)
-                                    all_fragment = LearnPathTabFragment(applicationContext, learnPaths, null, preview = true, finished = false)
-                                    adapter.addFragment(all_fragment, ALL_FRAGMENT)
-                                    // Add 'Started' fragment
-                                    learnPaths = splitLearnPaths(detailedLearnPaths, resource.data, STARTED_FRAGMENT)
-                                    started_fragment = LearnPathTabFragment(applicationContext, learnPaths, resource.data, preview = false, finished = false)
-                                    adapter.addFragment(started_fragment, STARTED_FRAGMENT)
-                                    // Add 'Done' fragment
-                                    learnPaths = splitLearnPaths(detailedLearnPaths, resource.data, DONE_FRAGMENT)
-                                    done_fragment = LearnPathTabFragment(applicationContext, learnPaths, null, preview = true, finished = true)
-                                    adapter.addFragment(done_fragment , DONE_FRAGMENT)
+                                    adapter.addFragment(LearnPathTabFragment(ALL_FRAGMENT, null, preview = true, finished = false), ALL_FRAGMENT)
+                                    adapter.addFragment(LearnPathTabFragment(STARTED_FRAGMENT, resource.data, preview = false, finished = false), STARTED_FRAGMENT)
+                                    adapter.addFragment(LearnPathTabFragment(DONE_FRAGMENT, null, preview = true, finished = true) , DONE_FRAGMENT)
 
                                     binding.viewPager.adapter = adapter
                                     binding.tabs.setupWithViewPager(binding.viewPager)
@@ -289,68 +287,50 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
     }
 
     override fun applyFilter(subjectIds: List<Long>, name: String) {
-//        Toast.makeText(applicationContext, "List: $subjectIds, name: $name", Toast.LENGTH_SHORT).show()
-        val filteredLearnPaths = filterLearnPaths(learnPaths, subjectIds, name)
-        for (x in filteredLearnPaths) {
-            println("---------------------------------")
-            println(x.title)
-        }
+        selectedSubjectsIds = subjectIds.toMutableList()
+        selectedName = name
 
-//        // Update 'All' fragment
-//        val allLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, ALL_FRAGMENT)
+        filteredLearnPaths = filterLearnPaths(learnPaths, subjectIds, name).toMutableList()
 
-//        fragment.updateList(allLearnPaths)
-////        // Update 'Started' fragment
-////        val startedLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, STARTED_FRAGMENT)
-////        started_fragment.updateList(startedLearnPaths)
-////        // Update 'Done' fragment
-////        val doneLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, DONE_FRAGMENT)
-////        done_fragment.updateList(doneLearnPaths)
         val adapter = ViewPagerAdapter(supportFragmentManager)
 
-        val allLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, ALL_FRAGMENT)
-        all_fragment = LearnPathTabFragment(
-            applicationContext,
-            allLearnPaths,
-            null,
-            preview = true,
-            finished = false
-        )
-        adapter.addFragment(all_fragment, ALL_FRAGMENT)
-        // Add 'Started' fragment
-        val startedLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, STARTED_FRAGMENT)
-        started_fragment = LearnPathTabFragment(
-            applicationContext,
-            startedLearnPaths,
-            userStatus,
-            preview = false,
-            finished = false
-        )
-        adapter.addFragment(started_fragment, STARTED_FRAGMENT)
-        // Add 'Done' fragment
-        val doneLearnPaths = splitLearnPaths(filteredLearnPaths, userStatus, DONE_FRAGMENT)
-        done_fragment = LearnPathTabFragment(
-            applicationContext,
-            doneLearnPaths,
-            null,
-            preview = true,
-            finished = true
-        )
-        adapter.addFragment(done_fragment, DONE_FRAGMENT)
+        adapter.addFragment(LearnPathTabFragment(ALL_FRAGMENT, null, preview = true, finished = false), ALL_FRAGMENT)
+        adapter.addFragment(LearnPathTabFragment(STARTED_FRAGMENT, userStatus, preview = false, finished = false), STARTED_FRAGMENT)
+        adapter.addFragment(LearnPathTabFragment(DONE_FRAGMENT, null, preview = true, finished = true), DONE_FRAGMENT)
 
         binding.viewPager.adapter = adapter
         binding.tabs.setupWithViewPager(binding.viewPager)
 
-        var fragment = supportFragmentManager.findFragmentByTag("android:switcher:${binding.viewPager.id}:0") as LearnPathTabFragment
-        fragment.updateList(allLearnPaths)
+        // Update class text
+        binding.classFilterValue.text = "$currentClass"
 
-        fragment = supportFragmentManager.findFragmentByTag("android:switcher:${binding.viewPager.id}:1") as LearnPathTabFragment
-        fragment.updateList(startedLearnPaths)
+        // Update subjects text
+        if(subjectIds.isEmpty()) {
+            binding.subjectFilter.visibility = View.GONE
+        } else {
+            var subjectsString = ""
+            for(subjectId in subjectIds) {
+                val subjectName = getSubjectNameById(subjects, subjectId)
+                subjectName?.apply {
+                    subjectsString += "$subjectName, "
+                }
+            }
+            if(subjectsString != "")
+                subjectsString = subjectsString.dropLast(2)
+            binding.subjectFilterValue.text = subjectsString
+            binding.subjectFilter.visibility = View.VISIBLE
+        }
 
-        fragment = supportFragmentManager.findFragmentByTag("android:switcher:${binding.viewPager.id}:2") as LearnPathTabFragment
-        fragment.updateList(doneLearnPaths)
-//        all_fragment.updateList(allLearnPaths)
-//        started_fragment.updateList(startedLearnPaths)
-//        done_fragment.updateList(doneLearnPaths)
+        // Update name text
+        if(name == "") {
+            binding.nameFilter.visibility = View.GONE
+        } else {
+            binding.nameFilterValue.text = name
+            binding.nameFilter.visibility = View.VISIBLE
+        }
+    }
+
+    fun getLearnPaths(type: String): List<LearnPathDetailedModel> {
+        return splitLearnPaths(filteredLearnPaths, userStatus, type)
     }
 }
