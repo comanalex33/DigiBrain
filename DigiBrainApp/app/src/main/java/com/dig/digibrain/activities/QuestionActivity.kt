@@ -15,11 +15,14 @@ import com.dig.digibrain.fragments.MultipleChoiceQuestionFragment
 import com.dig.digibrain.fragments.QuestionFragment
 import com.dig.digibrain.fragments.WordsGapFragment
 import com.dig.digibrain.interfaces.ItemClickListener
+import com.dig.digibrain.models.learnPaths.LearnPathQuizStatusUpdateModel
+import com.dig.digibrain.models.learnPaths.LearnPathStatusUpdateModel
 import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
 import com.dig.digibrain.models.quiz.AnswerModel
 import com.dig.digibrain.models.quiz.QuestionAnswerModel
 import com.dig.digibrain.models.quiz.QuestionModel
 import com.dig.digibrain.models.quiz.QuestionsAnswersList
+import com.dig.digibrain.objects.LearnPathLocalStatus
 import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
@@ -39,10 +42,16 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
     var difficulty: String? = null
     var subjectId: Long? = null
     var type: String? = null
+    var questionIds: List<Long>? = null
+
+    var updateStatus = false
+
     var nextQuestion = false
     var questionsNumber = 5
 
     var score: Double = 0.0
+    var totalScore: Int? = null
+    var learnPathId: Long? = null
 
     private val quizMinutes: Long = 4
     private val quizSeconds: Long = 0
@@ -67,11 +76,23 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
             subjectId = bundle.getLong("subjectId")
             difficulty = bundle.getString("difficulty")
             type = bundle.getString("type")
+            val questionsLongArray = bundle.getLongArray("questionIds")
+            questionsLongArray?.apply {
+                questionIds = this.toList()
+            }
+            if(bundle.containsKey("updateStatus")) {
+                updateStatus = bundle.getBoolean("updateStatus")
+                Toast.makeText(applicationContext, "Status $updateStatus", Toast.LENGTH_SHORT).show()
+            }
+            totalScore = bundle.getInt("score")
+            learnPathId = bundle.getLong("learnPathId")
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
         }
 
-        if(subjectId != null && difficulty != null && type != null) {
+        if (questionIds != null) {
+            getQuestionsForIds()
+        } else if(subjectId != null && difficulty != null && type != null) {
             getQuizQuestions(questionsNumber)
         }
 
@@ -127,6 +148,32 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         Status.SUCCESS -> {
                             loadingDialog.dismiss()
                             if(resource.data != null) {
+                                getAnswers(resource.data)
+                            }
+                        }
+                        Status.ERROR -> {
+                            loadingDialog.dismiss()
+                            Toast.makeText(applicationContext, resource.message, Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        Status.LOADING -> {
+                            loadingDialog.show()
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun getQuestionsForIds() {
+        val loadingDialog = LoadingDialog(this)
+        viewModel.getQuestionsForIds(questionIds!!)
+            .observe(this) {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.SUCCESS -> {
+                            loadingDialog.dismiss()
+                            if(resource.data != null) {
+                                Toast.makeText(applicationContext, "Questions received", Toast.LENGTH_SHORT).show()
                                 getAnswers(resource.data)
                             }
                         }
@@ -233,9 +280,10 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         } else {
             binding.score.text = score.toString()
             binding.questionNumber.text = "${selectedAnswers.size + 1}/${questionsAnswers.size}"
+            val question = questionsAnswers[currentQuestionPosition].question
 
-            if(type == "MultipleChoice" || type == "TrueFalse") {
-                if(type == "MultipleChoice")
+            if(question.type == "MultipleChoice" || question.type == "TrueFalse") {
+                if(question.type == "MultipleChoice")
                     questionsAnswers[currentQuestionPosition].answers = questionsAnswers[currentQuestionPosition].answers.shuffled()
                 supportFragmentManager.beginTransaction()
                     .replace(
@@ -245,7 +293,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         )
                     )
                     .commit()
-            } else if(type == "WordsGap") {
+            } else if(question.type == "WordsGap") {
                 questionsAnswers[currentQuestionPosition].answers = questionsAnswers[currentQuestionPosition].answers.shuffled()
                 supportFragmentManager.beginTransaction()
                     .replace(
@@ -287,16 +335,17 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
     override fun onClick(name: String) {
         dialog.dismiss()
 
-        val model = QuizReportPostModel(
-            username = sessionManager.getUserName()!!,
-            quizType = type!!,
-            score = score,
-            numberOfQuestions = questionsNumber,
-            subjectId = subjectId!!,
-            difficulty = difficulty!!
-        )
-        viewModel.addUserReport(model)
-            .observe(this) {
+        if(type != null && subjectId != null && difficulty != null) {
+            val model = QuizReportPostModel(
+                username = sessionManager.getUserName()!!,
+                quizType = type!!,
+                score = score,
+                numberOfQuestions = questionsNumber,
+                subjectId = subjectId!!,
+                difficulty = difficulty!!
+            )
+            viewModel.addUserReport(model)
+                .observe(this) {
                     it.let { resource ->
                         when (resource.status) {
                             Status.SUCCESS -> {
@@ -307,6 +356,12 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         }
                     }
                 }
+        } else {
+            if(updateStatus) {
+                LearnPathLocalStatus.done = true
+            }
+            updateQuizStatus()
+        }
     }
 
     private fun timeTaken(): String {
@@ -322,5 +377,37 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         }
         val f = DecimalFormat("00")
         return "${f.format(minutesTaken)}:${f.format(secondsTaken)}"
+    }
+
+    private fun updateQuizStatus() {
+        totalScore?.apply {
+            val scoreToUpdate = (score / questionsAnswers.size.toDouble()) * this
+
+            val authToken: String? = sessionManager.getBearerAuthToken()
+            val username: String? = sessionManager.getUserName()
+            val model = LearnPathQuizStatusUpdateModel(
+                sectionNumber = LearnPathLocalStatus.currentSectionNumber!!.toLong(),
+                lessonNumber = LearnPathLocalStatus.currentLessonNumber!!.toLong(),
+                score = scoreToUpdate.toLong()
+            )
+            if(authToken != null && username != null && learnPathId != null) {
+                viewModel.updateLearnPathQuizStatus(authToken, learnPathId!!, username, model)
+                    .observe(this@QuestionActivity) {
+                        it?.let { resource ->
+                            when (resource.status) {
+                                Status.SUCCESS -> {
+                                    Toast.makeText(applicationContext, "Updated quiz status", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                                Status.ERROR -> {
+                                    Toast.makeText(applicationContext, resource.message, Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                                Status.LOADING -> {}
+                            }
+                        }
+                    }
+            }
+        }
     }
 }

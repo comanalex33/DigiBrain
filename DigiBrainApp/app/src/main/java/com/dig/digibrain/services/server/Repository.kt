@@ -3,6 +3,7 @@ package com.dig.digibrain.services.server
 import com.dig.digibrain.models.LoginModel
 import com.dig.digibrain.models.ObjectStorageInfoModel
 import com.dig.digibrain.models.RegisterModel
+import com.dig.digibrain.models.learnPaths.LearnPathQuizStatusUpdateModel
 import com.dig.digibrain.models.learnPaths.LearnPathStatusUpdateModel
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
@@ -56,6 +57,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun getQuestionAnswers(questionId: Long) = apiService.getQuestionAnswers(questionId)
     suspend fun getUserReports(username: String) = apiService.getUserReports(username)
     // --POST--
+    suspend fun getQuestionsForIds(questionIds: List<Long>) = apiService.getQuestionsForIds(questionIds)
     suspend fun createQuizForUser(username: String) = apiService.createQuizForUser(username)
     suspend fun addQuestionToQuiz(model: QuestionAnswerModel) = apiService.addQuestionToQuiz(model)
     suspend fun createQuestion(authHeader: String, model: QuestionPostModel) = apiService.createQuestion(authHeader, model)
@@ -72,4 +74,5 @@ class Repository(private val apiService: ApiService) {
     suspend fun startLearnPath(authHeader: String, id: Long, username: String) = apiService.startLearnPath(authHeader, id, username)
     // --PUT--
     suspend fun updateLearnPathStatus(authHeader: String, id: Long, username: String, model: LearnPathStatusUpdateModel) = apiService.updateLearnPathStatus(authHeader, id, username, model)
+    suspend fun updateLearnPathQuizStatus(authHeader: String, id: Long, username: String, model: LearnPathQuizStatusUpdateModel) = apiService.updateLearnPathQuizStatus(authHeader, id, username, model)
 }
