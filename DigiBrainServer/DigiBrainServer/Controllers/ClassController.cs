@@ -68,6 +68,21 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult<IEnumerable<ClassResponseModel>>> GetClasses()
+        {
+            var classes = await _context.Class.ToListAsync();
+
+            var responseClasses = new List<ClassResponseModel>();
+            foreach(var classModel in classes)
+            {
+                responseClasses.Add((ClassResponseModel)classModel);
+            }
+
+            return Ok(responseClasses);
+        }
+
+        [HttpGet]
         public async Task<ActionResult<ClassResponseModel>> GetClassByNumberAndDomain([FromQuery] ClassViewModel classModel)
         {
             var classes = await _context.Class.Where(item => item.Number == classModel.Number && item.AtUniversity == classModel.AtUniversity && item.DomainId == classModel.DomainId).ToListAsync();

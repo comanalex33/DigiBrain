@@ -29,6 +29,6 @@ namespace DigiBrainServer.Models
         public DbSet<PathLessonModel> PathLesson { get; set; }
         public DbSet<PathLessonTheory> PathLessonTheory { get; set; }
         public DbSet<PathLessonQuiz> PathLessonQuiz { get; set; }
-        public DbSet<PathLearnStatusModel> PathStatus { get; set; }
+        public DbSet<PathLearnStatusModel> PathLearnStatus { get; set; }
     }
 }

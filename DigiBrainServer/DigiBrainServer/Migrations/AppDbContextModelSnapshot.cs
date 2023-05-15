@@ -185,6 +185,9 @@ namespace DigiBrainServer.Migrations
                     b.Property<bool>("RequestToResolve")
                         .HasColumnType("boolean");
 
+                    b.Property<long>("Started")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("SubjectId")
                         .HasColumnType("bigint");
 
@@ -203,13 +206,19 @@ namespace DigiBrainServer.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("LessonId")
+                    b.Property<bool>("Finished")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("LessonNumber")
                         .HasColumnType("bigint");
 
                     b.Property<long>("PathLearnId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("SectionId")
+                    b.Property<long>("SectionNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TheoryNumber")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Username")
@@ -217,7 +226,7 @@ namespace DigiBrainServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PathStatus");
+                    b.ToTable("PathLearnStatus");
                 });
 
             modelBuilder.Entity("DigiBrainServer.Models.PathLessonModel", b =>

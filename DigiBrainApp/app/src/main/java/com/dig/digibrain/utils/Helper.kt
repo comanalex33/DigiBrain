@@ -3,8 +3,11 @@ package com.dig.digibrain.utils
 import android.util.Base64
 import android.view.View
 import android.view.ViewGroup
+import com.dig.digibrain.R
 import com.dig.digibrain.models.TokenDataModel
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Helper {
     companion object {
@@ -25,6 +28,15 @@ class Helper {
                 .toTypedArray().size - 1
         }
 
+        fun String.getInitials(): String {
+            val words = this.split(" ")
+            return when {
+                words.size == 1 -> words[0].substring(0, 1)
+                words.size >= 2 -> words[0].substring(0, 1) + words[1].substring(0, 1)
+                else -> ""
+            }
+        }
+
         fun ViewGroup.forAllChildren(forOneChild: (v: View) -> Unit) {
             forOneChild(this)
             for (cx in 0 until childCount) {
@@ -34,6 +46,25 @@ class Helper {
                 else
                     forOneChild(child)
             }
+        }
+
+        fun convertTimestampToDateFormat(timestamp: String): String {
+            val utcDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault())
+            utcDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+            val date = utcDateFormat.parse(timestamp)
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            return dateFormat.format(date)
+        }
+
+        fun getAllGIFs(): List<Int> {
+            return listOf(
+                R.drawable.gif_apple_learning,
+                R.drawable.gif_girl_learning,
+                R.drawable.gif_helper,
+                R.drawable.gif_learn,
+                R.drawable.gif_learngit_teaser,
+                R.drawable.gif_studying_marker
+            )
         }
     }
 }

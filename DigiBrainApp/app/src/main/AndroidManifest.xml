@@ -16,9 +16,25 @@
         android:theme="@style/Theme.DigiBrainApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".activities.LearnPathDetailsActivity"
+            android:screenOrientation="portrait"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activities.LearnPathActivity"
+            android:screenOrientation="portrait"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".activities.StatisticsActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -26,6 +42,7 @@
         </activity>
         <activity
             android:name=".activities.AddQuestionToLessonsActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -33,6 +50,7 @@
         </activity>
         <activity
             android:name=".activities.AddQuestionActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:windowSoftInputMode="adjustPan">
             <meta-data
@@ -41,6 +59,7 @@
         </activity>
         <activity
             android:name=".activities.AddSubjectActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -48,6 +67,7 @@
         </activity>
         <activity
             android:name=".activities.QuestionActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -55,6 +75,7 @@
         </activity>
         <activity
             android:name=".activities.QuizActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -62,6 +83,7 @@
         </activity>
         <activity
             android:name=".activities.LessonActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -69,6 +91,7 @@
         </activity>
         <activity
             android:name=".activities.SubjectActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:label="@string/title_activity_subject"
             android:theme="@style/Theme.DigiBrainApp.NoActionBar">
@@ -78,6 +101,7 @@
         </activity>
         <activity
             android:name=".activities.LearnActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -85,6 +109,7 @@
         </activity>
         <activity
             android:name=".activities.ProfileActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -92,6 +117,7 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -99,6 +125,7 @@
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -106,6 +133,7 @@
         </activity>
         <activity
             android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -119,6 +147,7 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

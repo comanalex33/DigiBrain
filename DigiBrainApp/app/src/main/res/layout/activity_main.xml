@@ -62,6 +62,7 @@
             <ImageView
                 android:id="@+id/learnImage"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_learning"
                 app:layout_constraintBottom_toTopOf="@+id/learnText"
@@ -103,6 +104,7 @@
             <ImageView
                 android:id="@+id/quizImage"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_quiz"
                 app:layout_constraintBottom_toTopOf="@+id/quizText"
@@ -144,6 +146,7 @@
             <ImageView
                 android:id="@+id/profileImage"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_profile"
                 app:layout_constraintBottom_toTopOf="@+id/profileText"
@@ -185,6 +188,7 @@
             <ImageView
                 android:id="@+id/statsImage"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_stats"
                 app:layout_constraintBottom_toTopOf="@+id/statsText"
@@ -210,6 +214,46 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/learningPathButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:background="@drawable/curve_shape"
+            android:backgroundTint="@color/yellow_black"
+            android:padding="5dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/profileButton"
+            app:layout_constraintTop_toBottomOf="@+id/profileButton"
+            app:layout_constraintWidth_percent="0.35">
+
+            <ImageView
+                android:id="@+id/learningPathImage"
+                android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_learning_path"
+                app:layout_constraintBottom_toTopOf="@+id/learningPathText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/learningPathText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/learn_path"
+                android:textSize="20sp"
+                android:textColor="@color/black_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/learningPathImage" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/settingsButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -226,6 +270,7 @@
             <ImageView
                 android:id="@+id/settingsImage"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/_48sdp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_settings"
                 app:layout_constraintBottom_toTopOf="@+id/settingsText"

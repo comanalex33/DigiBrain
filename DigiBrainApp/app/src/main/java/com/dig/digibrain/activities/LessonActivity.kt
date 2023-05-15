@@ -1,8 +1,11 @@
 package com.dig.digibrain.activities
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.widget.Toast
+import androidx.core.text.HtmlCompat
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityLessonBinding
 
@@ -28,7 +31,9 @@ class LessonActivity : AppCompatActivity() {
 
         if(lessonTitle != null && lessonContent != null) {
             binding.lessonTitle.text = lessonTitle
-            binding.lessonContent.text = lessonContent
+//            binding.lessonContent.text = HtmlCompat.fromHtml(lessonContent!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            binding.lessonContent.setBackgroundColor(Color.TRANSPARENT)
+            binding.lessonContent.loadData(lessonContent!!, "text/html", "UTF-8")
         }
 
         binding.backArrow.setOnClickListener {
