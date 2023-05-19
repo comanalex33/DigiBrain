@@ -1,0 +1,54 @@
+.App {
+  text-align: center;
+}
+
+.Page-fit {
+  height: calc(100vh - 70px);
+}
+
+.Home-image {
+  width: 60%;
+  height: 60%;
+  border-radius: 30%;
+  object-fit: cover;
+}
+
+.Home-title {
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: xx-large;
+}
+
+.Home-content {
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home-footer {
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Learn-selected-button {
+  background-color: yellow;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: black;
+}
+
+.card-add:hover {
+  cursor: pointer;
+  background-color: gainsboro;
+  color: black;
+}

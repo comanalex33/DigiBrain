@@ -34,7 +34,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetRandomQuestions([FromQuery]QuestionGeneratorViewModel model)
+        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetQuestions([FromQuery]QuestionGeneratorViewModel model)
         {
             // Check type correctness
             if(!acceptedTypes.Contains(model.Type))
@@ -52,41 +52,56 @@ namespace DigiBrainServer.Controllers
                     Message = "Difficulty not allowed, accepted difficulties are " + string.Join(",", acceptedDifficulties)
                 });
             }
-            if (GetNumberOfValidQuestions(model.Difficulty, model.Type, model.LanguageId) < model.Number)
+
+            if (model.Number > 0)
             {
-                return NotFound(new ErrorResponseModel
+                if (GetNumberOfValidQuestions(model.Difficulty, model.Type, model.LanguageId) < model.Number)
                 {
-                    Message = "Doesn't exist so much questions in the databse"
-                });
+                    return NotFound(new ErrorResponseModel
+                    {
+                        Message = "Doesn't exist so much questions in the databse"
+                    });
+                }
             }
 
             var questions = new List<QuestionResponseModel>();
-            var selectedQuestionsIds = new List<long>();
-
-            // Get questions Ids
-            var questionsIds = await _context.Question.Select(item => item.Id).ToListAsync();
-
-            Random rnd = new();
-            for(int number = 1; number <= model.Number; number++)
+            
+            if (model.Number > 0)
             {
-                while(true)
-                {
-                    // Generate questionId
-                    var questionIdPosition = rnd.Next(0, questionsIds.Count);
-                    if (selectedQuestionsIds.Contains(questionIdPosition))
-                    {
-                        continue;
-                    }
-                    var questionId = questionsIds[questionIdPosition];
+                var selectedQuestionsIds = new List<long>();
 
-                    // Get and check question
-                    var question = await _context.Question.FindAsync(questionId);
-                    if(question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                // Get questions Ids
+                var questionsIds = await _context.Question.Select(item => item.Id).ToListAsync();
+
+                Random rnd = new();
+                for (int number = 1; number <= model.Number; number++)
+                {
+                    while (true)
                     {
-                        selectedQuestionsIds.Add(questionIdPosition);
-                        questions.Add((QuestionResponseModel)question);
-                        break;
+                        // Generate questionId
+                        var questionIdPosition = rnd.Next(0, questionsIds.Count);
+                        if (selectedQuestionsIds.Contains(questionIdPosition))
+                        {
+                            continue;
+                        }
+                        var questionId = questionsIds[questionIdPosition];
+
+                        // Get and check question
+                        var question = await _context.Question.FindAsync(questionId);
+                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        {
+                            selectedQuestionsIds.Add(questionIdPosition);
+                            questions.Add((QuestionResponseModel)question);
+                            break;
+                        }
                     }
+                }
+            } else
+            {
+                var allQuestions = await _context.Question.ToListAsync();
+                foreach(var question in allQuestions)
+                {
+                    questions.Add((QuestionResponseModel)question);
                 }
             }
 
@@ -95,7 +110,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpGet]
         [Route("subject/{id}")]
-        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetRandomQuestionsForSubject(long id, [FromQuery] QuestionGeneratorViewModel model)
+        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetQuestionsForSubject(long id, [FromQuery] QuestionGeneratorViewModel model)
         {
             // Check type correctness
             if (!acceptedTypes.Contains(model.Type))
@@ -113,43 +128,62 @@ namespace DigiBrainServer.Controllers
                     Message = "Difficulty not allowed, accepted difficulties are " + string.Join(",", acceptedDifficulties)
                 });
             }
-            if (GetNumberOfValidQuestionsForSubject(id, model.Difficulty, model.Type, model.LanguageId) < model.Number)
+            if (model.Number > 0)
             {
-                return NotFound(new ErrorResponseModel
+                if (GetNumberOfValidQuestionsForSubject(id, model.Difficulty, model.Type, model.LanguageId) < model.Number)
                 {
-                    Message = "Doesn't exist so many questions in the databse"
-                });
+                    return NotFound(new ErrorResponseModel
+                    {
+                        Message = "Doesn't exist so many questions in the databse"
+                    });
+                }
             }
+
             var questions = new List<QuestionResponseModel>();
+
+
             var selectedQuestionsIds = new List<long>();
 
-            // Get questions Ids
-            var questionsIds = await _context.Question.Select(item => item.Id).ToListAsync();
-
-            Random rnd = new();
-            for (int number = 1; number <= model.Number; number++)
+            if (model.Number > 0)
             {
-                while (true)
-                {
-                    // Generate questionId
-                    var questionIdPosition = rnd.Next(0, questionsIds.Count);
-                    if (selectedQuestionsIds.Contains(questionIdPosition))
-                    {
-                        continue;
-                    }
-                    var questionId = questionsIds[questionIdPosition];
-                    if(!ValidQuestionForSubject(id, questionId))
-                    {
-                        continue;
-                    }
+                // Get questions Ids
+                var questionsIds = await _context.Question.Select(item => item.Id).ToListAsync();
 
-                    // Get and check question
-                    var question = await _context.Question.FindAsync(questionId);
-                    if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                Random rnd = new();
+                for (int number = 1; number <= model.Number; number++)
+                {
+                    while (true)
                     {
-                        selectedQuestionsIds.Add(questionIdPosition);
+                        // Generate questionId
+                        var questionIdPosition = rnd.Next(0, questionsIds.Count);
+                        if (selectedQuestionsIds.Contains(questionIdPosition))
+                        {
+                            continue;
+                        }
+                        var questionId = questionsIds[questionIdPosition];
+                        if (!ValidQuestionForSubject(id, questionId))
+                        {
+                            continue;
+                        }
+
+                        // Get and check question
+                        var question = await _context.Question.FindAsync(questionId);
+                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        {
+                            selectedQuestionsIds.Add(questionIdPosition);
+                            questions.Add((QuestionResponseModel)question);
+                            break;
+                        }
+                    }
+                }
+            } else
+            {
+                var allQuestions = await _context.Question.ToListAsync();
+                foreach (var question in allQuestions)
+                {
+                    if (ValidQuestionForSubject(id, question.Id))
+                    {
                         questions.Add((QuestionResponseModel)question);
-                        break;
                     }
                 }
             }
