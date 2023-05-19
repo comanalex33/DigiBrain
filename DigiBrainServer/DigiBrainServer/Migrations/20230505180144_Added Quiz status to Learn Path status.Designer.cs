@@ -3,15 +3,17 @@ using System;
 using DigiBrainServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DigiBrainServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505180144_Added Quiz status to Learn Path status")]
+    partial class AddedQuizstatustoLearnPathstatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,7 +211,7 @@ namespace DigiBrainServer.Migrations
                     b.Property<long>("LessonNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("PathLearnId")
+                    b.Property<long?>("PathLearnStatusModelId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("Score")
@@ -218,12 +220,11 @@ namespace DigiBrainServer.Migrations
                     b.Property<long>("SectionNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
-                    b.ToTable("PathLearnQuizStatus");
+                    b.HasIndex("PathLearnStatusModelId");
+
+                    b.ToTable("PathLearnQuizStatusModel");
                 });
 
             modelBuilder.Entity("DigiBrainServer.Models.PathLearnStatusModel", b =>
@@ -708,6 +709,13 @@ namespace DigiBrainServer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("DigiBrainServer.Models.PathLearnQuizStatusModel", b =>
+                {
+                    b.HasOne("DigiBrainServer.Models.PathLearnStatusModel", null)
+                        .WithMany("Quiz")
+                        .HasForeignKey("PathLearnStatusModelId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("DigiBrainServer.Models.RoleModel", null)
@@ -757,6 +765,11 @@ namespace DigiBrainServer.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DigiBrainServer.Models.PathLearnStatusModel", b =>
+                {
+                    b.Navigation("Quiz");
                 });
 #pragma warning restore 612, 618
         }

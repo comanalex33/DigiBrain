@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace DigiBrainServer.Models
 {
     public class PathLearnStatusModel

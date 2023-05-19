@@ -4,9 +4,9 @@ namespace DigiBrainServer.ViewModels
 {
     public class PathLessonQuizViewModel
     {
-        [Required(ErrorMessage = "Learn path lesson quiz number required")]
-        public long Number { get; set; }
-
+        [Required(ErrorMessage = "Learn path lesson quiz score required")]
+        public long Score { get; set; }
+        
         [Required(ErrorMessage = "Learn path lesson quiz question required")]
         public long QuestionId { get; set; }
 

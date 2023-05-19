@@ -87,7 +87,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpGet]
         [Route("users/{username}/status")]
-        public async Task<ActionResult<IEnumerable<PathLearnStatusModel>>> GetStatusForUser(string username)
+        public async Task<ActionResult<IEnumerable<PathLearnStatusResponseModel>>> GetStatusForUser(string username)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
@@ -99,7 +99,23 @@ namespace DigiBrainServer.Controllers
             }
 
             var learnPathStatusList = await _context.PathLearnStatus.Where(item => item.Username == username).ToListAsync();
-            return Ok(learnPathStatusList);
+
+            var learnPathStatusResponseList = new List<PathLearnStatusResponseModel>();
+            foreach(var learnPath in learnPathStatusList)
+            {
+                var quizStatuses = await _context.PathLearnQuizStatus.Where(item => item.Username == username && 
+                                                                                    item.PathLearnId == learnPath.PathLearnId).ToListAsync();
+                
+                var response = new PathLearnStatusResponseModel(learnPath);
+                foreach(var quizStatus in quizStatuses)
+                {
+                    response.AddQuiz(quizStatus);
+                }
+
+                learnPathStatusResponseList.Add(response);
+            }
+
+            return Ok(learnPathStatusResponseList);
         }
 
         [HttpPost]
@@ -212,6 +228,75 @@ namespace DigiBrainServer.Controllers
             return Ok(learnPathStatus);
         }
 
+        [HttpPut]
+        [Route("{id}/users/{username}/status/quiz")]
+        [Authorize(Roles = "admin,student,teacher")]
+        public async Task<ActionResult<PathLearnStatusModel>> UpdateLearnPathQuizStatus(long id, string username, PathLearnQuizStatusViewModel model)
+        {
+            var learnPath = await _context.PathLearn.FindAsync(id);
+            if (learnPath == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learning path does not exist"
+                });
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This used does not exist"
+                });
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentUser.Id != user.Id)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Not allowed to modify this user's data"
+                });
+            }
+
+            var learnPathStatus = await _context.PathLearnStatus.Where(item => item.PathLearnId == id).FirstOrDefaultAsync();
+            if (learnPathStatus == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "No status found for this learn  path"
+                });
+            }
+
+            var quizStatusModel = await _context.PathLearnQuizStatus.Where(item => item.Username.Equals(username) &&
+                                                                                    item.SectionNumber == model.SectionNumber &&
+                                                                                    item.LessonNumber == model.LessonNumber &&
+                                                                                    item.PathLearnId == id).FirstOrDefaultAsync();
+            if(quizStatusModel != null)
+            {
+                quizStatusModel.Score = model.Score;
+                _context.PathLearnQuizStatus.Update(quizStatusModel);
+                await _context.SaveChangesAsync();
+
+                return Ok(quizStatusModel);
+            }
+
+            long quizStatusId = _context.PathLearnQuizStatus.Count() + 1;
+            var quizStatusCheck = await _context.PathLearnQuizStatus.FindAsync(quizStatusId);
+            while(quizStatusCheck != null)
+            {
+                quizStatusId++;
+                quizStatusCheck = await _context.PathLearnQuizStatus.FindAsync(quizStatusId);
+            }
+
+            quizStatusModel = new(quizStatusId, username, id, model.SectionNumber, model.LessonNumber, model.Score);
+            _context.PathLearnQuizStatus.Add(quizStatusModel);
+            await _context.SaveChangesAsync();
+
+            return Ok(quizStatusModel);
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<PathLearnResponseModel>> AddLearnPath(PathLearnViewModel model)
@@ -294,7 +379,7 @@ namespace DigiBrainServer.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<PathLessonResponseQuiz>> AddLearnPathLessonQuiz(PathLessonQuizViewModel model)
         {
-            var modelCheck = _context.PathLessonQuiz.Where(item => item.PathLessonId == model.PathLessonId && item.Number == model.Number).FirstOrDefault();
+            var modelCheck = _context.PathLessonQuiz.Where(item => item.PathLessonId == model.PathLessonId && item.QuestionId == model.QuestionId).FirstOrDefault();
             if (modelCheck != null)
             {
                 return BadRequest(new { message = "Learn path lesson quiz with this number already exists" });
@@ -308,7 +393,7 @@ namespace DigiBrainServer.Controllers
                 modelCheck = await _context.PathLessonQuiz.FindAsync(id);
             }
 
-            PathLessonQuiz learnPathLessonQuiz = new(id, model.Number, model.QuestionId, model.PathLessonId);
+            PathLessonQuiz learnPathLessonQuiz = new(id, model.Score, model.QuestionId, model.PathLessonId);
             _context.PathLessonQuiz.Add(learnPathLessonQuiz);
             await _context.SaveChangesAsync();
 

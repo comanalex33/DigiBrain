@@ -1,5 +1,7 @@
 package com.dig.digibrain.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +10,7 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityLessonBinding
+import com.dig.digibrain.objects.LearnPathLocalStatus
 
 class LessonActivity : AppCompatActivity() {
 
@@ -15,6 +18,9 @@ class LessonActivity : AppCompatActivity() {
 
     var lessonTitle: String? = null
     var lessonContent: String? = null
+
+    var learnPath = false
+    var updateStatus = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +31,11 @@ class LessonActivity : AppCompatActivity() {
         if(bundle != null) {
             lessonTitle = bundle.getString("lessonTitle")
             lessonContent = bundle.getString("lessonContent")
+            if(bundle.containsKey("learnPath"))
+                learnPath = bundle.getBoolean("learnPath")
+            if(bundle.containsKey("updateStatus")) {
+                updateStatus = bundle.getBoolean("updateStatus")
+            }
         } else {
             Toast.makeText(this, "Lesson could not be extracted", Toast.LENGTH_SHORT).show()
         }
@@ -37,9 +48,17 @@ class LessonActivity : AppCompatActivity() {
         }
 
         binding.backArrow.setOnClickListener {
+            if(learnPath)
+                LearnPathLocalStatus.done = true
             finish()
         }
 
         // TODO - Markdown content
+    }
+
+    override fun onBackPressed() {
+        if(learnPath && updateStatus)
+            LearnPathLocalStatus.done = true
+        finish()
     }
 }
