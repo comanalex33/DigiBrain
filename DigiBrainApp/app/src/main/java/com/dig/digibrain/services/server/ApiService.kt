@@ -1,10 +1,7 @@
 package com.dig.digibrain.services.server
 
 import com.dig.digibrain.models.*
-import com.dig.digibrain.models.learnPaths.LearnPathExpandedModel
-import com.dig.digibrain.models.learnPaths.LearnPathModel
-import com.dig.digibrain.models.learnPaths.LearnPathStatusModel
-import com.dig.digibrain.models.learnPaths.LearnPathStatusUpdateModel
+import com.dig.digibrain.models.learnPaths.*
 import com.dig.digibrain.models.postModels.quiz.AnswerPostModel
 import com.dig.digibrain.models.postModels.quiz.QuestionPostModel
 import com.dig.digibrain.models.postModels.quiz.QuizReportPostModel
@@ -110,6 +107,8 @@ interface ApiService {
     @GET("api/reports/users/{username}")
     suspend fun getUserReports(@Path("username") username: String): List<QuizReportModel>
     // --POST--
+    @POST("api/questions/ids")
+    suspend fun getQuestionsForIds(@Body questionIds: List<Long>): List<QuestionModel>
     @POST("api/quizes/users/{username}")
     suspend fun createQuizForUser(@Path("username") username: String): QuizModel
     @POST("api/quizes")
@@ -144,4 +143,10 @@ interface ApiService {
         @Path("id") id: Long,
         @Path("username") username: String,
         @Body model: LearnPathStatusUpdateModel): LearnPathStatusModel
+    @PUT("api/learn-paths/{id}/users/{username}/status/quiz")
+    suspend fun updateLearnPathQuizStatus(
+        @Header("Authorization") authHeader : String,
+        @Path("id") id: Long,
+        @Path("username") username: String,
+        @Body model: LearnPathQuizStatusUpdateModel): LearnPathStatusModel
 }

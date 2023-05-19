@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -62,7 +63,8 @@ class LearnPathDetailsAdapter(
                     holder.view.setOnClickListener {
                         model?.apply {
                             val lesson = getLessonById(this.pathLessonId)
-                            val dialog = LearnPathLessonDialog(lesson = lesson, theory = this)
+                            val dialog = LearnPathLessonDialog(lesson = lesson, theory = this, sectionNumber = sectionNumber, learnPathId = learnPathExpandedModel.id)
+                            dialog.setListener(this@LearnPathDetailsAdapter, position)
 
                             dialog.show(
                                 (context as AppCompatActivity).supportFragmentManager,
@@ -70,28 +72,48 @@ class LearnPathDetailsAdapter(
                             )
 
                             if(holder.view.id == R.id.done_view)
-                                dialog.setupUI(R.color.yellow, "Start again")
+                                dialog.setupUI(R.color.yellow, "Start again", false)
                             if(holder.view.id == R.id.future_view)
-                                dialog.setupUI(R.color.gray, "Blocked")
+                                dialog.setupUI(R.color.gray, "Blocked", false)
                         }
                     }
                 }
             }
             is LearnPathQuizViewHolder -> {
-                val model = holder.initializeUIComponents(position)
+                val quizes = holder.initializeUIComponents(position)
                 if(!preview) {
-                    holder.itemView.setOnClickListener {
-                        model?.apply {
-                            val lesson = getLessonById(this.pathLessonId)
-                            val dialog = LearnPathLessonDialog(lesson = lesson, quiz = this)
+                    holder.view.setOnClickListener {
+                        quizes?.apply {
+                            val lesson = getLessonById(this[0].pathLessonId)
+                            val dialog = LearnPathLessonDialog(lesson = lesson, quizes = quizes, sectionNumber = sectionNumber, learnPathId = learnPathExpandedModel.id)
+                            dialog.setListener(this@LearnPathDetailsAdapter, position)
 
                             dialog.show(
                                 (context as AppCompatActivity).supportFragmentManager,
-                                "Learn Path quiz details"
+                                "Learn Path quiz"
                             )
+
+                            if(holder.view.id == R.id.done_view)
+                                dialog.setupUI(R.color.yellow, "Start again", false)
+                            if(holder.view.id == R.id.future_view)
+                                dialog.setupUI(R.color.gray, "Blocked", false)
                         }
                     }
                 }
+//                val model = holder.initializeUIComponents(position)
+//                if(!preview) {
+//                    holder.itemView.setOnClickListener {
+//                        model?.apply {
+//                            val lesson = getLessonById(this.pathLessonId)
+//                            val dialog = LearnPathLessonDialog(lesson = lesson, quiz = this)
+//
+//                            dialog.show(
+//                                (context as AppCompatActivity).supportFragmentManager,
+//                                "Learn Path quiz details"
+//                            )
+//                        }
+//                    }
+//                }
             }
         }
     }
@@ -101,7 +123,9 @@ class LearnPathDetailsAdapter(
         val section = getSection()
         section?.apply {
             for(lesson in this.lessons) {
-                itemCount += 1 + lesson.theory.size + lesson.quiz.size
+                itemCount += 1 + lesson.theory.size
+                if(lesson.quiz.isNotEmpty())
+                    itemCount++
             }
         }
         return itemCount
@@ -117,8 +141,11 @@ class LearnPathDetailsAdapter(
                 }
                 vPosition++
                 val lessonPosition = position - vPosition + 1
-                if(lessonPosition > lesson.theory.size + lesson.quiz.size) {
-                    vPosition += lesson.theory.size + lesson.quiz.size
+                var currentLessonContentSize = lesson.theory.size
+                if(lesson.quiz.isNotEmpty())
+                    currentLessonContentSize++
+                if(lessonPosition > currentLessonContentSize) {
+                    vPosition += currentLessonContentSize
                     continue
                 }
                 for(theory in lesson.theory) {
@@ -126,12 +153,18 @@ class LearnPathDetailsAdapter(
                         return VIEW_TYPE_THEORY
                     }
                 }
-                for(quiz in lesson.quiz) {
-                    if(quiz.number == lessonPosition) {
-                        return VIEW_TYPE_QUIZ
-                    }
-                }
-                vPosition += lesson.theory.size + lesson.quiz.size
+                if(lesson.quiz.isNotEmpty())
+                    return VIEW_TYPE_QUIZ
+
+//                for(quiz in lesson.quiz) {
+//                    if(quiz.number == lessonPosition) {
+//                        return VIEW_TYPE_QUIZ
+//                    }
+//                }
+//                currentLessonContentSize = lesson.theory.size
+//                if(lesson.quiz.isNotEmpty())
+//                    currentLessonContentSize++
+//                vPosition += currentLessonContentSize
             }
         }
         return -1
@@ -184,7 +217,9 @@ class LearnPathDetailsAdapter(
                                 this@LearnPathLessonViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
                         return lesson
                     }
-                    itemCount = 1 + lesson.quiz.size + lesson.theory.size
+                    itemCount = 1 + lesson.theory.size
+                    if(lesson.quiz.isNotEmpty())
+                        itemCount++
                 }
             }
             return null
@@ -296,8 +331,11 @@ class LearnPathDetailsAdapter(
                 for(lesson in this.lessons) {
                     itemCount++
                     val lessonPosition = position - itemCount + 1
-                    if(lessonPosition > lesson.theory.size + lesson.quiz.size) {
-                        itemCount += lesson.theory.size + lesson.quiz.size
+                    var currentLessonContentSize = lesson.theory.size
+                    if(lesson.quiz.isNotEmpty())
+                        currentLessonContentSize++
+                    if(lessonPosition > currentLessonContentSize) {
+                        itemCount += currentLessonContentSize
                         continue
                     }
                     for(theory in lesson.theory) {
@@ -310,7 +348,7 @@ class LearnPathDetailsAdapter(
                             if(!preview) {
                                 if(this.number < sectionNumber.toInt() ||
                                     (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()) ||
-                                    (this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theory.number < theoryNumber.toInt())) {
+                                    (this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && (theory.number < theoryNumber.toInt() || theoryNumber.toInt() == 0))) {
                                     view = doneView
                                     setupVisibility(done = true)
                                 }
@@ -324,7 +362,9 @@ class LearnPathDetailsAdapter(
                             return Pair(theory, Pair(pos, len))
                         }
                     }
-                    itemCount += lesson.theory.size + lesson.quiz.size
+                    itemCount += lesson.theory.size
+                    if(lesson.quiz.isNotEmpty())
+                        itemCount++
                 }
             }
             return Pair(null, Pair(0, 0))
@@ -367,43 +407,72 @@ class LearnPathDetailsAdapter(
 
     inner class LearnPathQuizViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
 
-        var quizTitle: TextView = myView.findViewById(R.id.learn_path_quiz_title)
+        var view: View = myView.findViewById(R.id.future_view)
 
-        fun initializeUIComponents(position: Int): LearnPathQuiz? {
-            val model = getQuiz(position)
-            model?.apply {
-                quizTitle.text = "Quiz"
-            }
-            return model
+        var doneView: View = myView.findViewById(R.id.done_view)
+        var currentView: View = myView.findViewById(R.id.current_view)
+        var futureView: View = myView.findViewById(R.id.future_view)
+
+        fun initializeUIComponents(position: Int): List<LearnPathQuiz>? {
+            setupVisibility(future = true)
+            return getQuiz(position)
         }
 
-        private fun getQuiz(position: Int): LearnPathQuiz? {
+        private fun getQuiz(position: Int): List<LearnPathQuiz>? {
             var itemCount = 0
             val section = getSection()
             section?.apply {
                 for(lesson in this.lessons) {
                     itemCount++
                     val lessonPosition = position - itemCount + 1
-                    if(lessonPosition > lesson.theory.size + lesson.quiz.size) {
-                        itemCount += lesson.theory.size + lesson.quiz.size
+                    var currentLessonContentSize = lesson.theory.size
+                    if(lesson.quiz.isNotEmpty())
+                        currentLessonContentSize++
+                    if(lessonPosition > currentLessonContentSize) {
+                        itemCount += currentLessonContentSize
                         continue
                     }
-                    for(quiz in lesson.quiz) {
-                        if(quiz.number == lessonPosition) {
-                            if(!preview) {
-                                if(this.number < sectionNumber.toInt() ||
-                                    (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
-                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
-                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theoryNumber == 0L)
-                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
-                            }
-                            return quiz
+                    if(!preview) {
+                        if(this.number < sectionNumber.toInt() ||
+                            (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt())) {
+                            view = doneView
+                            setupVisibility(done = true)
+                        }
+                        //this@LearnPathTheoryViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+                        if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theoryNumber.toInt() == 0) {
+                            view = currentView
+                            setupVisibility(current = true)
                         }
                     }
-                    itemCount += lesson.theory.size + lesson.quiz.size
+                    return lesson.quiz
+//                    for(quiz in lesson.quiz) {
+//                        if(quiz.number == lessonPosition) {
+//                            if(!preview) {
+//                                if(this.number < sectionNumber.toInt() ||
+//                                    (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
+//                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+//                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theoryNumber == 0L)
+//                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
+//                            }
+//                            return quiz
+//                        }
+//                    }
+//                    itemCount += lesson.theory.size
+//                    if(lesson.quiz.isNotEmpty())
+//                        itemCount++
                 }
             }
             return null
+        }
+
+        private fun setupVisibility(done: Boolean = false, current: Boolean = false, future: Boolean = false) {
+            val doneVisibility = if (!done) View.GONE else View.VISIBLE
+            val currentVisibility = if (!current) View.GONE else View.VISIBLE
+            val futureVisibility = if (!future) View.GONE else View.VISIBLE
+
+            doneView.visibility = doneVisibility
+            currentView.visibility = currentVisibility
+            futureView.visibility = futureVisibility
         }
     }
 }

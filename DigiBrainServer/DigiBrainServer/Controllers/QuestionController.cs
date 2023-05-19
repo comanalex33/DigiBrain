@@ -33,6 +33,23 @@ namespace DigiBrainServer.Controllers
             _context = context;
         }
 
+        [HttpPost]
+        [Route("ids")]
+        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetQuestionsForIds(List<long> questionIds)
+        {
+            var responseQuestions = new List<QuestionResponseModel>();
+            foreach (var questionId in questionIds)
+            {
+                var question = await _context.Question.FindAsync(questionId);
+                if (question != null)
+                {
+                    responseQuestions.Add((QuestionResponseModel)question);
+                }
+            }
+
+            return Ok(responseQuestions);
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetQuestions([FromQuery]QuestionGeneratorViewModel model)
         {
