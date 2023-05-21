@@ -82,10 +82,30 @@ const apiService = {
             languageId: languageId
         }
 
-        return axios.get(`${API_BASE_URL}/api/questions/subject/${subjectId}`, { params: questionParams })
+        return axios.get(`${API_BASE_URL}/api/questions/subject/${subjectId}/answers`, { params: questionParams })
     },
     getAnswersForQuestion: (questionId) => {
         return axios.get(`${API_BASE_URL}/api/answers/questions/${questionId}`)
+    },
+    addQuestion: (text, difficulty, questionType, languageId, config) => {
+        let question = {
+            text: text,
+            difficulty: difficulty,
+            type: questionType,
+            languageId: languageId
+        }
+
+        return axios.post(`${API_BASE_URL}/api/questions`, question, config)
+    },
+    addAnswers: (answers, config) => {
+        return axios.post(`${API_BASE_URL}/api/answers/multiple`, answers, config)
+    },
+    addQuestionToSubjects: (subjectIds, questionId, config) => {
+        return axios.post(`${API_BASE_URL}/api/questions/${questionId}/subjects`, subjectIds, config)
+    },
+    // -- DELETE --
+    deleteQuestion: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/questions/${id}`, config)
     }
 };
 

@@ -118,7 +118,10 @@ namespace DigiBrainServer.Controllers
                 var allQuestions = await _context.Question.ToListAsync();
                 foreach(var question in allQuestions)
                 {
-                    questions.Add((QuestionResponseModel)question);
+                    if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                    {
+                        questions.Add((QuestionResponseModel)question);
+                    }
                 }
             }
 
@@ -200,7 +203,114 @@ namespace DigiBrainServer.Controllers
                 {
                     if (ValidQuestionForSubject(id, question.Id))
                     {
-                        questions.Add((QuestionResponseModel)question);
+                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        {
+                            questions.Add((QuestionResponseModel)question);
+                        }
+                    }
+                }
+            }
+
+            return Ok(questions);
+        }
+
+        [HttpGet]
+        [Route("subject/{id}/answers")]
+        public async Task<ActionResult<IEnumerable<QuestionResponseModel>>> GetQuestionsWithAnswersForSubject (long id, [FromQuery] QuestionGeneratorViewModel model)
+        {
+            // Check type correctness
+            if (!acceptedTypes.Contains(model.Type))
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Type not allowed, accepted types are " + string.Join(",", acceptedTypes)
+                });
+            }
+            // Check difficulty correctness
+            if (!acceptedDifficulties.Contains(model.Difficulty))
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Difficulty not allowed, accepted difficulties are " + string.Join(",", acceptedDifficulties)
+                });
+            }
+            if (model.Number > 0)
+            {
+                if (GetNumberOfValidQuestionsForSubject(id, model.Difficulty, model.Type, model.LanguageId) < model.Number)
+                {
+                    return NotFound(new ErrorResponseModel
+                    {
+                        Message = "Doesn't exist so many questions in the databse"
+                    });
+                }
+            }
+
+            var questions = new List<QuestionsAnswersResponseModel>();
+
+
+            var selectedQuestionsIds = new List<long>();
+
+            if (model.Number > 0)
+            {
+                // Get questions Ids
+                var questionsIds = await _context.Question.Select(item => item.Id).ToListAsync();
+
+                Random rnd = new();
+                for (int number = 1; number <= model.Number; number++)
+                {
+                    while (true)
+                    {
+                        // Generate questionId
+                        var questionIdPosition = rnd.Next(0, questionsIds.Count);
+                        if (selectedQuestionsIds.Contains(questionIdPosition))
+                        {
+                            continue;
+                        }
+                        var questionId = questionsIds[questionIdPosition];
+                        if (!ValidQuestionForSubject(id, questionId))
+                        {
+                            continue;
+                        }
+
+                        // Get and check question
+                        var question = await _context.Question.FindAsync(questionId);
+                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        {
+                            selectedQuestionsIds.Add(questionIdPosition);
+
+                            var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
+                            var responseAnswers = new List<AnswerResponseModel>();
+                            foreach (var answer in answers)
+                            {
+                                responseAnswers.Add((AnswerResponseModel)answer);
+                            }
+
+                            var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
+                            questions.Add(questionAnswers);
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var allQuestions = await _context.Question.ToListAsync();
+                foreach (var question in allQuestions)
+                {
+                    if (ValidQuestionForSubject(id, question.Id))
+                    {
+                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        {
+                            var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
+                            var responseAnswers = new List<AnswerResponseModel>();
+                            foreach (var answer in answers)
+                            {
+                                responseAnswers.Add((AnswerResponseModel)answer);
+                            }
+
+                            var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
+                            questions.Add(questionAnswers);
+                        }
                     }
                 }
             }
