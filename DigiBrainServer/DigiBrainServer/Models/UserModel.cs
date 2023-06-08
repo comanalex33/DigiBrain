@@ -9,6 +9,7 @@ namespace DigiBrainServer.Models
         public long ClassId { get; set; }
         public string ProfileImageName { get; set; }
         public bool RequestToResolve { get; set; }
+        public string RegistrationToken { get; set; }
 
         public static explicit operator UserResponseModel(UserModel user)
         {

@@ -16,5 +16,12 @@ namespace DigiBrainServer.Models
         public string S3WriteSecretKey { get; set; }
         public string S3BucketName { get; set; }
         public string S3BucketRegion { get; set; }
+
+        // Email service secrets
+        public string EmailFrom { get; set; }
+        public string SmtpHost { get; set; }
+        public int SmtpPort { get; set; }
+        public string SmtpUser { get; set; }
+        public string SmtpPassword { get; set; }
     }
 }
