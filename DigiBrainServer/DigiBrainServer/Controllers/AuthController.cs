@@ -1,9 +1,11 @@
 ﻿using DigiBrainServer.Models;
 using DigiBrainServer.ResponseModels;
+using DigiBrainServer.Services;
 using DigiBrainServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -24,13 +26,15 @@ namespace DigiBrainServer.Controllers
         private readonly UserManager<UserModel> _userModel;
         private readonly RoleManager<RoleModel> _roleManager;
         private readonly SecretsModel _secretsManager;
+        private readonly IEmailService _emailService;
 
-        public AuthController(IConfiguration configuration, UserManager<UserModel> userModel, RoleManager<RoleModel> roleManager, SecretsModel secretsManager)
+        public AuthController(IConfiguration configuration, UserManager<UserModel> userModel, RoleManager<RoleModel> roleManager, SecretsModel secretsManager, IEmailService emailService)
         {
             _configuration = configuration;
             _userModel = userModel;
             _roleManager = roleManager;
             _secretsManager = secretsManager;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -56,6 +60,14 @@ namespace DigiBrainServer.Controllers
                 return Unauthorized(new ErrorResponseModel
                 {
                     Message = "Invalid username or password"
+                });
+            }
+
+            if(user.EmailConfirmed == false)
+            {
+                return Unauthorized(new ErrorResponseModel
+                {
+                    Message = "Account not confirmed"
                 });
             }
 
@@ -103,6 +115,8 @@ namespace DigiBrainServer.Controllers
                 await AddRoles("teacher");
 
                 var admin = await AddUser(model, true);
+                var adminUser = await _userModel.FindByNameAsync(model.Username);
+                SendConfirmationEmail(adminUser, Request.Headers["origin"]);
 
                 return admin;
             }
@@ -139,8 +153,32 @@ namespace DigiBrainServer.Controllers
             var user = await AddUser(model, false);
             var userModel = await _userModel.FindByNameAsync(model.Username);
             await _userModel.AddToRoleAsync(userModel, "student");
+            SendConfirmationEmail(userModel, Request.Headers["origin"]);
 
             return user;
+        }
+
+        [HttpGet]
+        [Route("verify-email")]
+        public async Task<ActionResult<InfoResponseModel>> VerifyEmail(string code)
+        {
+            var user = await _userModel.Users.FirstOrDefaultAsync(item => item.RegistrationToken == code);
+
+            if (user == null)
+            {
+                return Ok(new { message = "Verification failed" });
+            }
+
+            if (user.EmailConfirmed == true)
+            {
+                return BadRequest(new { message = "Email already confirmed" });
+            }
+
+            user.EmailConfirmed = true;
+
+            await _userModel.UpdateAsync(user);
+
+            return Ok(new { message = "Verification successful, you can now login" });
         }
 
         private async Task AddRoles(string role)
@@ -155,7 +193,7 @@ namespace DigiBrainServer.Controllers
 
         private async Task<ActionResult<UserViewModel>> AddUser(RegisterViewModel model, bool makeAdmin)
         {
-            var puser = new UserModel { UserName = model.Username, Email = model.Email };
+            var puser = new UserModel { UserName = model.Username, Email = model.Email, RegistrationToken = Guid.NewGuid().ToString() };
             var result = await _userModel.CreateAsync(puser, model.Password);
             if (!result.Succeeded)
             {
@@ -169,6 +207,21 @@ namespace DigiBrainServer.Controllers
             }
 
             return Created("", new UserViewModel { Id = user.Id, Email = user.Email, UserName = user.UserName });
+        }
+
+        private void SendConfirmationEmail(UserModel user, string origin)
+        {
+            var verifyUrl = $"{origin}/api/auth/verify-email?code={user.RegistrationToken}";
+            var message = $@"<p>Please click the below link to verify your email address:</p>
+                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
+
+            _emailService.Send(
+                to: user.Email,
+                subject: "Sign-up Verification API - Verify Email",
+                html: $@"<h4>Verify Email</h4>
+                         <p>Thanks for registering!</p>
+                         {message}"
+            );
         }
     }
 }
