@@ -1,0 +1,82 @@
+.App {
+  text-align: center;
+}
+
+.Page-fit {
+  height: calc(100vh - 70px);
+}
+
+.Home-image {
+  width: 60%;
+  height: 60%;
+  border-radius: 30%;
+  object-fit: cover;
+}
+
+.Home-title {
+  width: 70%;
+  font-size: 70px;
+  font-weight: bold;
+  color: #3F456C;
+}
+
+.Home-content {
+  width: 80%;
+  text-align: justify;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Home-footer {
+  height: 20%;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Learn-selected-button {
+  background-color: yellow;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: black;
+}
+
+.card-add:hover {
+  cursor: pointer;
+  background-color: gainsboro;
+  color: black;
+}
+
+#container {
+  position: relative;
+  overflow: hidden;
+}
+
+.step {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+}
+
+#step1 {
+  transform: translateX(0);
+}
+
+#step2 {
+  transform: translateX(100%);
+}
+
+.search-filter {
+  background-color: #f2f2f0;
+  border-radius: 30px;
+}

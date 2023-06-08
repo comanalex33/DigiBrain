@@ -1,0 +1,24 @@
+.class-card {
+    background-color: green;
+    width: fit-content;
+    color: white;
+    border-radius: 30px;
+    padding: 5px 20px 5px 20px;
+    margin: 5px;
+    margin-left: 20px;
+}
+
+.university-card {
+    background-color: blueviolet;
+    width: fit-content;
+    color: white;
+    border-radius: 30px;
+    padding: 5px 20px 5px 20px;
+    margin: 5px;
+    margin-left: 20px;
+}
+
+.lesson-title-box {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
