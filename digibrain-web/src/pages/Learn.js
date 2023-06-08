@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import { ListGroup, Tab } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 import '../App.css'
+import '../css/Learn.css'
+
 import Popup from '../components/Popup';
 import WidePopup from '../components/WidePopup';
+import ClassSelector from '../components/ClassSelector';
+
 import apiService from '../services/ApiService';
 
 function Learn() {
@@ -14,6 +19,7 @@ function Learn() {
 
     const [classNumber, setClassNumber] = useState(0)
     const [university, setUniversity] = useState(false)
+    const [languageId, setLanguageId] = useState(0)
 
     const [subjects, setSubjects] = useState([])
     const [chapters, setChapters] = useState([])
@@ -31,14 +37,41 @@ function Learn() {
     const [addChapterOpen, setAddChapterOpen] = useState(false)
 
     const [selectedClassId, setSelectedClassId] = useState(0)
+    const [selectedSubjectName, setSelectedSubjectName] = useState('')
     const [selectedSubjectId, setSelectedSubjectId] = useState(0)
     const [selectedChapterId, setSelectedChapterId] = useState(0)
 
+    const [searchFilterActive, setSearchFilterActive] = useState(true);
+
     const token = sessionStorage.getItem('token')
     const config = { headers: { 'Authorization': 'Bearer ' + token } }
+    const { i18n, t } = useTranslation()
 
     let subjectsList = []
-    let chaptersList = []
+
+    useEffect(() => {
+        const handleLanguageChange = () => {
+            // Call your method or function here
+            const id = sessionStorage.getItem('languageId')
+            setLanguageId(id)
+
+            if (classNumber !== 0) {
+                setSubjectOpened(false)
+                setSelectedSubjectName('')
+                setSelectedSubjectId(0)
+                getSubjects(id)
+            }
+        };
+
+        const id = sessionStorage.getItem('languageId')
+        setLanguageId(id)
+
+        i18n.on('languageChanged', handleLanguageChange);
+
+        return () => {
+            i18n.off('languageChanged', handleLanguageChange);
+        };
+    }, [i18n, classNumber]);
 
     const handleButtonClick = (number, university) => {
         setClassNumber(number)
@@ -61,6 +94,10 @@ function Learn() {
         setSubjectName(event.target.value)
     }
 
+    const handleSearchFilterChange = () => {
+        setSearchFilterActive(!searchFilterActive)
+    };
+
     const handleLessonEdit = (item) => {
         if (item === null) {
             setEditedLessonId(0)
@@ -75,118 +112,19 @@ function Learn() {
         }
     }
 
-    const renderSchoolButtons = () => {
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-
-        const firstRow = numbers.slice(0, 4);
-        const secondRow = numbers.slice(4, 8);
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {firstRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-                <br />
-                <div className='d-flex w-100 justify-content-around'>
-                    {secondRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const renderHighschoolButtons = () => {
-        const numbers = [9, 10, 11, 12];
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {numbers.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const getRomanFromNumber = (number) => {
-        switch (number) {
-            case 1:
-                return 'I'
-            case 2:
-                return 'II'
-            case 3:
-                return 'III'
-            case 4:
-                return 'IV'
-            case 5:
-                return 'V'
-            case 6:
-                return 'VI'
-            default:
-                return null
-        }
-    }
-
-    const renderUniversityButtons = () => {
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-
-        const firstRow = numbers.slice(0, 4);
-        const secondRow = numbers.slice(4, 8);
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {firstRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, true)}
-                            className={classNumber === number && university === true ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-                <br />
-                <div className='d-flex w-100 justify-content-around'>
-                    {secondRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, true)}
-                            className={classNumber === number && university === true ? 'Learn-selected-button' : '' +
-                                (number === 7 || number === 8 ? ' invisible' : '')}>
-                            {getRomanFromNumber(number)}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const getSubjects = () => {
+    const getSubjects = (langId) => {
         setPopup(false)
+
+        var usedLanguageId
+        if (langId !== 0)
+            usedLanguageId = langId
+        else
+            usedLanguageId = languageId
 
         apiService.getClassByNumberAndDomain(classNumber, university, 0)
             .then(response => {
                 setSelectedClassId(response.data.id)
-                apiService.getSubjects(response.data.id, 2)
+                apiService.getSubjects(response.data.id, (usedLanguageId === null) ? 1 : usedLanguageId)
                     .then(response2 => {
                         setSubjects(response2.data)
                     })
@@ -201,6 +139,16 @@ function Learn() {
 
     const handleSelectChange = (event) => {
         setSelectedSubjectId(event.target.value)
+        let subjectFound = false
+        subjects.forEach(subject => {
+            if (subject.id == event.target.value) {
+                setSelectedSubjectName(subject.name)
+                subjectFound = true
+            }
+        });
+        if (subjectFound === false) {
+            setSelectedSubjectName('')
+        }
     }
 
     const updateLesson = () => {
@@ -234,7 +182,7 @@ function Learn() {
 
     const addSubject = () => {
         if (subjectName !== '') {
-            apiService.addSubject(subjectName, selectedClassId, 2, 0, config)
+            apiService.addSubject(subjectName, selectedClassId, (languageId === null) ? 1 : languageId, 0, config)
                 .then(response => {
                     setSubjectName('')
                     setAddSubjectOpen(false)
@@ -261,40 +209,38 @@ function Learn() {
     }
 
     subjectsList = [
-        <option value={0} key={0}>-- Choose one subject --</option>,
+        <option value={0} key={0}>-- {t("choose_subject")} --</option>,
         subjects.map((item, _) => (
             <option value={item.id} key={item.id}>{item.name}</option>
         ))
     ]
 
-    chaptersList = chapters.map((item, _) => (
-        <li>{item.name}</li>
-    ))
-
     const renderChapters = () => {
         return (
-            <div className="row">
+            <div className="row mt-3 overflow-auto scrollable">
                 <div className="col-4">
                     <ListGroup id="list-tab">
-                        {chapters.map((item, _) => (
-                            <ListGroup.Item key={item.id} action onClick={() => handleTabSelect(`${item.id}`)} eventKey={item.id}>
-                                {item.name}
-                            </ListGroup.Item>
-                        ))}
-                        {(subjectOpened === true) &&
-                            <div className={'d-inline d-flex align-items-center' + (addChapterOpen === false ? ' d-none' : '')}>
-                                <input type='text' className='m-1 w-100' onChange={handleChapterNameChange} />
-                                <i className='fa fa-check icon m-2' onClick={addChapter} />
-                                <i className='fa fa-times icon m-2' onClick={() => setAddChapterOpen(false)} />
-                            </div>
-                        }
-                        {(subjectOpened === true) &&
-                            <div className='card card-add m-3' onClick={() => setAddChapterOpen(true)}>
-                                <div className="card-header d-flex justify-content-center">
-                                    <i className='fa fa-plus icon' />
+                        <>
+                            {chapters.map((item, _) => (
+                                <ListGroup.Item key={item.id} action onClick={() => handleTabSelect(`${item.id}`)} eventKey={item.id}>
+                                    {item.name}
+                                </ListGroup.Item>
+                            ))}
+                            {(subjectOpened === true) &&
+                                <div className={'d-inline d-flex align-items-center' + (addChapterOpen === false ? ' d-none' : '')}>
+                                    <input type='text' className='m-1 w-100' onChange={handleChapterNameChange} />
+                                    <i className='fa fa-check icon m-2' onClick={addChapter} />
+                                    <i className='fa fa-times icon m-2' onClick={() => setAddChapterOpen(false)} />
                                 </div>
-                            </div>
-                        }
+                            }
+                            {(subjectOpened === true) &&
+                                <div className='card card-add m-3' onClick={() => setAddChapterOpen(true)}>
+                                    <div className="card-header d-flex justify-content-center">
+                                        <i className='fa fa-plus icon' />
+                                    </div>
+                                </div>
+                            }
+                        </>
                     </ListGroup>
                 </div>
                 <div className="col-8">
@@ -342,10 +288,6 @@ function Learn() {
         )
     }
 
-    // subjectsList = subjects.map((item, _) => (
-    //     <option value={item.id} key={item.id}>{item.name}</option>
-    // ))
-
     const [activeTab, setActiveTab] = useState('home');
 
     const handleTabSelect = (selectedTab) => {
@@ -371,56 +313,122 @@ function Learn() {
             setActiveKey(selectedToggle);
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+
+            const { selectionStart, selectionEnd, value } = e.target;
+
+            // Add four spaces at the current cursor position
+            const modifiedValue = value.substring(0, selectionStart) + '    ' + value.substring(selectionEnd);
+            const modifiedCursorPosition = selectionStart + 4;
+
+            e.target.value = modifiedValue;
+            e.target.setSelectionRange(modifiedCursorPosition, modifiedCursorPosition);
+        }
+    };
+
     return (
-        <div className='Page-fit'>
-            <div className='d-flex'>
-                <button onClick={() => setPopup(true)}>Select class</button>
-                <p>Class: {classNumber}</p>
-                <p>University: {university === false ? 'False' : 'True'}</p>
-            </div>
-            <div className='d-flex align-items-center'>
-                <p>Subject</p>
-                <Form.Select aria-label="Default select example" onChange={handleSelectChange}>
-                    {subjectsList}
-                </Form.Select>
-                <div className='card card-add m-3' onClick={() => setAddSubjectOpen(true)}>
-                    <div className="card-header d-flex justify-content-center">
-                        <i className='fa fa-plus icon' />
+        <div className='Page-fit p-3 d-flex flex-column'>
+
+            <div className='search-filter'>
+                <div className="card-header d-flex w-100">
+                    <h5 className="mb-0 w-100">
+                        <div className='float-start d-flex align-items-center justify-content-between w-100'>
+                            <div className="btn btn-link fs-5" onClick={handleSearchFilterChange}>
+                                {t("search_filter")}
+                            </div>
+                            <div>
+                                <i className={"fa-solid icon" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
+                            </div>
+                        </div>
+                    </h5>
+                </div>
+                <div className={"collapse" + (searchFilterActive === true ? ' show' : '')}>
+                    {/* Choose class */}
+                    <div className='border-bottom border-dark p-1 d-flex align-items-end justify-content-between'>
+                        <div className='fs-4 fw-bold'>{t("select_class")}</div>
+                        <button onClick={() => setPopup(true)} className='btn btn-primary'>{t("choose_class")}</button>
                     </div>
+                    {(classNumber !== 0) &&
+                        <div className='d-flex'>
+                            <div className="class-card">{t("selected_class")}: {classNumber}</div>
+                            {(university === true) &&
+                                <div className="university-card">{t("at_university")}</div>
+                            }
+                        </div>
+                    }
+                    {(classNumber === 0) &&
+                        <div className='text-center text-danger fs-5'>{t("no_class_selected")}</div>
+                    }
+
+                    {/* Choose subject */}
+                    <div className='border-bottom border-dark'>
+                        <div className='p-1 d-flex align-items-end justify-content-between'>
+                            <div className='fs-4 fw-bold'>{t("select_subject")}</div>
+                            <div className='d-flex w-50'>
+                                <Form.Select className='w-100' aria-label="Default select example" onChange={handleSelectChange}>
+                                    {subjectsList}
+                                </Form.Select>
+                                <div className='card card-add ms-3' onClick={() => setAddSubjectOpen(true)}>
+                                    <div className="card-header d-flex justify-content-center">
+                                        <i className='fa fa-plus icon' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={'d-inline d-flex align-items-center' + (addSubjectOpen === false ? ' d-none' : '')}>
+                            <input type='text' className='m-1 w-100' onChange={handleSubjectNameChange} />
+                            <i className='fa fa-check icon m-2' onClick={addSubject} />
+                            <i className='fa fa-times icon m-2' onClick={() => setAddSubjectOpen(false)} />
+                        </div>
+                    </div>
+                    {(selectedSubjectName !== '') &&
+                        <>
+                            <div className="class-card">{t("selected_subject")}: {selectedSubjectName}</div>
+                        </>
+                    }
+                    {(selectedSubjectName === '') &&
+                        <div className='text-center text-danger fs-5'>{t("no_subject_selected")}</div>
+                    }
+
+                    {/* Open sybject */}
+                    <div className='mt-3'>
+                        <div className='d-flex justify-content-center'>
+                            <button onClick={openSubject} className='btn btn-primary w-25 fs-5'>{t("open")}</button>
+                        </div>
+                    </div>
+                    <br />
                 </div>
             </div>
-            <div className={'d-inline d-flex align-items-center' + (addSubjectOpen === false ? ' d-none' : '')}>
-                <input type='text' className='m-1 w-100' onChange={handleSubjectNameChange} />
-                <i className='fa fa-check icon m-2' onClick={addSubject} />
-                <i className='fa fa-times icon m-2' onClick={() => setAddSubjectOpen(false)} />
-            </div>
-            <div>
-                <button onClick={openSubject}>Open</button>
-                {renderChapters()}
-            </div>
+            {(subjectOpened === false) ?
+                <div className='flex-grow-1 d-flex align-items-center justify-content-center fs-4 text-danger'>{t("no_subject_loaded")}</div>
+                :
+                <>
+                    {(subjectOpened === true) &&
+                        <div className='fs-4 fw-bold'>{t("subject_content")}</div>
+                    }
+                    {renderChapters()}
+                </>
+            }
             <Popup trigger={popup}>
-                <h2 id='title-accept-delete'>School</h2>
-                {renderSchoolButtons()}
-                <h2 id='title-accept-delete'>Highschool</h2>
-                {renderHighschoolButtons()}
-                <h2 id='title-accept-delete'>University</h2>
-                {renderUniversityButtons()}
+                <ClassSelector classNumber={classNumber} university={university} handleClassSelected={handleButtonClick} translator={t} />
                 <div className='d-flex justify-content-end'>
-                    <button id='button-reject' onClick={getSubjects}>Ok</button>
+                    <button className='btn btn-primary' onClick={() => getSubjects(0)}>Ok</button>
                 </div>
             </Popup>
             <WidePopup trigger={editLessonPopup}>
-                <div>
-                    <label>Title: </label>
-                    <input type='text' value={lessonTitle} onChange={handleLessonTitleChange} />
+                <div className='d-flex justify-content-center'>
+                    <label className='fs-5'>{t("title")}</label>
+                    <input type='text' className='lesson-title-box' value={lessonTitle} onChange={handleLessonTitleChange} />
                 </div>
                 <div className='d-flex'>
-                    <textarea className='w-50' value={lessonText} onChange={handleLessonTextChange} />
+                    <textarea className='w-50' value={lessonText} onKeyDown={handleKeyDown} onChange={handleLessonTextChange} />
                     <div className='w-50 p-3' dangerouslySetInnerHTML={{ __html: lessonText }} />
                 </div>
-                <div className='w-100'>
-                    <button className='float-start' onClick={() => setEditLessonPopup(false)}>Cancel</button>
-                    <button className='float-end' onClick={updateLesson}>Save</button>
+                <div className='w-100 mt-3'>
+                    <button className='float-start btn btn-danger' onClick={() => setEditLessonPopup(false)}>{t("cancel")}</button>
+                    <button className='float-end btn btn-primary' onClick={updateLesson}>{t("save")}</button>
                 </div>
             </WidePopup>
         </div>

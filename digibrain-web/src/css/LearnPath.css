@@ -1,0 +1,33 @@
+.lesson-title-box {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.details-card {
+    width: fit-content;
+    color: white;
+    border-radius: 30px;
+    padding: 5px 20px 5px 20px;
+    margin: 5px;
+    margin-left: 20px;
+}
+
+.author {
+    background-color: green;
+}
+
+.description {
+    background-color: blueviolet;
+}
+
+.last-update-date {
+    background-color: blue;
+}
+
+.number-of-starts {
+    background-color: red;
+}
+
+.margin-left {
+    margin-left: 20px;
+}

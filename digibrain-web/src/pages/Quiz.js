@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
+import { useTranslation } from 'react-i18next';
 
 import '../App.css'
 import Popup from '../components/Popup';
-import apiService from '../services/ApiService';
 import WidePopup from '../components/WidePopup';
+import ClassSelector from '../components/ClassSelector';
+
+import apiService from '../services/ApiService';
 
 function Quiz() {
 
@@ -14,12 +17,14 @@ function Quiz() {
 
     const [classNumber, setClassNumber] = useState(0)
     const [university, setUniversity] = useState(false)
+    const [languageId, setLanguageId] = useState(0)
 
     const [subjects, setSubjects] = useState([])
     const [questions, setQuestions] = useState([])
 
     const [selectedClassId, setSelectedClassId] = useState(0)
     const [selectedSubjectId, setSelectedSubjectId] = useState(0)
+    const [selectedSubjectName, setSelectedSubjectName] = useState('')
     const [selectedDifficuty, setSelectedDificulty] = useState('')
     const [selectedQuestionType, setSelectedQuestionType] = useState('')
     const [selectedQuestion, setSelectedQuestion] = useState(null)
@@ -28,10 +33,39 @@ function Quiz() {
     const [questionText, setQuestionText] = useState('')
     const [addedAnswers, setAddedAnswers] = useState([])
 
+    const [searchFilterActive, setSearchFilterActive] = useState(true);
+
     const token = sessionStorage.getItem('token')
     const config = { headers: { 'Authorization': 'Bearer ' + token } }
+    const { i18n, t } = useTranslation()
 
     let subjectsList = []
+
+    useEffect(() => {
+        const handleLanguageChange = () => {
+            // Call your method or function here
+            const id = sessionStorage.getItem('languageId')
+            setLanguageId(id)
+
+            if (classNumber !== 0) {
+                setQuestionsOpened(false)
+                setSelectedSubjectName('')
+                setSelectedSubjectId(0)
+                setQuestions([])
+                setSelectedQuestion(null)
+                getSubjects(id)
+            }
+        };
+
+        const id = sessionStorage.getItem('languageId')
+        setLanguageId(id)
+
+        i18n.on('languageChanged', handleLanguageChange);
+
+        return () => {
+            i18n.off('languageChanged', handleLanguageChange);
+        };
+    }, [i18n, classNumber]);
 
     const handleButtonClick = (number, university) => {
         setClassNumber(number)
@@ -40,6 +74,16 @@ function Quiz() {
 
     const handleSelectChange = (event) => {
         setSelectedSubjectId(event.target.value)
+        let subjectFound = false
+        subjects.forEach(subject => {
+            if (subject.id == event.target.value) {
+                setSelectedSubjectName(subject.name)
+                subjectFound = true
+            }
+        });
+        if (subjectFound === false) {
+            setSelectedSubjectName('')
+        }
     }
 
     const handleQuestionTextChange = event => {
@@ -73,6 +117,10 @@ function Quiz() {
         setAddQuestionPopup(false)
         setAddedAnswers([])
     }
+
+    const handleSearchFilterChange = () => {
+        setSearchFilterActive(!searchFilterActive)
+    };
 
     const handleAddQuestionPopupOpen = () => {
         setAddQuestionPopup(true)
@@ -156,118 +204,19 @@ function Quiz() {
         return count
     }
 
-    const renderSchoolButtons = () => {
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-
-        const firstRow = numbers.slice(0, 4);
-        const secondRow = numbers.slice(4, 8);
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {firstRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-                <br />
-                <div className='d-flex w-100 justify-content-around'>
-                    {secondRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const renderHighschoolButtons = () => {
-        const numbers = [9, 10, 11, 12];
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {numbers.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, false)}
-                            className={classNumber === number && university === false ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const getRomanFromNumber = (number) => {
-        switch (number) {
-            case 1:
-                return 'I'
-            case 2:
-                return 'II'
-            case 3:
-                return 'III'
-            case 4:
-                return 'IV'
-            case 5:
-                return 'V'
-            case 6:
-                return 'VI'
-            default:
-                return null
-        }
-    }
-
-    const renderUniversityButtons = () => {
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
-
-        const firstRow = numbers.slice(0, 4);
-        const secondRow = numbers.slice(4, 8);
-
-        return (
-            <div>
-                <div className='d-flex w-100 justify-content-around'>
-                    {firstRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, true)}
-                            className={classNumber === number && university === true ? 'Learn-selected-button' : ''}>
-                            {number}
-                        </button>
-                    ))}
-                </div>
-                <br />
-                <div className='d-flex w-100 justify-content-around'>
-                    {secondRow.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handleButtonClick(number, true)}
-                            className={classNumber === number && university === true ? 'Learn-selected-button' : '' +
-                                (number === 7 || number === 8 ? ' invisible' : '')}>
-                            {getRomanFromNumber(number)}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const getSubjects = () => {
+    const getSubjects = (langId) => {
         setPopup(false)
+
+        var usedLanguageId
+        if (langId !== 0)
+            usedLanguageId = langId
+        else
+            usedLanguageId = languageId
 
         apiService.getClassByNumberAndDomain(classNumber, university, 0)
             .then(response => {
                 setSelectedClassId(response.data.id)
-                apiService.getSubjects(response.data.id, 2)
+                apiService.getSubjects(response.data.id, (usedLanguageId === null) ? 1 : usedLanguageId)
                     .then(response2 => {
                         setSubjects(response2.data)
                     })
@@ -308,7 +257,7 @@ function Quiz() {
 
     const renderQuestions = () => {
         return (
-            <div id="accordion" className='scrollable'>
+            <div id="accordion" className='scrollable mt-3 overflow-auto'>
                 {questions.map((item, _) => (
                     <div className="card" key={item.id}>
                         <div className="card-header">
@@ -331,7 +280,7 @@ function Quiz() {
                             <div className="card-body">
                                 <ul>
                                     {item.answers.map((answer, _) => (
-                                        <li key={answer.id}>{answer.text} - {answer.correct ? 'Corect' : 'Gresit'} - {answer.position}</li>
+                                        <li key={answer.id}>{answer.text} - {answer.correct ? t("correct") : t("wrong")} - {answer.position}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -401,69 +350,119 @@ function Quiz() {
     };
 
     subjectsList = [
-        <option value={0} key={0}>-- Choose one subject --</option>,
+        <option value={0} key={0}>-- {t("choose_subject")} --</option>,
         subjects.map((item, _) => (
             <option value={item.id} key={item.id}>{item.name}</option>
         ))
     ]
 
     return (
-        <div className='Page-fit'>
-            <div className='d-flex'>
-                <button onClick={() => setPopup(true)}>Select class</button>
-                <p>Class: {classNumber}</p>
-                <p>University: {university === false ? 'False' : 'True'}</p>
-            </div>
-            <div className='d-flex align-items-center'>
-                <p>Subject</p>
-                <Form.Select aria-label="Default select example" onChange={handleSelectChange}>
-                    {subjectsList}
-                </Form.Select>
-            </div>
-            <div className='d-flex align-items-center'>
-                <p className='m-3'>Alege dificultate</p>
-                <div className='btn-group'>
-                    <button className={'btn' + (selectedDifficuty === 'Easy' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Easy')}>Easy</button>
-                    <button className={'btn' + (selectedDifficuty === 'Medium' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Medium')}>Medium</button>
-                    <button className={'btn' + (selectedDifficuty === 'Hard' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Hard')}>Hard</button>
+        <div className='Page-fit p-3 d-flex flex-column'>
+
+            <div className='search-filter'>
+                <div className="card-header d-flex w-100">
+                    <h5 className="mb-0 w-100">
+                        <div className='float-start d-flex align-items-center justify-content-between w-100'>
+                            <div className="btn btn-link fs-5" onClick={handleSearchFilterChange}>
+                                {t("search_filter")}
+                            </div>
+                            <div>
+                                <i className={"fa-solid icon" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
+                            </div>
+                        </div>
+                    </h5>
+                </div>
+                <div className={"collapse" + (searchFilterActive === true ? ' show' : '')}>
+                    {/* Choose class */}
+                    <div className='border-bottom border-dark p-1 d-flex align-items-end justify-content-between'>
+                        <div className='fs-4 fw-bold'>{t("select_class")}</div>
+                        <button onClick={() => setPopup(true)} className='btn btn-primary'>{t("choose_class")}</button>
+                    </div>
+                    {(classNumber !== 0) &&
+                        <div className='d-flex'>
+                            <div className="class-card">{t("selected_class")}: {classNumber}</div>
+                            {(university === true) &&
+                                <div className="university-card">{t("at_university")}</div>
+                            }
+                        </div>
+                    }
+                    {(classNumber === 0) &&
+                        <div className='text-center text-danger fs-5'>{t("no_class_selected")}</div>
+                    }
+
+                    {/* Choose subject */}
+                    <div className='border-bottom border-dark'>
+                        <div className='p-1 d-flex align-items-end justify-content-between'>
+                            <div className='fs-4 fw-bold'>{t("select_subject")}</div>
+                            <div className='d-flex w-50'>
+                                <Form.Select className='w-100' aria-label="Default select example" onChange={handleSelectChange}>
+                                    {subjectsList}
+                                </Form.Select>
+                            </div>
+                        </div>
+                    </div>
+                    {(selectedSubjectName !== '') &&
+                        <>
+                            <div className="class-card">{t("selected_subject")}: {selectedSubjectName}</div>
+                        </>
+                    }
+                    {(selectedSubjectName === '') &&
+                        <div className='text-center text-danger fs-5'>{t("no_subject_selected")}</div>
+                    }
+
+
+                    {/* Choose difficulty */}
+                    <div className='d-flex align-items-center'>
+                        <p className='fs-4 fw-bold mt-3'>{t("select_difficulty")}</p>
+                        <div className='btn-group m-3'>
+                            <button className={'btn' + (selectedDifficuty === 'Easy' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Easy')}>{t("easy")}</button>
+                            <button className={'btn' + (selectedDifficuty === 'Medium' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Medium')}>{t("medium")}</button>
+                            <button className={'btn' + (selectedDifficuty === 'Hard' ? ' bg-primary text-white' : '')} onClick={() => setSelectedDificulty('Hard')}>{t("hard")}</button>
+                        </div>
+                    </div>
+
+                    {/* Choose question type */}
+                    <div className='d-flex align-items-center'>
+                        <p className='fs-4 fw-bold mt-3'>{t("select_question_type")}</p>
+                        <div className='btn-group m-3'>
+                            <button className={'btn' + (selectedQuestionType === 'MultipleChoice' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('MultipleChoice')}>{t("multiple_choice")}</button>
+                            <button className={'btn' + (selectedQuestionType === 'WordsGap' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('WordsGap')}>{t("words_gap")}</button>
+                            <button className={'btn' + (selectedQuestionType === 'TrueFalse' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('TrueFalse')}>{t("true_false")}</button>
+                        </div>
+                    </div>
+
+                    {/* Open questions */}
+                    <div className='d-flex justify-content-center mb-3'>
+                        <button onClick={getQuestions} className='btn btn-primary w-25 fs-5'>{t("open")}</button>
+                    </div>
                 </div>
             </div>
-            <div className='d-flex align-items-center'>
-                <p className='m-3'>Alege tipul de Quiz</p>
-                <div className='btn-group'>
-                    <button className={'btn' + (selectedQuestionType === 'MultipleChoice' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('MultipleChoice')}>Raspuns multiplu</button>
-                    <button className={'btn' + (selectedQuestionType === 'WordsGap' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('WordsGap')}>Cuvinte lipsa</button>
-                    <button className={'btn' + (selectedQuestionType === 'TrueFalse' ? ' bg-primary text-white' : '')} onClick={() => setSelectedQuestionType('TrueFalse')}>Adevarat sau Fals</button>
-                </div>
-            </div>
-            <div>
-                <button onClick={getQuestions}>Open</button>
-            </div>
-            {renderQuestions()}
+            {(questionsOpened === false) ?
+                <div className='flex-grow-1 d-flex align-items-center justify-content-center fs-4 text-danger'>{t("no_questions_loaded")}</div>
+                :
+                <>
+                    {renderQuestions()}
+                </>
+            }
             <Popup trigger={popup}>
-                <h2 id='title-accept-delete'>School</h2>
-                {renderSchoolButtons()}
-                <h2 id='title-accept-delete'>Highschool</h2>
-                {renderHighschoolButtons()}
-                <h2 id='title-accept-delete'>University</h2>
-                {renderUniversityButtons()}
+                <ClassSelector classNumber={classNumber} university={university} handleClassSelected={handleButtonClick} translator={t} />
                 <div className='d-flex justify-content-end'>
-                    <button id='button-reject' onClick={getSubjects}>Ok</button>
+                    <button className='btn btn-primary' onClick={() => getSubjects(0)}>Ok</button>
                 </div>
             </Popup>
             <WidePopup trigger={addQuestionPopup}>
                 <div className='d-flex'>
-                    <label className='w-25'>Question text:</label>
-                    <input className='w-75' type='text' value={questionText} onChange={handleQuestionTextChange} />
+                    <label className='w-25'>{t("question_text")}:</label>
+                    <input className='w-100' type='text' value={questionText} onChange={handleQuestionTextChange} />
                 </div>
-                <label>Answers</label>
+                <label>{t("answers")}</label>
                 <div>
                     {(selectedQuestionType === "MultipleChoice") &&
                         <>
                             <ul>
                                 {addedAnswers.map((item, position) => (
                                     <div key={position} className='d-flex gap-5'>
-                                        <label>Answer {position + 1}</label>
+                                        <label>{t("answer")} {position + 1}</label>
                                         <input className='ml-3' type='text' value={item.text} onChange={(event) => handleAddAnswerTextChange(event, position)} />
                                         <Form.Check type='checkbox' checked={item.correct} onChange={(event) => handleAddAnswerCheckChange(event, position)} />
                                     </div>
@@ -490,7 +489,7 @@ function Quiz() {
                         <ul>
                             {addedAnswers.map((item, position) => (
                                 <div key={position} className='d-flex gap-5'>
-                                    <label>Position {position + 1}</label>
+                                    <label>{t("position")} {position + 1}</label>
                                     <input className='ml-3' type='text' value={item.text} onChange={(event) => handleAddAnswerTextChange(event, position)} />
                                 </div>
                             ))}
@@ -498,24 +497,24 @@ function Quiz() {
                     }
                 </div>
                 <div className='w-100'>
-                    <button className='float-start' onClick={handleAddQuestionPopupClose}>Cancel</button>
-                    <button className='float-end' onClick={addQuestion}>Save</button>
+                    <button className='float-start btn btn-danger' onClick={handleAddQuestionPopupClose}>{t("cancel")}</button>
+                    <button className='float-end btn btn-primary' onClick={addQuestion}>{t("save")}</button>
                 </div>
             </WidePopup>
             <Popup trigger={confirmDeletePopup}>
                 <div className='d-flex justify-content-center'>
-                    <p>Sigur vrei sa stergi aceasta intrebare?</p>
+                    <p className='fs-4'>{t("delete_question_check")}</p>
                 </div>
                 <div className='d-flex gap-3'>
-                    <label>Intrebare:</label>
+                    <label>{t("question")}:</label>
                     {(selectedQuestion !== null) &&
                         <label>{selectedQuestion.text}</label>
                     }
                 </div>
                 <br />
                 <div className='w-100 d-flex justify-content-around'>
-                    <button onClick={deleteSelectedQuestion}>Da</button>
-                    <button onClick={() => setConfirmDeletePopup(false)}>Nu</button>
+                    <button className='btn btn-primary' onClick={deleteSelectedQuestion}>{t("yes")}</button>
+                    <button className='btn btn-danger' onClick={() => setConfirmDeletePopup(false)}>{t("no")}</button>
                 </div>
             </Popup>
         </div>

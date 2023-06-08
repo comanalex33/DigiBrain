@@ -20,13 +20,15 @@ namespace DigiBrainServer.Controllers
         {
             "MultipleChoice",
             "WordsGap",
-            "TrueFalse"
+            "TrueFalse",
+            "Any"
         };
         private readonly List<string> acceptedDifficulties = new()
         {
             "Easy",
             "Medium",
-            "Hard"
+            "Hard",
+            "Any"
         };
         public QuestionController(AppDbContext context)
         {
@@ -105,11 +107,17 @@ namespace DigiBrainServer.Controllers
 
                         // Get and check question
                         var question = await _context.Question.FindAsync(questionId);
-                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                         {
-                            selectedQuestionsIds.Add(questionIdPosition);
-                            questions.Add((QuestionResponseModel)question);
-                            break;
+                            if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
+                            {
+                                if (question.LanguageId == model.LanguageId)
+                                {
+                                    selectedQuestionsIds.Add(questionIdPosition);
+                                    questions.Add((QuestionResponseModel)question);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -118,9 +126,15 @@ namespace DigiBrainServer.Controllers
                 var allQuestions = await _context.Question.ToListAsync();
                 foreach(var question in allQuestions)
                 {
-                    if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                    if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                     {
-                        questions.Add((QuestionResponseModel)question);
+                        if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
+                        {
+                            if (question.LanguageId == model.LanguageId)
+                            {
+                                questions.Add((QuestionResponseModel)question);
+                            }
+                        }
                     }
                 }
             }
@@ -188,11 +202,17 @@ namespace DigiBrainServer.Controllers
 
                         // Get and check question
                         var question = await _context.Question.FindAsync(questionId);
-                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                         {
-                            selectedQuestionsIds.Add(questionIdPosition);
-                            questions.Add((QuestionResponseModel)question);
-                            break;
+                            if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
+                            {
+                                if (question.LanguageId == model.LanguageId)
+                                {
+                                    selectedQuestionsIds.Add(questionIdPosition);
+                                    questions.Add((QuestionResponseModel)question);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -203,9 +223,15 @@ namespace DigiBrainServer.Controllers
                 {
                     if (ValidQuestionForSubject(id, question.Id))
                     {
-                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                         {
-                            questions.Add((QuestionResponseModel)question);
+                            if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
+                            {
+                                if (question.LanguageId == model.LanguageId)
+                                {
+                                    questions.Add((QuestionResponseModel)question);
+                                }
+                            }
                         }
                     }
                 }
@@ -274,20 +300,26 @@ namespace DigiBrainServer.Controllers
 
                         // Get and check question
                         var question = await _context.Question.FindAsync(questionId);
-                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                         {
-                            selectedQuestionsIds.Add(questionIdPosition);
-
-                            var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
-                            var responseAnswers = new List<AnswerResponseModel>();
-                            foreach (var answer in answers)
+                            if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
                             {
-                                responseAnswers.Add((AnswerResponseModel)answer);
-                            }
+                                if (question.LanguageId == model.LanguageId)
+                                {
+                                    selectedQuestionsIds.Add(questionIdPosition);
 
-                            var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
-                            questions.Add(questionAnswers);
-                            break;
+                                    var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
+                                    var responseAnswers = new List<AnswerResponseModel>();
+                                    foreach (var answer in answers)
+                                    {
+                                        responseAnswers.Add((AnswerResponseModel)answer);
+                                    }
+
+                                    var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
+                                    questions.Add(questionAnswers);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -299,17 +331,23 @@ namespace DigiBrainServer.Controllers
                 {
                     if (ValidQuestionForSubject(id, question.Id))
                     {
-                        if (question.Type.Equals(model.Type) && question.Difficulty.Equals(model.Difficulty) && question.LanguageId == model.LanguageId)
+                        if (model.Type.Equals("Any") || question.Type.Equals(model.Type))
                         {
-                            var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
-                            var responseAnswers = new List<AnswerResponseModel>();
-                            foreach (var answer in answers)
+                            if (model.Difficulty.Equals("Any") || question.Difficulty.Equals(model.Difficulty))
                             {
-                                responseAnswers.Add((AnswerResponseModel)answer);
-                            }
+                                if (question.LanguageId == model.LanguageId)
+                                {
+                                    var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
+                                    var responseAnswers = new List<AnswerResponseModel>();
+                                    foreach (var answer in answers)
+                                    {
+                                        responseAnswers.Add((AnswerResponseModel)answer);
+                                    }
 
-                            var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
-                            questions.Add(questionAnswers);
+                                    var questionAnswers = new QuestionsAnswersResponseModel(question.Id, question.Type, question.Difficulty, question.Text, question.LanguageId, responseAnswers);
+                                    questions.Add(questionAnswers);
+                                }
+                            }
                         }
                     }
                 }
@@ -428,12 +466,39 @@ namespace DigiBrainServer.Controllers
 
         private int GetNumberOfValidQuestions(string Difficulty, string Type, long LanguageId)
         {
+
+            if(Type.Equals("Any") && !Difficulty.Equals("Any"))
+            {
+                return _context.Question.Where(item => item.Difficulty.Equals(Difficulty) && item.LanguageId == LanguageId).Count();
+            }
+            if (!Type.Equals("Any") && Difficulty.Equals("Any"))
+            {
+                return _context.Question.Where(item => item.Type.Equals(Type) && item.LanguageId == LanguageId).Count();
+            }
+            if (Type.Equals("Any") && Difficulty.Equals("Any"))
+            {
+                return _context.Question.Where(item => item.LanguageId == LanguageId).Count();
+            }
             return _context.Question.Where(item => item.Difficulty.Equals(Difficulty) && item.Type.Equals(Type) && item.LanguageId == LanguageId).Count();
         }
 
         private int GetNumberOfValidQuestionsForSubject(long id, string Difficulty, string Type, long LanguageId)
         {
-            var questions = _context.Question.Where(item => item.Difficulty.Equals(Difficulty) && item.Type.Equals(Type) && item.LanguageId == LanguageId).ToList();
+            List<QuestionModel> questions;
+            if (Type.Equals("Any") && !Difficulty.Equals("Any"))
+            {
+                questions = _context.Question.Where(item => item.Difficulty.Equals(Difficulty) && item.LanguageId == LanguageId).ToList();
+            } else if (!Type.Equals("Any") && Difficulty.Equals("Any"))
+            {
+                questions = _context.Question.Where(item => item.Type.Equals(Type) && item.LanguageId == LanguageId).ToList();
+            } else if (Type.Equals("Any") && Difficulty.Equals("Any"))
+            {
+                questions = _context.Question.Where(item => item.LanguageId == LanguageId).ToList();
+            } else
+            {
+                questions = _context.Question.Where(item => item.Difficulty.Equals(Difficulty) && item.LanguageId == LanguageId).ToList();
+            }
+
             var subjectQuestions = new List<SubjectQuestionModel>();
             foreach(var question in questions)
             {

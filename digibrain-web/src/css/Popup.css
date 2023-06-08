@@ -6,6 +6,7 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.2);
     
+    z-index: 999;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,9 +17,10 @@
     padding: 32px;
     width: 100%;
     max-width: 640px;
-    max-height: 450px;
+    max-height: 500px;
     background-color: #fff;
     overflow-y: auto;
+    border-radius: 20px;
 }
 
 .wide-popup-inner {
@@ -29,4 +31,5 @@
     max-height: 450px;
     background-color: #fff;
     overflow-y: auto;
+    border-radius: 20px;
 }

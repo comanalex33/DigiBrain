@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import jwt from 'jwt-decode'
+import { useTranslation } from 'react-i18next';
 import {
     MDBBtn,
     MDBContainer,
@@ -26,7 +27,9 @@ function App() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [justifyActive, setJustifyActive] = useState('tab1');
+    
     const navigate = useNavigate()
+    const { i18n, t } = useTranslation()
 
     const handleJustifyClick = (value) => {
         if (value === justifyActive) {
@@ -63,6 +66,7 @@ function App() {
                 console.log(decode.roles);
                 sessionStorage.setItem('token', token);
                 sessionStorage.setItem('username', decode.name);
+                sessionStorage.setItem('languageId', 1)
                 sessionStorage.setItem('role', decode.roles);
                 if (decode.roles === 'admin' || decode.roles === 'teacher') {
                     navigate("/")
@@ -81,12 +85,12 @@ function App() {
             <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
                 <MDBTabsItem>
                     <MDBTabsLink onClick={() => handleJustifyClick('tab1')} active={justifyActive === 'tab1'}>
-                        Login
+                        {t("login")}
                     </MDBTabsLink>
                 </MDBTabsItem>
                 <MDBTabsItem>
                     <MDBTabsLink onClick={() => handleJustifyClick('tab2')} active={justifyActive === 'tab2'}>
-                        Register
+                        {t("register")}
                     </MDBTabsLink>
                 </MDBTabsItem>
             </MDBTabs>
@@ -100,12 +104,12 @@ function App() {
                             <MDBCard className='my-5 cascading-right' style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(30px)' }}>
                                 <MDBCardBody className='p-5 shadow-5 text-center'>
 
-                                    <h2 className="fw-bold mb-5">Sign in</h2>
+                                    <h2 className="fw-bold mb-5">{t("sign_in")}</h2>
 
-                                    <MDBInput wrapperClass='mb-4' label='Username' id='form3' type='username' onChange={handleUsernameChange} />
-                                    <MDBInput wrapperClass='mb-4' label='Password' id='form4' type='password' onChange={handlePasswordChange} />
+                                    <MDBInput wrapperClass='mb-4' label={t("username")} id='form3' type='username' onChange={handleUsernameChange} />
+                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' onChange={handlePasswordChange} />
 
-                                    <MDBBtn className='w-100 mb-4' size='md' onClick={handleLogin}>Login</MDBBtn>
+                                    <MDBBtn className='w-100 mb-4' size='md' onClick={handleLogin}>{t("login")}</MDBBtn>
 
                                 </MDBCardBody>
                             </MDBCard>
@@ -120,14 +124,14 @@ function App() {
                             <MDBCard className='my-5 cascading-right' style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(30px)' }}>
                                 <MDBCardBody className='p-5 shadow-5 text-center'>
 
-                                    <h2 className="fw-bold mb-5">Sign up now</h2>
+                                    <h2 className="fw-bold mb-5">{t("sign_up")}</h2>
 
-                                    <MDBInput wrapperClass='mb-4' label='Username' id='form3' type='username' />
-                                    <MDBInput wrapperClass='mb-4' label='Email' id='form3' type='email' />
-                                    <MDBInput wrapperClass='mb-4' label='Password' id='form4' type='password' />
-                                    <MDBInput wrapperClass='mb-4' label='Password' id='form4' type='password' />
+                                    <MDBInput wrapperClass='mb-4' label={t("username")} id='form3' type='username' />
+                                    <MDBInput wrapperClass='mb-4' label={t("email")} id='form3' type='email' />
+                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' />
+                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' />
 
-                                    <MDBBtn className='w-100 mb-4' size='md'>sign up</MDBBtn>
+                                    <MDBBtn className='w-100 mb-4' size='md'>{t("register")}</MDBBtn>
 
                                 </MDBCardBody>
                             </MDBCard>
