@@ -73,6 +73,17 @@ class SettingsFragment : PreferenceFragmentCompat(), ILanguageChanged {
                 true
             }
         }
+
+        preferenceManager.findPreference<SwitchPreferenceCompat>("notifications")?.apply {
+            val notificationsPref = this
+            notificationsPref.setOnPreferenceClickListener {
+
+                requireActivity().getSharedPreferences("application", Context.MODE_PRIVATE).
+                    edit().putBoolean("notifications", notificationsPref.isChecked).apply()
+
+                true
+            }
+        }
     }
 
     private fun setupViewModel() {

@@ -111,4 +111,9 @@
     <string name="hi">Hi</string>
     <string name="all">All</string>
     <string name="learn_path">Learn Path</string>
+
+    <!--    Services-->
+    <string name="user_not_active_title">It\'s time to learn</string>
+    <string name="user_not_active_short_message">No activity in past 3 days</string>
+    <string name="user_not_active_message">No activity in past 3 days. Read some learning materials or start a learning path</string>
 </resources>

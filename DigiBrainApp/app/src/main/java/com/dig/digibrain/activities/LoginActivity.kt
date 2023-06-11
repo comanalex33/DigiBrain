@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.dig.digibrain.databinding.ActivityLoginBinding
 import com.dig.digibrain.dialogs.LoadingDialog
 import com.dig.digibrain.models.LoginModel
 import com.dig.digibrain.services.SessionManager
+import com.dig.digibrain.services.notifications.UserActivityService
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LoginViewModel
@@ -140,6 +142,7 @@ class LoginActivity : AppCompatActivity() {
                         Status.SUCCESS -> {
                             if (resource.data != null) {
                                 sessionManager.setObjectStorageInfo(resource.data)
+                                setUserLastLoginAndAlarm()
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
                             }
@@ -153,6 +156,15 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun setUserLastLoginAndAlarm() {
+        // Set user last login time
+        this.getSharedPreferences("application", Context.MODE_PRIVATE).
+            edit().putLong("lastLoginTime", System.currentTimeMillis()).apply()
+
+        Log.v("LoginActivity", "Starting CheckRecentRun service...")
+        startService(Intent(this, UserActivityService::class.java))
     }
 
     private fun checkLoginFields(): Boolean {

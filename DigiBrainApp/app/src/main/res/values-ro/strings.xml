@@ -111,4 +111,10 @@
     <string name="delete">Sterge</string>
     <string name="hi">Salut</string>
     <string name="all">Toate</string>
+    <string name="learn_path">Plan de învățare</string>
+
+    <!--    Services-->
+    <string name="user_not_active_title">E timpul să înveți</string>
+    <string name="user_not_active_short_message">Nicio activitate în ultimele 3 zile</string>
+    <string name="user_not_active_message">Nicio activitate în ultimele 3 zile. Citește niște materiale sau începe un plan de învățare</string>
 </resources>

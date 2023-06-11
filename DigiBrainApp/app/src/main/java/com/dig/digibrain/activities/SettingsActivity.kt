@@ -3,8 +3,6 @@ package com.dig.digibrain.activities
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
-import android.widget.Toast
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivitySettingsBinding
 import com.dig.digibrain.fragments.SettingsFragment
@@ -31,21 +29,6 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
     }
-
-//    override fun onAttachedToWindow() {
-//        super.onAttachedToWindow()
-//        binding = ActivitySettingsBinding.inflate(layoutInflater)
-//    }
-
-//    override fun onResume() {
-//        super.onResume()
-//
-//        Toast.makeText(applicationContext, "Haha", Toast.LENGTH_SHORT).show()
-//
-//        sessionManager.configuration?.apply {
-//            onConfigurationChanged(sessionManager.configuration!!)
-//        }
-//    }
 
     fun isBindingSet(): Boolean {
         return this::binding.isInitialized
