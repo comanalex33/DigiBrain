@@ -154,10 +154,23 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <service
             android:name=".services.notifications.UserActivityService"
             android:exported="false"
             android:enabled="true"/>
+
+        <service
+            android:name=".services.notifications.FirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/design_default_color_on_primary" />
     </application>
 
 </manifest>

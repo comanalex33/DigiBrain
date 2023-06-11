@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "224135050878",
+    "project_id": "digi-brain-18bfa",
+    "storage_bucket": "digi-brain-18bfa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224135050878:android:17a163ef162a2ada730a2f",
+        "android_client_info": {
+          "package_name": "com.dig.digibrain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224135050878-pj9jejcjlrip8lcalrknoosjk2n84ms3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARMXMTrsfOwV9NJ_nmyxoTi_LtfWtAeLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224135050878-pj9jejcjlrip8lcalrknoosjk2n84ms3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

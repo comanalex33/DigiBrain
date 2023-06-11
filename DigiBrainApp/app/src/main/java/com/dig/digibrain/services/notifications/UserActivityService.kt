@@ -11,11 +11,11 @@ import android.os.Handler
 import com.dig.digibrain.R
 import com.dig.digibrain.activities.LoginActivity
 
-const val THREE_DAYS_MILLIS = 3 * 24 * 60 * 60 * 1000   // Three days in millis
-
 class UserActivityService: Service() {
 
     private val TAG = "UserActivityService"
+    private val THREE_DAYS_MILLIS = 3 * 24 * 60 * 60 * 1000   // Three days in millis
+
     private val handler = Handler()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

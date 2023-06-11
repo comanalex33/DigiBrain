@@ -23,3 +23,9 @@ The form of `secrets.json` file is:
   "JWTSecret": "SECRET"
 }
 ```
+
+## firebase.json
+
+In order to push notifications to mobile users, the project is using Firebase SCM and it needs a file with a private key.
+
+This file is generated from Firebase Console and it is renamed to `firebase.json`.

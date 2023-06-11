@@ -22,6 +22,7 @@ import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LoginViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
@@ -143,6 +144,7 @@ class LoginActivity : AppCompatActivity() {
                             if (resource.data != null) {
                                 sessionManager.setObjectStorageInfo(resource.data)
                                 setUserLastLoginAndAlarm()
+                                FirebaseMessaging.getInstance().subscribeToTopic("all")
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
                             }
