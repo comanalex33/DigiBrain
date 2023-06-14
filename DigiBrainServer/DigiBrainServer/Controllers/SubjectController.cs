@@ -58,7 +58,7 @@ namespace DigiBrainServer.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<SubjectResponseModel>> AddSubject(SubjectViewModel subjectModel)
         {
             var subjectCheck = _context.Subject.Where(item => item.Name.Equals(subjectModel.Name) && item.ClassId == subjectModel.ClassId).FirstOrDefault();
@@ -96,7 +96,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<SubjectResponseModel>> DeleteSubject(long id)
         {
             var subject = await _context.Subject.FindAsync(id);
@@ -109,6 +109,49 @@ namespace DigiBrainServer.Controllers
             }
 
             _context.Subject.Remove(subject);
+            await _context.SaveChangesAsync();
+
+            return Ok((SubjectResponseModel)subject);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<SubjectResponseModel>> UpdateSubject(long id, SubjectViewModel subjectModel)
+        {
+            var subject = await _context.Subject.FindAsync(id);
+            if (subject == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This subject does not exist"
+                });
+            }
+
+            var subjectCheck = _context.Subject.Where(item => item.Id != id && item.Name.Equals(subjectModel.Name) && item.ClassId == subjectModel.ClassId).FirstOrDefault();
+            if (subjectCheck != null)
+            {
+                return BadRequest(new { message = "Subject already exists" });
+            }
+
+            var classCheck = await _context.Class.FindAsync(subjectModel.ClassId);
+            if (classCheck != null)
+            {
+                var domainCheck = await _context.Domain.FindAsync(classCheck.DomainId);
+                if (domainCheck != null)
+                {
+                    if (domainCheck.LanguageId != subjectModel.LanguageId)
+                    {
+                        return BadRequest(new { message = "Subject domain must have the language" });
+                    }
+                }
+            }
+
+            subject.Name = subjectModel.Name;
+            subject.ClassId = subjectModel.ClassId;
+            subject.LanguageId = subjectModel.LanguageId;
+            subject.IconId = subjectModel.IconId;
+
+            _context.Subject.Update(subject);
             await _context.SaveChangesAsync();
 
             return Ok((SubjectResponseModel)subject);

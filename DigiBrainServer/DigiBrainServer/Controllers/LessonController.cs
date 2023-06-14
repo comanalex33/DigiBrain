@@ -36,7 +36,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<LessonResponseModel>> AddLesson(LessonViewModel lessonModel)
         {
             var lessonCheck = _context.Lesson.Where(item => item.Title.Equals(lessonModel.Title) && item.ChapterId == lessonModel.ChapterId).FirstOrDefault();
@@ -61,7 +61,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<LessonResponseModel>> DeleteLesson(long id)
         {
             var lesson = await _context.Lesson.FindAsync(id);
@@ -74,6 +74,35 @@ namespace DigiBrainServer.Controllers
             }
 
             _context.Lesson.Remove(lesson);
+            await _context.SaveChangesAsync();
+
+            return Ok((LessonResponseModel)lesson);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<LessonResponseModel>> UpdateLesson(long id, LessonViewModel lessonModel)
+        {
+            var lesson = await _context.Lesson.FindAsync(id);
+            if (lesson == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This lesson does not exist"
+                });
+            }
+
+            var lessonCheck = _context.Lesson.Where(item => item.Id != id && item.Title.Equals(lessonModel.Title) && item.ChapterId == lessonModel.ChapterId).FirstOrDefault();
+            if (lessonCheck != null)
+            {
+                return BadRequest(new { message = "A lesson with this title already exists" });
+            }
+
+            lesson.Title = lessonModel.Title;
+            lesson.Text = lessonModel.Text;
+            lesson.ChapterId = lessonModel.ChapterId;
+
+            _context.Lesson.Update(lesson);
             await _context.SaveChangesAsync();
 
             return Ok((LessonResponseModel)lesson);

@@ -12,10 +12,14 @@ import ClassSelector from '../components/ClassSelector';
 
 import apiService from '../services/ApiService';
 
+const CHAPTER = 0
+const LESSON = 1
+
 function Learn() {
 
     const [popup, setPopup] = useState(false)
     const [editLessonPopup, setEditLessonPopup] = useState(false)
+    const [confirmDeletePopup, setConfirmDeletePopup] = useState(false)
 
     const [classNumber, setClassNumber] = useState(0)
     const [university, setUniversity] = useState(false)
@@ -35,11 +39,16 @@ function Learn() {
 
     const [chapterName, setChapterName] = useState('')
     const [addChapterOpen, setAddChapterOpen] = useState(false)
+    const [editChapter, setEditChapter] = useState(false)
+    const [editedChapterId, setEditedChapterId] = useState(0)
 
     const [selectedClassId, setSelectedClassId] = useState(0)
     const [selectedSubjectName, setSelectedSubjectName] = useState('')
     const [selectedSubjectId, setSelectedSubjectId] = useState(0)
     const [selectedChapterId, setSelectedChapterId] = useState(0)
+
+    const [deletedElement, setDeletedElement] = useState(-1)
+    const [deletedElementId, setDeletedElementId] = useState(-1)
 
     const [searchFilterActive, setSearchFilterActive] = useState(true);
 
@@ -151,33 +160,84 @@ function Learn() {
         }
     }
 
-    const updateLesson = () => {
-        if (editedLessonId === 0) {
-            apiService.addLesson(lessonTitle, lessonText, selectedChapterId, config)
-                .then(response => {
-                    setEditLessonPopup(false)
-                    handleTabSelect(selectedChapterId)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+    const saveLesson = () => {
+        if (lessonTitle !== null && lessonText !== null) {
+            if (editedLessonId === 0) {
+                apiService.addLesson(lessonTitle, lessonText, selectedChapterId, config)
+                    .then(response => {
+                        setEditLessonPopup(false)
+                        handleTabSelect(selectedChapterId)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            } else {
+                apiService.updateLesson(editedLessonId, lessonTitle, lessonText, selectedChapterId, config)
+                    .then(response => {
+                        setEditLessonPopup(false)
+                        handleTabSelect(selectedChapterId)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
         }
     }
 
-    const addChapter = () => {
-        if (chapterName !== '') {
-            let position = chapters.length - 1
-            let nextChapterNumber = position < 0 ? 1 : chapters[position].number + 1
-            apiService.addChapter(nextChapterNumber, chapterName, selectedSubjectId, config)
-                .then(response => {
-                    setChapterName('')
-                    setAddChapterOpen(false)
-                    openSubject()
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+    const deleteLesson = (id) => {
+        apiService.deleteLesson(id, config)
+            .then(response => {
+                setLessonTitle('')
+                setConfirmDeletePopup(false)
+                handleTabSelect(selectedChapterId)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    const saveChapter = (chapter = null) => {
+        if (editChapter === false) {
+            console.log(chapterName)
+            if (chapterName !== '') {
+                let position = chapters.length - 1
+                let nextChapterNumber = position < 0 ? 1 : chapters[position].number + 1
+                apiService.addChapter(nextChapterNumber, chapterName, selectedSubjectId, config)
+                    .then(response => {
+                        setChapterName('')
+                        setAddChapterOpen(false)
+                        openSubject()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        } else {
+            if (chapterName !== '') {
+                apiService.updateChapter(chapter.id, chapter.number, chapterName, chapter.subjectId, config)
+                    .then(response => {
+                        setChapterName('')
+                        setEditChapter(false)
+                        setEditedChapterId(0)
+                        openSubject()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
         }
+    }
+
+    const deleteChapter = (id) => {
+        apiService.deleteChapter(id, config)
+            .then(response => {
+                setChapterName('')
+                setConfirmDeletePopup(false)
+                openSubject()
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     const addSubject = () => {
@@ -221,15 +281,51 @@ function Learn() {
                 <div className="col-4">
                     <ListGroup id="list-tab">
                         <>
-                            {chapters.map((item, _) => (
+                            {chapters.slice().sort((a, b) => a.number - b.number).map((item, _) => (
                                 <ListGroup.Item key={item.id} action onClick={() => handleTabSelect(`${item.id}`)} eventKey={item.id}>
-                                    {item.name}
+                                    {/* {item.name} */}
+                                    <div className='d-flex justify-content-between p-1'>
+                                        {(editChapter === true && editedChapterId == item.id) ?
+                                            <input type='text' className='m-1 w-50' value={chapterName} onChange={handleChapterNameChange} />
+                                            :
+                                            <label>{item.name}</label>
+                                        }
+                                        <div className='d-flex gap-2'>
+                                            {(editChapter === true && editedChapterId == item.id) ?
+                                                <>
+                                                    < i className='fa fa-check icon d-flex align-items-center' onClick={() => {
+                                                        saveChapter(item)
+                                                    }} />
+                                                    < i className='fa fa-times icon d-flex align-items-center' onClick={() => {
+                                                        setEditChapter(false)
+                                                        setEditedChapterId(0)
+                                                        setChapterName('')
+                                                    }} />
+                                                </>
+                                                :
+                                                <i className='fa-solid fa-edit icon d-flex align-items-center' onClick={() => {
+                                                    setEditChapter(true)
+                                                    setEditedChapterId(item.id)
+                                                    setChapterName(item.name)
+                                                }} />
+                                            }
+
+                                            {(editChapter === false || editedChapterId != item.id) &&
+                                                <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                                    setDeletedElement(CHAPTER)
+                                                    setChapterName(item.name)
+                                                    setDeletedElementId(item.id)
+                                                    setConfirmDeletePopup(true)
+                                                }} />
+                                            }
+                                        </div>
+                                    </div>
                                 </ListGroup.Item>
                             ))}
                             {(subjectOpened === true) &&
                                 <div className={'d-inline d-flex align-items-center' + (addChapterOpen === false ? ' d-none' : '')}>
-                                    <input type='text' className='m-1 w-100' onChange={handleChapterNameChange} />
-                                    <i className='fa fa-check icon m-2' onClick={addChapter} />
+                                    <input type='text' className='m-1 w-100' value={chapterName} onChange={handleChapterNameChange} />
+                                    <i className='fa fa-check icon m-2' onClick={saveChapter} />
                                     <i className='fa fa-times icon m-2' onClick={() => setAddChapterOpen(false)} />
                                 </div>
                             }
@@ -267,14 +363,20 @@ function Learn() {
                 {lessons.map((item, _) => (
                     <div className="card" key={item.id}>
                         <div className="card-header">
-                            <h5 className="mb-0">
-                                <div className='float-start'>
+                            <h5 className="d-flex justify-content-between">
+                                <div>
                                     <button className="btn btn-link" onClick={() => handleAccordionToggle(item.title)}>
                                         {item.title}
                                     </button>
                                 </div>
-                                <div className='float-end'>
-                                    <i className='fa fa-edit icon' onClick={() => handleLessonEdit(item)} />
+                                <div className='d-flex gap-2'>
+                                    <i className='fa fa-edit icon d-flex align-items-center' onClick={() => handleLessonEdit(item)} />
+                                    <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                        setDeletedElement(LESSON)
+                                        setLessonTitle(item.title)
+                                        setDeletedElementId(item.id)
+                                        setConfirmDeletePopup(true)
+                                    }} />
                                 </div>
                             </h5>
                         </div>
@@ -428,9 +530,49 @@ function Learn() {
                 </div>
                 <div className='w-100 mt-3'>
                     <button className='float-start btn btn-danger' onClick={() => setEditLessonPopup(false)}>{t("cancel")}</button>
-                    <button className='float-end btn btn-primary' onClick={updateLesson}>{t("save")}</button>
+                    <button className='float-end btn btn-primary' onClick={saveLesson}>{t("save")}</button>
                 </div>
             </WidePopup>
+            <Popup trigger={confirmDeletePopup}>
+                <div className='d-flex justify-content-center'>
+                    {(() => {
+                        switch (deletedElement) {
+                            case CHAPTER:
+                                return <p className='fs-4'>{t("delete_chapter_check")}</p>
+                            case LESSON:
+                                return <p className='fs-4'>{t("delete_lesson_check")}</p>
+                            default:
+                                return
+                        }
+                    })()}
+                </div>
+                <div className='d-flex gap-3'>
+                    {(() => {
+                        switch (deletedElement) {
+                            case CHAPTER:
+                                return <label>{t("chapter")}:  {chapterName}</label>
+                            case LESSON:
+                                return <label>{t("lesson")}:  {lessonTitle}</label>
+                            default:
+                                return
+                        }
+                    })()}
+                </div>
+                <br />
+                <div className='w-100 d-flex justify-content-around'>
+                    <button className='btn btn-primary' onClick={() => {
+                        switch (deletedElement) {
+                            case CHAPTER:
+                                deleteChapter(deletedElementId)
+                                break
+                            case LESSON:
+                                deleteLesson(deletedElementId)
+                                break
+                        }
+                    }}>{t("yes")}</button>
+                    <button className='btn btn-danger' onClick={() => setConfirmDeletePopup(false)}>{t("no")}</button>
+                </div>
+            </Popup>
         </div>
     );
 };

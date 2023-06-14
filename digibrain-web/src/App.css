@@ -80,3 +80,23 @@
   background-color: #f2f2f0;
   border-radius: 30px;
 }
+
+.message-box {
+  border-radius: 25px;
+}
+
+.button-round {
+  border-radius: 15px;
+}
+
+.active-button {
+  background-color: #4576ff;
+  color: white;
+  cursor: pointer;
+}
+
+.inactive-button {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}

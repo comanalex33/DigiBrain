@@ -28,6 +28,8 @@ i18n
                     school: "School",
                     highschool: "Highschool",
                     university: "University",
+                    chapter: "Chapter",
+                    lesson: "Lesson",
 
                     // Login
                     login: "Login",
@@ -42,6 +44,8 @@ i18n
                     learn_tab: "Learn",
                     quiz_tab: "Quiz",
                     learn_path_tab: "Learn Path",
+                    requests_tab: "Requests",
+                    messages_tab: "Messages",
                     sign_in_button: "Sign In",
                     sign_out_button: "Sign Out",
 
@@ -63,6 +67,8 @@ i18n
                     subject_content: "Subject content",
                     search_filter: "Search filter",
                     no_subject_loaded: "No subject loaded yet",
+                    delete_chapter_check: "Are you sure you want to delete this chapter?",
+                    delete_lesson_check: "Are you sure you want to delete this lesson?",
 
                     // Quiz
                     select_difficulty: "Select difficulty",
@@ -90,6 +96,25 @@ i18n
                     started: "Started",
                     times: "times",
                     no_learn_paths_loaded: "No learn paths loaded yet",
+                    delete_section_check: "Are you sure you want to delete this section?",
+                    delete_lesson_check: "Are you sure you want to delete this lesson?",
+                    delete_theory_check: "Are you sure you want to delete this theory material?",
+                    delete_quiz_check: "Are you sure you want to delete this quiz?",
+                    new_learn_path_notification_title: "New learn path, subject",
+                    new_learn_path_message_start: "A new learn path was just created by",
+                    new_learn_path_message_end: "check it out in the app",
+
+                    // Message
+                    title_and_message_not_empty: "Title and message cannot be empty",
+                    empty_destination: "The message must have a destination",
+                    all_users_notified: "All Users notified",
+                    students: "Students",
+                    teachers: "Teachers",
+                    admins: "Admins",
+                    notified: "notified",
+                    message: "Message",
+                    send: "Send",
+                    to: "To"
                 }
             },
             ro: {
@@ -108,11 +133,15 @@ i18n
                     school: "Școală",
                     highschool: "Liceu",
                     university: "Universitate",
+                    chapter: "Capitol",
+                    lesson: "Lecție",
 
                     // Navbar
                     learn_tab: "Învață",
                     quiz_tab: "Quiz",
                     learn_path_tab: "Plan de învățare",
+                    requests_tab: "Request-uri",
+                    messages_tab: "Mesaje",
                     sign_in_button: "Conectare",
                     sign_out_button: "Deconectare",
 
@@ -143,6 +172,8 @@ i18n
                     subject_content: "Conținut subiect",
                     search_filter: "Filtru de căutare",
                     no_subject_loaded: "Niciun subiect deschis încă",
+                    delete_chapter_check: "Sigur vrei să ștergi acest capitol?",
+                    delete_lesson_check: "Sigur vrei să ștergi această lecție?",
 
                     // Quiz
                     select_difficulty: "Selectează dificultatea",
@@ -170,6 +201,25 @@ i18n
                     started: "Început de",
                     times: "ori",
                     no_learn_paths_loaded: "Niciun plan de învățare încărcat încă",
+                    delete_section_check: "Sigur vrei să ștergi această secțiune?",
+                    delete_lesson_check: "Sigur vrei să ștergi această lecție?",
+                    delete_theory_check: "Sigur vrei să ștergi aceast material teoretic?",
+                    delete_quiz_check: "Sigur vrei să ștergi aceast quiz?",
+                    new_learn_path_notification_title: "Plan de învățare nou, subiect",
+                    new_learn_path_message_start: "Un nou plan de învățare a fost creat de catre",
+                    new_learn_path_message_end: "uită-te peste el în aplicație",
+
+                    // Message
+                    title_and_message_not_empty: "Titlul și mesajul nu pot fi goale",
+                    empty_destination: "Mesajul trebuie să aibă o destinație",
+                    all_users_notified: "Toți utilizatorii au fost notificați",
+                    students: "Studenți",
+                    teachers: "Profesori",
+                    admins: "Admini",
+                    notified: "notificați",
+                    message: "Mesaj",
+                    send: "Trimite",
+                    to: "Către"
                 }
             }
         }

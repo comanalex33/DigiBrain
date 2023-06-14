@@ -298,7 +298,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<PathLearnResponseModel>> AddLearnPath(PathLearnViewModel model)
         {
             var modelCheck = _context.PathLearn.Where(item => item.Title.Equals(model.Title)).FirstOrDefault();
@@ -324,7 +324,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpPost]
         [Route("sections")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<PathSectionResponseModel>> AddLearnPathSection(PathSectionViewModel model)
         {
             var modelCheck = _context.PathSection.Where(item => item.PathLearnId == model.PathLearnId && ( item.Title.Equals(model.Title) || item.Number == model.Number )).FirstOrDefault();
@@ -350,7 +350,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpPost]
         [Route("sections/lessons")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<PathLessonResponseModel>> AddLearnPathLesson(PathLessonViewModel model)
         {
             var modelCheck = _context.PathLesson.Where(item => item.PathSectionId == model.PathSectionId && ( item.Title.Equals(model.Title) || item.Number == model.Number )).FirstOrDefault();
@@ -376,34 +376,38 @@ namespace DigiBrainServer.Controllers
 
         [HttpPost]
         [Route("sections/lessons/quiz")]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<PathLessonResponseQuiz>> AddLearnPathLessonQuiz(PathLessonQuizViewModel model)
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult> AddLearnPathLessonQuiz(List<PathLessonQuizViewModel> questions)
         {
-            var modelCheck = _context.PathLessonQuiz.Where(item => item.PathLessonId == model.PathLessonId && item.QuestionId == model.QuestionId).FirstOrDefault();
-            if (modelCheck != null)
+            foreach (var model in questions)
             {
-                return BadRequest(new { message = "Learn path lesson quiz with this number already exists" });
-            }
+                var modelCheck = _context.PathLessonQuiz.Where(item => item.PathLessonId == model.PathLessonId && item.QuestionId == model.QuestionId).FirstOrDefault();
+                if (modelCheck != null)
+                {
+                    continue;
+                }
 
-            long id = _context.PathLessonQuiz.Count() + 1;
-            modelCheck = await _context.PathLessonQuiz.FindAsync(id);
-            while (modelCheck != null)
-            {
-                id++;
+                long id = _context.PathLessonQuiz.Count() + 1;
                 modelCheck = await _context.PathLessonQuiz.FindAsync(id);
-            }
+                while (modelCheck != null)
+                {
+                    id++;
+                    modelCheck = await _context.PathLessonQuiz.FindAsync(id);
+                }
 
-            PathLessonQuiz learnPathLessonQuiz = new(id, model.Score, model.QuestionId, model.PathLessonId);
-            _context.PathLessonQuiz.Add(learnPathLessonQuiz);
+                PathLessonQuiz learnPathLessonQuiz = new(id, model.Score, model.QuestionId, model.PathLessonId);
+                _context.PathLessonQuiz.Add(learnPathLessonQuiz);
+            }
+            
             await _context.SaveChangesAsync();
 
-            return Ok((PathLessonResponseQuiz)learnPathLessonQuiz);
+            return Ok();
         }
 
         [HttpPost]
         [Route("sections/lessons/theory")]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<PathLessonTheory>> AddLearnPathLessonTheory(PathLessonTheoryViewModel model)
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLessonResponseTheory>> AddLearnPathLessonTheory(PathLessonTheoryViewModel model)
         {
             var modelCheck = _context.PathLessonTheory.Where(item => item.PathLessonId == model.PathLessonId && item.Number == model.Number).FirstOrDefault();
             if (modelCheck != null)
@@ -424,6 +428,244 @@ namespace DigiBrainServer.Controllers
             await _context.SaveChangesAsync();
 
             return Ok((PathLessonResponseTheory)learnPathLessonTheory);
+        }
+
+        [HttpDelete]
+        [Route("sections/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathSectionResponseModel>> DeletePathLearnSection(long id)
+        {
+            var section = await _context.PathSection.FindAsync(id);
+            if(section == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path section doesn't exist"
+                });
+            }
+
+            _context.PathSection.Remove(section);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathSectionResponseModel)section);
+        }
+
+        [HttpDelete]
+        [Route("sections/lessons/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLessonResponseModel>> DeletePathLearnLesson(long id)
+        {
+            var lesson = await _context.PathLesson.FindAsync(id);
+            if (lesson == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path lesson doesn't exist"
+                });
+            }
+
+            _context.PathLesson.Remove(lesson);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathLessonResponseModel)lesson);
+        }
+
+        [HttpDelete]
+        [Route("sections/lessons/{id}/quiz")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult> DeletePathLearnLessonQuiz(long id)
+        {
+            var questions = await _context.PathLessonQuiz.Where(item => item.PathLessonId == id).ToListAsync();
+            foreach(var question in questions)
+            {
+                _context.PathLessonQuiz.Remove(question);
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("sections/lessons/theory/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLessonResponseTheory>> DeletePathLearnLessonTheory(long id)
+        {
+            var theory = await _context.PathLessonTheory.FindAsync(id);
+            if (theory == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path lesson theory doesn't exist"
+                });
+            }
+
+            _context.PathLessonTheory.Remove(theory);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathLessonResponseTheory)theory);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLearnResponseModel>> UpdateLearnPath(long id, PathLearnViewModel model)
+        {
+            var learnPath = await _context.PathLearn.FindAsync(id);
+            if (learnPath == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learning path does not exist"
+                });
+            }
+
+            var modelCheck = _context.PathLearn.Where(item => item.Id != id && item.Title.Equals(model.Title)).FirstOrDefault();
+            if (modelCheck != null)
+            {
+                return BadRequest(new { message = "Learn path with this name already exists" });
+            }
+
+            learnPath.Title = model.Title;
+            learnPath.Description = model.Description;
+            learnPath.Author = model.Author;
+            learnPath.SubjectId = model.SubjectId;
+            learnPath.ImageName = model.ImageName;
+
+            _context.PathLearn.Update(learnPath);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathLearnResponseModel)learnPath);
+        }
+
+        [HttpPut]
+        [Route("sections/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathSectionResponseModel>> UpdateLearnPathSection(long id, PathSectionViewModel model)
+        {
+            var section = await _context.PathSection.FindAsync(id);
+            if (section == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path section doesn't exist"
+                });
+            }
+
+            var modelCheck = _context.PathSection.Where(item => item.Id != id && item.PathLearnId == model.PathLearnId && (item.Title.Equals(model.Title) || item.Number == model.Number)).FirstOrDefault();
+            if (modelCheck != null)
+            {
+                return BadRequest(new { message = "Learn path section with this name or number already exists" });
+            }
+
+            section.Number = model.Number;
+            section.Title = model.Title;
+            section.IconId = model.IconId;
+            section.PathLearnId = model.PathLearnId;
+
+            _context.PathSection.Update(section);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathSectionResponseModel)section);
+        }
+
+        [HttpPut]
+        [Route("sections/lessons/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLessonResponseModel>> UpdateLearnPathLesson(long id, PathLessonViewModel model)
+        {
+            var lesson = await _context.PathLesson.FindAsync(id);
+            if (lesson == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path lesson doesn't exist"
+                });
+            }
+
+            var modelCheck = _context.PathLesson.Where(item => item.Id != id && item.PathSectionId == model.PathSectionId && (item.Title.Equals(model.Title) || item.Number == model.Number)).FirstOrDefault();
+            if (modelCheck != null)
+            {
+                return BadRequest(new { message = "Learn path lesson with this name or number already exists" });
+            }
+
+            lesson.Number = model.Number;
+            lesson.Title = model.Title;
+            lesson.Description = model.Description;
+            lesson.PathSectionId = model.PathSectionId;
+
+            _context.PathLesson.Update(lesson);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathLessonResponseModel)lesson);
+        }
+
+        [HttpPut]
+        [Route("sections/lessons/{id}/quiz")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult> UpdateLearnPathLessonQuiz(long id, List<PathLessonQuizViewModel> questions)
+        {
+            var deletedQuestions = await _context.PathLessonQuiz.Where(item => item.PathLessonId == id).ToListAsync();
+            foreach (var question in deletedQuestions)
+            {
+                _context.PathLessonQuiz.Remove(question);
+            }
+
+            await _context.SaveChangesAsync();
+
+            foreach (var model in questions)
+            {
+                var modelCheck = _context.PathLessonQuiz.Where(item => item.PathLessonId == model.PathLessonId && item.QuestionId == model.QuestionId).FirstOrDefault();
+                if (modelCheck != null)
+                {
+                    continue;
+                }
+
+                long newId = _context.PathLessonQuiz.Count() + 1;
+                modelCheck = await _context.PathLessonQuiz.FindAsync(newId);
+                while (modelCheck != null)
+                {
+                    newId++;
+                    modelCheck = await _context.PathLessonQuiz.FindAsync(newId);
+                }
+
+                PathLessonQuiz learnPathLessonQuiz = new(newId, model.Score, model.QuestionId, model.PathLessonId);
+                _context.PathLessonQuiz.Add(learnPathLessonQuiz);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("sections/lessons/theory/{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<PathLessonResponseTheory>> UpdateLearnPathLessonTheory(long id, PathLessonTheoryViewModel model)
+        {
+            var theory = await _context.PathLessonTheory.FindAsync(id);
+            if (theory == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This learn path lesson theory doesn't exist"
+                });
+            }
+
+            var modelCheck = _context.PathLessonTheory.Where(item => item.Id != id && item.PathLessonId == model.PathLessonId && item.Number == model.Number).FirstOrDefault();
+            if (modelCheck != null)
+            {
+                return BadRequest(new { message = "Learn path lesson theory with this number already exists" });
+            }
+
+            theory.Number = model.Number;
+            theory.Title = model.Title;
+            theory.Text = model.Text;
+            theory.PathLessonId = model.PathLessonId;
+
+            _context.PathLessonTheory.Update(theory);
+            await _context.SaveChangesAsync();
+
+            return Ok((PathLessonResponseTheory)theory);
         }
     }
 }

@@ -21,6 +21,7 @@ function Quiz() {
 
     const [subjects, setSubjects] = useState([])
     const [questions, setQuestions] = useState([])
+    const [editQuestion, setEditQuestion] = useState(false)
 
     const [selectedClassId, setSelectedClassId] = useState(0)
     const [selectedSubjectId, setSelectedSubjectId] = useState(0)
@@ -124,6 +125,7 @@ function Quiz() {
 
     const handleAddQuestionPopupOpen = () => {
         setAddQuestionPopup(true)
+        setEditQuestion(false)
         setQuestionText("")
 
         switch (selectedQuestionType) {
@@ -136,12 +138,14 @@ function Quiz() {
             case "TrueFalse":
                 const updatedAnswers = []
                 let trueItem = {
+                    id: 0,
                     text: "Adevarat",
                     position: 0,
                     correct: false,
                     questionId: 0
                 }
                 let falseItem = {
+                    id: 0,
                     text: "Fals",
                     position: 0,
                     correct: false,
@@ -161,22 +165,32 @@ function Quiz() {
         const updatedAnswers = [...addedAnswers]
 
         let answerListItem = {
+            id: 0,
             text: "",
             position: position,
             correct: correct,
-            questionId: 0
+            questionId: (editQuestion === true) ? selectedQuestion.id : 0
         }
 
         updatedAnswers.push(answerListItem)
         setAddedAnswers(updatedAnswers)
     }
 
+    const removeAnswer = (position) => {
+        const updatedAnswers = [...addedAnswers]
+
+        updatedAnswers.splice(position, 1)
+        setAddedAnswers(updatedAnswers)
+    }
+
     const handleEditQuestion = (question) => {
         setSelectedQuestion(question)
+        setEditQuestion(true)
         setQuestionText(question.text)
         const answers = []
         question.answers.forEach(answer => {
             let item = {
+                id: answer.id,
                 text: answer.text,
                 position: answer.position,
                 correct: answer.correct,
@@ -262,10 +276,8 @@ function Quiz() {
                     <div className="card" key={item.id}>
                         <div className="card-header">
                             <h5 className="mb-0">
-                                <div className='float-start'>
-                                    <button className="btn btn-link" onClick={() => handleAccordionToggle(item.id)}>
-                                        {item.text}
-                                    </button>
+                                <div className='float-start h-100'>
+                                    <div className='fs-6 d-flex align-items-center'>{item.text}</div>
                                 </div>
                                 <div className='float-end'>
                                     <div className='d-flex gap-2'>
@@ -274,16 +286,6 @@ function Quiz() {
                                     </div>
                                 </div>
                             </h5>
-                        </div>
-
-                        <div className={"collapse" + (activeKey === item.id ? ' show' : '')}>
-                            <div className="card-body">
-                                <ul>
-                                    {item.answers.map((answer, _) => (
-                                        <li key={answer.id}>{answer.text} - {answer.correct ? t("correct") : t("wrong")} - {answer.position}</li>
-                                    ))}
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 ))}
@@ -298,7 +300,7 @@ function Quiz() {
         )
     }
 
-    const addQuestion = () => {
+    const saveQuestion = () => {
 
         if (addedAnswers.length < 2) {
             alert("Orice intrebare trebuie sa aiba si raspunsuri, cel putin 2")
@@ -312,42 +314,45 @@ function Quiz() {
             }
         }
 
-        apiService.addQuestion(questionText, selectedDifficuty, selectedQuestionType, 2, config)
-            .then(questionResponse => {
-                const updatedAnswers = [...addedAnswers]
-                updatedAnswers.forEach(element => {
-                    element.questionId = questionResponse.data.id
-                });
+        if (editQuestion === false) {
+            apiService.addQuestion(questionText, selectedDifficuty, selectedQuestionType, 2, config)
+                .then(questionResponse => {
+                    const updatedAnswers = [...addedAnswers]
+                    updatedAnswers.forEach(element => {
+                        element.questionId = questionResponse.data.id
+                    });
 
-                apiService.addAnswers(updatedAnswers, config)
-                    .then(answerResponse => {
-                        apiService.addQuestionToSubjects([selectedSubjectId], questionResponse.data.id, config)
-                            .then(response => {
-                                console.log("Question added")
-                                getQuestions()
-                                setAddQuestionPopup(false)
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            })
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            })
-            .catch(error => {
-                console.log(error)
-            })
+                    apiService.addAnswers(updatedAnswers, config)
+                        .then(answerResponse => {
+                            apiService.addQuestionToSubjects([selectedSubjectId], questionResponse.data.id, config)
+                                .then(response => {
+                                    console.log("Question added")
+                                    getQuestions()
+                                    setAddQuestionPopup(false)
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                })
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        } else {
+            apiService.updateQuestion(selectedQuestion.id, questionText, selectedDifficuty, selectedQuestionType, languageId, addedAnswers, config)
+                .then(response => {
+                    console.log("Question updated")
+                    getQuestions()
+                    setAddQuestionPopup(false)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
     }
-
-    const [activeKey, setActiveKey] = useState(0);
-
-    const handleAccordionToggle = (selectedToggle) => {
-        if (activeKey === selectedToggle)
-            setActiveKey('')
-        else
-            setActiveKey(selectedToggle);
-    };
 
     subjectsList = [
         <option value={0} key={0}>-- {t("choose_subject")} --</option>,
@@ -462,9 +467,14 @@ function Quiz() {
                             <ul>
                                 {addedAnswers.map((item, position) => (
                                     <div key={position} className='d-flex gap-5'>
-                                        <label>{t("answer")} {position + 1}</label>
-                                        <input className='ml-3' type='text' value={item.text} onChange={(event) => handleAddAnswerTextChange(event, position)} />
-                                        <Form.Check type='checkbox' checked={item.correct} onChange={(event) => handleAddAnswerCheckChange(event, position)} />
+                                        <div className='d-flex justify-content-between p-1 w-100'>
+                                            <div className='d-flex gap-3'>
+                                                <label>{t("answer")} {position + 1}</label>
+                                                <input className='ml-3' type='text' value={item.text} onChange={(event) => handleAddAnswerTextChange(event, position)} />
+                                                <Form.Check type='checkbox' checked={item.correct} onChange={(event) => handleAddAnswerCheckChange(event, position)} />
+                                            </div>
+                                            <i className='fa fa-trash icon' onClick={() => removeAnswer(position)} />
+                                        </div>
                                     </div>
                                 ))}
                             </ul>
@@ -498,7 +508,7 @@ function Quiz() {
                 </div>
                 <div className='w-100'>
                     <button className='float-start btn btn-danger' onClick={handleAddQuestionPopupClose}>{t("cancel")}</button>
-                    <button className='float-end btn btn-primary' onClick={addQuestion}>{t("save")}</button>
+                    <button className='float-end btn btn-primary' onClick={saveQuestion}>{t("save")}</button>
                 </div>
             </WidePopup>
             <Popup trigger={confirmDeletePopup}>

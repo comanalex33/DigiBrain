@@ -12,11 +12,18 @@ import ClassSelector from '../components/ClassSelector';
 
 import apiService from '../services/ApiService';
 import utils from '../Utils';
+import axios from 'axios';
+
+const SECTION = 0
+const LESSON = 1
+const THEORY = 2
+const QUIZ = 3
 
 function LearnPath() {
 
     // Explorer mode
     const [popup, setPopup] = useState(false)
+    const [addNewLearnPathPopup, setAddNewLearnPathPopup] = useState(false)
 
     const [activeKey, setActiveKey] = useState(0);
 
@@ -25,6 +32,9 @@ function LearnPath() {
     const [languageId, setLanguageId] = useState(0)
 
     const [subjects, setSubjects] = useState([])
+
+    const [newLearnPathTitle, setNewLearnPathTitle] = useState('')
+    const [newLearnPathDescription, setNewLearnPathDescription] = useState('')
 
     const [learnPathsOpened, setLearnPathsOpened] = useState(false)
     const [learnPaths, setLearnPaths] = useState([])
@@ -36,8 +46,13 @@ function LearnPath() {
 
     const [searchFilterActive, setSearchFilterActive] = useState(true);
 
+    const username = sessionStorage.getItem('username')
     const token = sessionStorage.getItem('token')
     const config = { headers: { 'Authorization': 'Bearer ' + token } }
+    const configPost = {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+    }
     const { i18n, t } = useTranslation()
 
     let subjectsList = []
@@ -104,9 +119,15 @@ function LearnPath() {
         setEditedLearnPath(learnPath)
         setActiveSection(null)
         getLearnPathDetails(learnPath.id)
-        setLearnPathTitle(learnPath.title)
-        setLearnPathDescription(learnPath.description)
         openEditMode()
+    }
+
+    const handleNewLearnPathTitleChange = event => {
+        setNewLearnPathTitle(event.target.value)
+    }
+
+    const handleNewLearnPathDescriptionChange = event => {
+        setNewLearnPathDescription(event.target.value)
     }
 
     const getSubjects = (langId) => {
@@ -134,24 +155,48 @@ function LearnPath() {
             })
     }
 
-    const getLearnPaths = () => {
+    const getLearnPaths = (filter = false) => {
         apiService.getLearnPaths()
             .then(response => {
                 console.log(response.data)
                 setLearnPaths(response.data)
+                if (filter === true) {
+                    filterLearnPaths(response.data)
+                    console.log("Filtrate")
+                }
             })
             .catch(error => {
                 console.log(error)
             })
     }
 
-    const filterLearnPaths = () => {
+    const filterLearnPaths = (learnPaths) => {
         console.log(selectedSubjectId)
         if (selectedSubjectId !== 0) {
             const filteredList = learnPaths.filter((item) => item.subjectId === parseInt(selectedSubjectId))
             console.log(filteredList)
             setFilteredLearnPaths(filteredList)
             setLearnPathsOpened(true)
+        }
+    }
+
+    const addLearnPath = () => {
+        if (newLearnPathTitle !== '' && newLearnPathDescription !== '') {
+            apiService.addLearnPath(newLearnPathTitle, newLearnPathDescription, username, selectedSubjectId, null, config)
+                .then(response => {
+                    setAddNewLearnPathPopup(false)
+                    getLearnPaths(true)
+                    apiService.notify(`${t("new_learn_path_notification_title")} ${selectedSubjectName}`, `${t("new_learn_path_message_start")} ${username}, ${t("new_learn_path_message_end")}: ${newLearnPathTitle}`, `subject${selectedSubjectId}`, config)
+                        .then(response => {
+                            console.log("Users notified")
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     }
 
@@ -173,11 +218,19 @@ function LearnPath() {
 
     const [addSectionOpen, setAddSectionOpen] = useState(false)
     const [sectionName, setSectionName] = useState('')
+    const [editSection, setEditSection] = useState(false)
+    const [editedSectionId, setEditedSectionId] = useState(0)
 
     const [addLessonOpen, setAddLessonOpen] = useState(false)
     const [lessonName, setLessonName] = useState('')
+    const [editLesson, setEditLesson] = useState(false)
+    const [editedLessonId, setEditedLessonId] = useState(0)
 
     const [editTheoryPopup, setEditTheoryPopup] = useState(false)
+    const [confirmDeletePopup, setConfirmDeletePopup] = useState(false)
+    const [deletedElement, setDeletedElement] = useState(-1)
+    const [deletedElementId, setDeletedElementId] = useState(-1)
+
     const [editedTheoryId, setEditedTheoryId] = useState(0)
     const [theoryTitle, setTheoryTitle] = useState('')
     const [theoryText, setTheoryText] = useState('')
@@ -186,6 +239,7 @@ function LearnPath() {
     const [questions, setQuestions] = useState([])
     const [activeQuestionId, setActiveQuestionId] = useState(null)
     const [selectedQuestionIds, setSelectedQuestionIds] = useState([])
+    const [newQuiz, setNewQuiz] = useState(false)
 
     const handleLearnPathSectionChange = (selectedSection) => {
         setActiveSection(selectedSection)
@@ -199,7 +253,10 @@ function LearnPath() {
     }
 
     const handleLearnPathLessonChange = (selectedLesson) => {
-        setActiveLesson(selectedLesson)
+        if (activeLesson === selectedLesson)
+            setActiveLesson(null)
+        else
+            setActiveLesson(selectedLesson)
     }
 
     const handleSectionNameChange = event => {
@@ -241,6 +298,12 @@ function LearnPath() {
     }
 
     const handleQuizEdit = (questions) => {
+        if (questions.length == 0) {
+            setNewQuiz(true)
+        } else {
+            setNewQuiz(false)
+        }
+
         setChooseQuestionsPopup(true)
         let ids = []
         questions.forEach(element => {
@@ -268,10 +331,16 @@ function LearnPath() {
         setSelectedQuestionIds(list)
     }
 
+    const getTheoryById = (id) => {
+        return activeLesson.theory.find(theory => theory.id == id) || null
+    }
+
     const getLearnPathDetails = (id) => {
         apiService.getLearnPathDetails(id)
             .then(response => {
                 setDetailedLearnPath(response.data)
+                setLearnPathTitle(response.data.title)
+                setLearnPathDescription(response.data.description)
             })
             .catch(error => {
                 console.log(error)
@@ -288,20 +357,125 @@ function LearnPath() {
             })
     }
 
+    const saveLearnPath = () => {
+        if (selectedLearnPathTitle !== '' && selectedLearnPathDescription !== '') {
+            apiService.updateLearnPath(detailedLearnPath.id, selectedLearnPathTitle, selectedLearnPathDescription, detailedLearnPath.author, detailedLearnPath.subjectId, detailedLearnPath.imageName, config)
+                .then(response => {
+                    closeEditMode()
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
+    }
+
+    const saveLearnPathSection = (section = null) => {
+        if (editSection === false) {
+            if (sectionName !== '') {
+                let position = detailedLearnPath.sections.length - 1
+                let nextSectionNumber = position < 0 ? 1 : detailedLearnPath.sections[position].number + 1
+                apiService.addLearnPathSection(nextSectionNumber, sectionName, 0, detailedLearnPath.id, config)
+                    .then(response => {
+                        setSectionName('')
+                        setAddSectionOpen(false)
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        } else {
+            if (sectionName !== '') {
+                apiService.updateLearnPathSection(section.id, section.number, sectionName, section.iconId, section.pathLearnId, config)
+                    .then(response => {
+                        setSectionName('')
+                        setEditSection(false)
+                        setEditedSectionId(0)
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        }
+    }
+
+    const deleteLearnPathSection = (id) => {
+        apiService.deleteLearnPathSection(id, config)
+            .then(response => {
+                setSectionName('')
+                setConfirmDeletePopup(false)
+                getLearnPathDetails(detailedLearnPath.id)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    const saveLearnPathLesson = (lesson = null) => {
+        if (editLesson === false) {
+            if (lessonName !== '') {
+                let position = activeSection.lessons.length - 1
+                let nextLessonNumber = position < 0 ? 1 : activeSection.lessons[position].number + 1
+                apiService.addLearnPathLesson(nextLessonNumber, lessonName, 'Test', activeSection.id, config)
+                    .then(response => {
+                        setLessonName('')
+                        setAddLessonOpen(false)
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        } else {
+            if (lessonName !== '') {
+                apiService.updateLearnPathLesson(lesson.id, lesson.number, lessonName, lesson.description, lesson.pathSectionId, config)
+                    .then(response => {
+                        setLessonName('')
+                        setEditLesson(false)
+                        setEditedLessonId(0)
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        }
+    }
+
+    const deleteLearnPathLesson = (id) => {
+        apiService.deleteLearnPathLesson(id, config)
+            .then(response => {
+                setLessonName('')
+                setConfirmDeletePopup(false)
+                getLearnPathDetails(detailedLearnPath.id)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     const saveQuiz = () => {
         console.log(selectedQuestionIds)
-        setChooseQuestionsPopup(false)
-        setSelectedQuestionIds([])
-    }
+        console.log(newQuiz)
 
-    const addLearnPathSection = () => {
-        if (sectionName !== '') {
-            let position = detailedLearnPath.sections.length - 1
-            let nextSectionNumber = position < 0 ? 1 : detailedLearnPath.sections[position].number + 1
-            apiService.addLearnPathSection(nextSectionNumber, sectionName, 0, detailedLearnPath.id, config)
+        if (newQuiz) {
+            if (selectedQuestionIds.length !== 0) {
+                apiService.addLearnPathQuiz(selectedQuestionIds, activeLesson.id, config)
+                    .then(response => {
+                        setChooseQuestionsPopup(false)
+                        setSelectedQuestionIds([])
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        } else {
+            apiService.updateLearnPathQuiz(activeLesson.id, selectedQuestionIds, activeLesson.id, config)
                 .then(response => {
-                    setSectionName('')
-                    setAddSectionOpen(false)
+                    setChooseQuestionsPopup(false)
+                    setSelectedQuestionIds([])
                     getLearnPathDetails(detailedLearnPath.id)
                 })
                 .catch(error => {
@@ -310,37 +484,61 @@ function LearnPath() {
         }
     }
 
-    const addLearnPathLesson = () => {
-        if (lessonName !== '') {
-            let position = activeSection.lessons.length - 1
-            let nextLessonNumber = position < 0 ? 1 : activeSection.lessons[position].number + 1
-            apiService.addLearnPathLesson(nextLessonNumber, lessonName, 'Test', activeSection.id, config)
-                .then(response => {
-                    setLessonName('')
-                    setAddLessonOpen(false)
-                    getLearnPathDetails(detailedLearnPath.id)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-        }
+    const deleteLearnPathQuiz = (id) => {
+        apiService.deleteLearnPathTheory(id, config)
+            .then(response => {
+                setLessonName('')
+                setConfirmDeletePopup(false)
+                getLearnPathDetails(detailedLearnPath.id)
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
-    const addLearnPathTheory = () => {
+    const saveLearnPathTheory = () => {
         if (theoryTitle !== null && theoryText !== null) {
-            let position = activeLesson.theory.length - 1
-            let nextTheoryNumber = position < 0 ? 1 : activeLesson.theory[position].number + 1
-            apiService.addLearnPathTheory(nextTheoryNumber, theoryTitle, theoryText, activeLesson.id, config)
-                .then(response => {
-                    setTheoryTitle('')
-                    setTheoryText('')
-                    setEditTheoryPopup(false)
-                    getLearnPathDetails(detailedLearnPath.id)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+            if (editedTheoryId === 0) {
+                let position = activeLesson.theory.length - 1
+                let nextTheoryNumber = position < 0 ? 1 : activeLesson.theory[position].number + 1
+                apiService.addLearnPathTheory(nextTheoryNumber, theoryTitle, theoryText, activeLesson.id, config)
+                    .then(response => {
+                        setTheoryTitle('')
+                        setTheoryText('')
+                        setEditTheoryPopup(false)
+                        getLearnPathDetails(detailedLearnPath.id)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            } else {
+                const theory = getTheoryById(editedTheoryId)
+                if (theory !== null) {
+                    apiService.updateLearnPathTheory(theory.id, theory.number, theoryTitle, theoryText, activeLesson.id, config)
+                        .then(response => {
+                            setTheoryTitle('')
+                            setTheoryText('')
+                            setEditTheoryPopup(false)
+                            getLearnPathDetails(detailedLearnPath.id)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                }
+            }
         }
+    }
+
+    const deleteLearnPathTheory = (id) => {
+        apiService.deleteLearnPathTheory(id, config)
+            .then(response => {
+                setTheoryTitle('')
+                setConfirmDeletePopup(false)
+                getLearnPathDetails(detailedLearnPath.id)
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     const renderLearnPathSections = () => {
@@ -350,18 +548,50 @@ function LearnPath() {
                     <ListGroup id="list-tab">
                         {(detailedLearnPath !== null) &&
                             <>
-                                {detailedLearnPath.sections.map((section, _) => (
+                                {detailedLearnPath.sections.slice().sort((a, b) => a.number - b.number).map((section, _) => (
                                     <ListGroup.Item key={section.id} action onClick={() => handleLearnPathSectionChange(section)} eventKey={section.id}>
                                         {/* {section.title} */}
                                         <div className='d-flex justify-content-between p-1'>
-                                            <label>{section.title}</label>
-                                            <i className='fa-solid fa-edit icon' />
+                                            {(editSection === true && editedSectionId == section.id) ?
+                                                <input type='text' className='m-1 w-50' value={sectionName} onChange={handleSectionNameChange} />
+                                                :
+                                                <label>{section.title}</label>
+                                            }
+                                            <div className='d-flex gap-2'>
+                                                {(editSection === true && editedSectionId == section.id) ?
+                                                    <>
+                                                        < i className='fa fa-check icon d-flex align-items-center' onClick={() => {
+                                                            saveLearnPathSection(section)
+                                                        }} />
+                                                        < i className='fa fa-times icon d-flex align-items-center' onClick={() => {
+                                                            setEditSection(false)
+                                                            setEditedSectionId(0)
+                                                            setSectionName('')
+                                                        }} />
+                                                    </>
+                                                    :
+                                                    <i className='fa-solid fa-edit icon d-flex align-items-center' onClick={() => {
+                                                        setEditSection(true)
+                                                        setEditedSectionId(section.id)
+                                                        setSectionName(section.title)
+                                                    }} />
+                                                }
+
+                                                {(editSection === false || editedSectionId != section.id) &&
+                                                    <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                                        setDeletedElement(SECTION)
+                                                        setSectionName(section.title)
+                                                        setDeletedElementId(section.id)
+                                                        setConfirmDeletePopup(true)
+                                                    }} />
+                                                }
+                                            </div>
                                         </div>
                                     </ListGroup.Item>
                                 ))}
                                 <div className={'d-inline d-flex align-items-center' + (addSectionOpen === false ? ' d-none' : '')}>
-                                    <input type='text' className='m-1 w-100' onChange={handleSectionNameChange} />
-                                    <i className='fa fa-check icon m-2' onClick={addLearnPathSection} />
+                                    <input type='text' className='m-1 w-100' value={sectionName} onChange={handleSectionNameChange} />
+                                    <i className='fa fa-check icon m-2' onClick={saveLearnPathSection} />
                                     <i className='fa fa-times icon m-2' onClick={() => setAddSectionOpen(false)} />
                                 </div>
                                 <div className='card card-add m-3' onClick={() => setAddSectionOpen(true)}>
@@ -396,14 +626,47 @@ function LearnPath() {
                 {(activeSection !== null) &&
                     <div>
                         {
-                            activeSection.lessons.map((lesson, _) => (
+                            activeSection.lessons.slice().sort((a, b) => a.number - b.number).map((lesson, _) => (
                                 <div className="card" key={lesson.id}>
                                     <div className="card-header">
                                         <h5 className="mb-0">
-                                            <div className='float-start'>
-                                                <button className="btn btn-link" onClick={() => handleLearnPathLessonChange(lesson)}>
-                                                    {lesson.title}
-                                                </button>
+                                            <div className='d-flex justify-content-between'>
+                                                {(editLesson === true && editedLessonId == lesson.id) ?
+                                                    <input type='text' className='m-1 w-25' value={lessonName} onChange={handleLessonNameChange} />
+                                                    :
+                                                    <button className="btn btn-link" onClick={() => handleLearnPathLessonChange(lesson)}>
+                                                        {lesson.title}
+                                                    </button>
+                                                }
+                                                <div className='d-flex gap-2'>
+                                                    {(editLesson === true && editedLessonId == lesson.id) ?
+                                                        <>
+                                                            < i className='fa fa-check icon d-flex align-items-center' onClick={() => {
+                                                                saveLearnPathLesson(lesson)
+                                                            }} />
+                                                            < i className='fa fa-times icon d-flex align-items-center' onClick={() => {
+                                                                setEditLesson(false)
+                                                                setEditedLessonId(0)
+                                                                setLessonName('')
+                                                            }} />
+                                                        </>
+                                                        :
+                                                        <i className='fa fa-edit icon d-flex align-items-center' onClick={() => {
+                                                            setEditLesson(true)
+                                                            setEditedLessonId(lesson.id)
+                                                            setLessonName(lesson.title)
+                                                        }} />
+                                                    }
+
+                                                    {(editLesson === false || editedLessonId != lesson.id) &&
+                                                        <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                                            setDeletedElement(LESSON)
+                                                            setLessonName(lesson.title)
+                                                            setDeletedElementId(lesson.id)
+                                                            setConfirmDeletePopup(true)
+                                                        }} />
+                                                    }
+                                                </div>
                                             </div>
                                         </h5>
                                     </div>
@@ -411,11 +674,19 @@ function LearnPath() {
                                     {(activeLesson !== null) &&
                                         <div className={"collapse" + (activeLesson === lesson ? ' show' : '')}>
                                             <p className='m-2'>{t("lessons")}</p>
-                                            {activeLesson.theory.map((theory, position) => (
+                                            {activeLesson.theory.slice().sort((a, b) => a.number - b.number).map((theory, position) => (
                                                 <div key={position} className='card m-1'>
                                                     <div className='d-flex justify-content-between p-3'>
                                                         <label>{theory.title}</label>
-                                                        <i className='fa-solid fa-edit icon' onClick={() => handleTheoryEdit(theory)} />
+                                                        <div className='d-flex gap-2'>
+                                                            <i className='fa fa-edit icon d-flex align-items-center' onClick={() => handleTheoryEdit(theory)} />
+                                                            <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                                                setDeletedElement(THEORY)
+                                                                setTheoryTitle(theory.title)
+                                                                setDeletedElementId(theory.id)
+                                                                setConfirmDeletePopup(true)
+                                                            }} />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}
@@ -429,7 +700,15 @@ function LearnPath() {
                                                 <div key={activeLesson.theory.length + 1} className='card m-1'>
                                                     <div className='d-flex justify-content-between p-3'>
                                                         <label>{t("quiz")}</label>
-                                                        <i className='fa-solid fa-edit icon' onClick={() => handleQuizEdit(activeLesson.quiz)} />
+                                                        <div className='d-flex gap-2'>
+                                                            <i className='fa-solid fa-edit icon d-flex align-items-center' onClick={() => handleQuizEdit(activeLesson.quiz)} />
+                                                            <i className='fa fa-trash icon d-flex align-items-center' onClick={() => {
+                                                                setDeletedElement(QUIZ)
+                                                                setLessonName(lesson.title)
+                                                                setDeletedElementId(lesson.id)
+                                                                setConfirmDeletePopup(true)
+                                                            }} />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ) : (
@@ -446,8 +725,8 @@ function LearnPath() {
                             ))
                         }
                         <div className={'d-inline d-flex align-items-center' + (addLessonOpen === false ? ' d-none' : '')}>
-                            <input type='text' className='m-1 w-100' onChange={handleLessonNameChange} />
-                            <i className='fa fa-check icon m-2' onClick={addLearnPathLesson} />
+                            <input type='text' className='m-1 w-100' value={lessonName} onChange={handleLessonNameChange} />
+                            <i className='fa fa-check icon m-2' onClick={saveLearnPathLesson} />
                             <i className='fa fa-times icon m-2' onClick={() => setAddLessonOpen(false)} />
                         </div>
                         <div className='card card-add m-3' onClick={() => setAddLessonOpen(true)}>
@@ -509,6 +788,8 @@ function LearnPath() {
 
         step1.style.transform = 'translateX(0)'
         step2.style.transform = 'translateX(100%)'
+
+        setDetailedLearnPath(null)
     }
 
     return (
@@ -568,7 +849,7 @@ function LearnPath() {
 
                         {/* Open learn paths */}
                         <div className='d-flex justify-content-center mt-3'>
-                            <button onClick={filterLearnPaths} className='btn btn-primary w-25 fs-5'>{t("open")}</button>
+                            <button onClick={() => filterLearnPaths(learnPaths)} className='btn btn-primary w-25 fs-5'>{t("open")}</button>
                         </div>
                         <br />
                     </div>
@@ -595,6 +876,15 @@ function LearnPath() {
                                 </div>
                             </div>
                         ))}
+                        <div className='card card-add m-3' onClick={() => {
+                            setNewLearnPathTitle('')
+                            setNewLearnPathDescription('')
+                            setAddNewLearnPathPopup(true)
+                        }}>
+                            <div className="card-header d-flex justify-content-center">
+                                <i className='fa fa-plus icon' />
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
@@ -602,7 +892,7 @@ function LearnPath() {
             <div className='step p-3 overflow-auto scrollable' id='step2'>
                 <div className='d-flex justify-content-between w-100 p-3'>
                     <button className='btn btn-danger' onClick={closeEditMode}>{t("cancel")}</button>
-                    <button className='btn btn-primary'>{t("save")}</button>
+                    <button className='btn btn-primary' onClick={saveLearnPath}>{t("save")}</button>
                 </div>
                 {(editedLearnPath !== null) &&
                     <div className='d-flex flex-column'>
@@ -632,6 +922,21 @@ function LearnPath() {
                     <button className='btn btn-primary' onClick={() => getSubjects(0)}>Ok</button>
                 </div>
             </Popup>
+            <WidePopup trigger={addNewLearnPathPopup}>
+                <div className='d-flex justify-content-center w-100 fs-3'>Add new learn path</div>
+                <div className='d-flex gap-3 mt-3'>
+                    <label className='fs-4'>{t('title')}:</label>
+                    <input type='text' className='w-50' value={newLearnPathTitle} onChange={handleNewLearnPathTitleChange} />
+                </div>
+                <div className='d-flex gap-3 mt-3'>
+                    <label className='fs-4'>{t('description')}:</label>
+                    <input type='text' className='w-50' value={newLearnPathDescription} onChange={handleNewLearnPathDescriptionChange} />
+                </div>
+                <div className='w-100 mt-3'>
+                    <button className='float-start btn btn-danger' onClick={() => setAddNewLearnPathPopup(false)}>{t("cancel")}</button>
+                    <button className='float-end btn btn-primary' onClick={addLearnPath}>{t("save")}</button>
+                </div>
+            </WidePopup>
             <WidePopup trigger={editTheoryPopup}>
                 <div className='d-flex justify-content-center'>
                     <label className='fs-5'>{t("title")}: </label>
@@ -643,7 +948,7 @@ function LearnPath() {
                 </div>
                 <div className='w-100 mt-3'>
                     <button className='float-start btn btn-danger' onClick={() => setEditTheoryPopup(false)}>{t("cancel")}</button>
-                    <button className='float-end btn btn-primary' onClick={addLearnPathTheory}>{t("save")}</button>
+                    <button className='float-end btn btn-primary' onClick={saveLearnPathTheory}>{t("save")}</button>
                 </div>
             </WidePopup>
             <WidePopup trigger={chooseQuestionsPopup}>
@@ -653,6 +958,60 @@ function LearnPath() {
                     <button className='float-end btn btn-primary' onClick={saveQuiz}>{t("save")}</button>
                 </div>
             </WidePopup>
+            <Popup trigger={confirmDeletePopup}>
+                <div className='d-flex justify-content-center'>
+                    {(() => {
+                        switch (deletedElement) {
+                            case SECTION:
+                                return <p className='fs-4'>{t("delete_section_check")}</p>
+                            case LESSON:
+                                return <p className='fs-4'>{t("delete_lesson_check")}</p>
+                            case THEORY:
+                                return <p className='fs-4'>{t("delete_theory_check")}</p>
+                            case QUIZ:
+                                return <p className='fs-4'>{t("delete_quiz_check")}</p>
+                            default:
+                                return <p className='fs-4'>{t("delete_theory_check")}</p>
+                        }
+                    })()}
+                </div>
+                <div className='d-flex gap-3'>
+                    {(() => {
+                        switch (deletedElement) {
+                            case SECTION:
+                                return <label>{t("title")}:  {sectionName}</label>
+                            case LESSON:
+                                return <label>{t("title")}:  {lessonName}</label>
+                            case THEORY:
+                                return <label>{t("title")}:  {theoryTitle}</label>
+                            case QUIZ:
+                                return <label>{t("title")}:  {theoryTitle}</label>
+                            default:
+                                return
+                        }
+                    })()}
+                </div>
+                <br />
+                <div className='w-100 d-flex justify-content-around'>
+                    <button className='btn btn-primary' onClick={() => {
+                        switch (deletedElement) {
+                            case SECTION:
+                                deleteLearnPathSection(deletedElementId)
+                                break
+                            case LESSON:
+                                deleteLearnPathLesson(deletedElementId)
+                                break
+                            case THEORY:
+                                deleteLearnPathTheory(deletedElementId)
+                                break
+                            case QUIZ:
+                                deleteLearnPathQuiz(deletedElementId)
+                                break
+                        }
+                    }}>{t("yes")}</button>
+                    <button className='btn btn-danger' onClick={() => setConfirmDeletePopup(false)}>{t("no")}</button>
+                </div>
+            </Popup>
         </div>
     );
 };

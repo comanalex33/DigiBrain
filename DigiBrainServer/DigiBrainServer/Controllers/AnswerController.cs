@@ -36,7 +36,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<AnswerResponseModel>> AddAnswer(AnswerViewModel model)
         {
             var answerCheck = _context.Answer.Where(item => item.Text == model.Text && item.QuestionId == model.QuestionId && item.Position == model.Position).FirstOrDefault();
@@ -62,7 +62,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpPost]
         [Route("multiple/")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<List<AnswerResponseModel>>> AddMultipleAnswer(List<AnswerViewModel> answers)
         {
             var addedAnswers = new List<AnswerResponseModel>();
@@ -96,7 +96,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<AnswerResponseModel>> DeleteAnswer(long id)
         {
             var answer = await _context.Answer.FindAsync(id);
@@ -109,6 +109,36 @@ namespace DigiBrainServer.Controllers
             }
 
             _context.Answer.Remove(answer);
+            await _context.SaveChangesAsync();
+
+            return Ok((AnswerResponseModel)answer);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<AnswerResponseModel>> UpdateAnswer(long id, AnswerViewModel model)
+        {
+            var answer = await _context.Answer.FindAsync(id);
+            if (answer == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This answer does not exist"
+                });
+            }
+
+            var answerCheck = _context.Answer.Where(item => item.Id != id && item.Text == model.Text && item.QuestionId == model.QuestionId).FirstOrDefault();
+            if (answerCheck != null)
+            {
+                return BadRequest(new { message = "An answer with this text already exists for this question" });
+            }
+
+            answer.Text = model.Text;
+            answer.Position = model.Position;
+            answer.Correct = model.Correct;
+            answer.QuestionId = model.QuestionId;
+
+            _context.Answer.Update(answer);
             await _context.SaveChangesAsync();
 
             return Ok((AnswerResponseModel)answer);
