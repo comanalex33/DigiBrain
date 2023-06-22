@@ -26,6 +26,9 @@ function App() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [email, setEmail] = useState('')
+
     const [justifyActive, setJustifyActive] = useState('tab1');
     
     const navigate = useNavigate()
@@ -45,6 +48,14 @@ function App() {
 
     const handlePasswordChange = event => {
         setPassword(event.target.value)
+    }
+
+    const handlePassword2Change = event => {
+        setPassword2(event.target.value)
+    }
+
+    const handleEmailChange = event => {
+        setEmail(event.target.value)
     }
 
     const handleLogin = () => {
@@ -71,6 +82,38 @@ function App() {
                 if (decode.roles === 'admin' || decode.roles === 'teacher') {
                     navigate("/")
                 }
+            })
+            .catch(error => {
+                console.log(error)
+                alert(error.response.data.message)
+            })
+    }
+
+    const handleRegister = () => {
+        if (username === '') {
+            alert("Username field is empty!")
+            return
+        }
+
+        if (password === '') {
+            alert("Password field is empty!")
+            return
+        }
+
+        if (password2 !== password) {
+            alert("Passwords does't match!")
+            return
+        }
+
+        if (email === '') {
+            alert("Email field is empty!")
+            return
+        }
+
+        apiService.register(username, password, email)
+            .then(response => {
+                alert("Account created successfully")
+                navigate("/login")
             })
             .catch(error => {
                 console.log(error)
@@ -126,12 +169,12 @@ function App() {
 
                                     <h2 className="fw-bold mb-5">{t("sign_up")}</h2>
 
-                                    <MDBInput wrapperClass='mb-4' label={t("username")} id='form3' type='username' />
-                                    <MDBInput wrapperClass='mb-4' label={t("email")} id='form3' type='email' />
-                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' />
-                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' />
+                                    <MDBInput wrapperClass='mb-4' label={t("username")} id='form3' type='username' onChange={handleUsernameChange}/>
+                                    <MDBInput wrapperClass='mb-4' label={t("email")} id='form3' type='email' onChange={handleEmailChange}/>
+                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' onChange={handlePasswordChange}/>
+                                    <MDBInput wrapperClass='mb-4' label={t("password")} id='form4' type='password' onChange={handlePassword2Change}/>
 
-                                    <MDBBtn className='w-100 mb-4' size='md'>{t("register")}</MDBBtn>
+                                    <MDBBtn className='w-100 mb-4' size='md' onClick={handleRegister}>{t("register")}</MDBBtn>
 
                                 </MDBCardBody>
                             </MDBCard>

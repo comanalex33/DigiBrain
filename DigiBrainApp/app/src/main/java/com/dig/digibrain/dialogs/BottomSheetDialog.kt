@@ -5,11 +5,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.transition.Visibility
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
-import android.view.ViewGroup.LayoutParams
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -18,15 +15,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.dig.digibrain.R
 import com.dig.digibrain.activities.LearnPathActivity
 import com.dig.digibrain.adapters.LearnPathFilterSubjectAdapter
-import com.dig.digibrain.adapters.SubjectSpinnerItemAdapter
 import com.dig.digibrain.databinding.DialogBottomSheetBinding
 import com.dig.digibrain.interfaces.IApplyLearnPathFilter
-import com.dig.digibrain.interfaces.IClassChanged
 import com.dig.digibrain.models.subject.ClassModel
 import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
 import com.dig.digibrain.utils.Helper.Companion.forAllChildren
-import kotlin.math.exp
 
 class BottomSheetDialog(
     var subjects: List<SubjectModel>,

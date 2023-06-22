@@ -100,6 +100,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
             if(nextQuestion) {
                 val fragment = supportFragmentManager.findFragmentById(binding.containerFragment.id) as QuestionFragment
                 score += fragment.getScore()
+                score = (score * 100).toInt() / 100.0
                 updateQuestion()
                 binding.nextButton.text = applicationContext.getString(R.string.check)
                 nextQuestion = false
@@ -274,7 +275,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
         if(currentQuestionPosition == questionsAnswers.size) {
             val f = DecimalFormat("00")
             val totalTime = "${f.format(quizMinutes)}:${f.format(quizSeconds)}"
-            dialog = QuizResultsDialog(this, applicationContext.getString(R.string.congratulations), questionsAnswers.size, timeTaken(), score)
+            dialog = QuizResultsDialog(this, false, questionsAnswers.size, timeTaken(), score)
             dialog.show(this.supportFragmentManager, "Quiz results")
             currentQuestionPosition++
         } else {
@@ -326,7 +327,7 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                 binding.quizTime.text = "00:00"
                 val f = DecimalFormat("00")
                 val totalTime = "${f.format(quizMinutes)}:${f.format(quizSeconds)}"
-                dialog = QuizResultsDialog(this@QuestionActivity, applicationContext.getString(R.string.timeout), questionsAnswers.size, timeTaken(), score)
+                dialog = QuizResultsDialog(this@QuestionActivity, true, questionsAnswers.size, timeTaken(), score)
                 dialog.show(this@QuestionActivity.supportFragmentManager, "Quiz results")
             }
         }.start()

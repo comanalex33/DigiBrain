@@ -2,8 +2,9 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/blue_light"
-    android:id="@+id/single_choice_answer_card">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/single_choice_answer_card"
+    app:cardBackgroundColor="@color/app_mode_color">
 
     <RadioButton
         android:id="@+id/single_choice_answer"

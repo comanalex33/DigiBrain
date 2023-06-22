@@ -71,7 +71,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
                     if(spinnerAnswers[position]!!.answerSpinnerPosition == 0) {
                         holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                             context,
-                            R.color.yellow_black
+                            R.color.yellow
                         )
                     }
                     holder.spinner.setSelection(spinnerAnswers[position]!!.answerSpinnerPosition)
@@ -79,7 +79,7 @@ class WordsGapAdapter(var context: Context, private var arrayList: List<String>,
                 if(!spinnerAnswers.containsKey(position)) {
                     holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                         context,
-                        R.color.yellow_black
+                        R.color.yellow
                     )
                 }
             }

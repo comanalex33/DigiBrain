@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.AddQuestionToLessonsActivity">
 
@@ -24,7 +23,7 @@
         <TextView
             android:id="@+id/question_text"
             android:textSize="@dimen/_15sdp"
-            android:textColor="@color/yellow_black"
+            android:textColor="@color/blue_light_dark"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -48,12 +47,11 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:tabBackground="@color/teal_200"
+                app:tabBackground="@color/blue_light_dark"
                 app:tabGravity="fill"
                 app:tabInlineLabel="true"
                 app:tabMode="fixed"
                 app:tabTextColor="@android:color/black"/>
-
 
         </com.google.android.material.appbar.AppBarLayout>
 

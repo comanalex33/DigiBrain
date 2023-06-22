@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
-            android:text="School"
+            android:text="@string/school"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp" />
 
@@ -164,7 +164,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="Highschool"
+            android:text="@string/highschool"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp" />
 
@@ -239,7 +239,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="University"
+            android:text="@string/university"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp" />
 

@@ -13,6 +13,15 @@ const apiService = {
 
         return axios.post(`${API_BASE_URL}/api/Auth/login`, user);
     },
+    register: (username, password, email) => {
+        let user = {
+            username: username,
+            password: password,
+            email: email
+        }
+
+        return axios.post(`${API_BASE_URL}/api/Auth/register`, user);
+    },
     getObjectStorageInfo: (config) => {
         return axios.get(`${API_BASE_URL}/api/Auth/object-storage-info`, config)
     },
@@ -23,8 +32,21 @@ const apiService = {
     },
 
     // User
+    // -- GET --
     getUserDetails: (username, config) => {
         return axios.get(`${API_BASE_URL}/api/users/${username}`, config)
+    },
+    getRoleRequests: (config) => {
+        return axios.get(`${API_BASE_URL}/api/users/requests`, config)
+    },
+    // -- PUT --
+    changeUserRole: (username, accept, config) => {
+        let configPut = {
+            method: 'PUT',
+            headers: config.headers
+        }
+
+        return fetch(`${API_BASE_URL}/api/users/${username}/roles/accept/${accept}`, configPut)
     },
 
     // Learn

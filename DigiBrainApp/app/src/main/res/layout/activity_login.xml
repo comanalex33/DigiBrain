@@ -39,6 +39,8 @@
             app:layout_constraintBottom_toTopOf="@+id/password_holder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
+            android:hint="@string/username"
+            android:textColorHint="@color/dark_gray"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.8">
@@ -55,7 +57,6 @@
                 android:textCursorDrawable="@null"
                 android:drawablePadding="10dp"
                 android:ems="10"
-                android:hint="@string/username"
                 android:inputType="textPersonName"
                 android:autofillHints="username" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -66,6 +67,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/white_black"
+            android:hint="@string/password"
+            android:textColorHint="@color/dark_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -85,7 +88,6 @@
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="@dimen/_8sdp"
                 android:ems="10"
-                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:autofillHints="password" />
 
@@ -113,9 +115,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/curve_shape"
-                android:backgroundTint="@color/yellow_black"
+                android:backgroundTint="@color/yellow"
                 android:text="@string/login"
-                android:textColor="@color/black_white"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <LinearLayout

@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light"
+    android:background="@color/white_blue_dark"
     tools:context=".activities.LessonActivity">
 
-    <ImageView
+    <View
         android:id="@+id/back_arrow"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/_5sdp"
-        android:src="@drawable/ic_back_arrow"
+        android:background="@drawable/ic_back_arrow"
+        android:backgroundTint="@color/black"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,25 +31,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:textSize="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_25sdp"/>
-
-<!--        <TextView-->
-<!--            android:id="@+id/lesson_content"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="@color/black_white"-->
-<!--            android:textSize="@dimen/_12sdp"-->
-<!--            android:layout_margin="@dimen/_10sdp"/>-->
-
-<!--        <org.sufficientlysecure.htmltextview.HtmlTextView-->
-<!--            android:id="@+id/lesson_content"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="@color/black_white"-->
-<!--            android:textSize="@dimen/_12sdp"-->
-<!--            android:layout_margin="@dimen/_10sdp"/>-->
 
         <WebView
             android:id="@+id/lesson_content"

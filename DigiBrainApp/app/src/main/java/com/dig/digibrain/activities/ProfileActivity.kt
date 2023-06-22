@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.amazonaws.auth.BasicAWSCredentials
@@ -33,6 +34,7 @@ import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.ProfileViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -98,6 +100,10 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
             acceptDialog.addListener(this)
             acceptDialog.show(this.supportFragmentManager, "Accept delete account")
         }
+
+        binding.requestRoleButton.setOnClickListener {
+            requestRole()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -135,7 +141,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
                                     val email = resource.data.email
                                     val classId = resource.data.classId
                                     profileImageName = resource.data.profileImageName
-                                    getClass(email, classId)
+                                    getClass(email, classId, resource.data.roleRequest != null)
 
                                     val scope = CoroutineScope(Dispatchers.Main)
                                     scope.launch {
@@ -172,7 +178,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
         }
     }
 
-    private fun getClass(email: String, classId: Long) {
+    private fun getClass(email: String, classId: Long, roleRequested: Boolean) {
         if(classId != 0L) {
             viewModel.getClassById(classId)
                 .observe(this) {
@@ -185,7 +191,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
                                     currentClass = classNumber
                                     atUniversity = resource.data.atUniversity
                                     currentAtUniversity = resource.data.atUniversity
-                                    updateFields(email, classNumber)
+                                    updateFields(email, classNumber, roleRequested)
                                     getDomain(resource.data.domainId)
                                 }
                             }
@@ -197,7 +203,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
                     }
                 }
         } else {
-            updateFields(email, 0)
+            updateFields(email, 0, roleRequested)
         }
     }
 
@@ -223,7 +229,7 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
         }
     }
 
-    private fun updateFields(email: String, classNumber: Int) {
+    private fun updateFields(email: String, classNumber: Int, roleRequested: Boolean) {
         binding.username.text = sessionManager.getUserName()
         binding.email.text = email
         binding.role.text = sessionManager.getUserRole()
@@ -231,6 +237,64 @@ class ProfileActivity : AppCompatActivity(), IClassChanged, IDomainChanged, IAcc
             binding.classNumber.text = classNumber.toString()
         else
             binding.classNumber.text = "-"
+
+        if(roleRequested) {
+            binding.requestRoleButton.visibility = View.GONE
+            binding.requestRoleWaiting.visibility = View.VISIBLE
+        } else {
+            when (sessionManager.getUserRole()) {
+                "student" -> {
+                    binding.requestRoleButton.visibility = View.VISIBLE
+                    binding.requestRoleButton.text =
+                        resources.getString(R.string.request_teacher_role)
+                    binding.requestRoleWaiting.visibility = View.GONE
+                }
+                "teacher" -> {
+                    binding.requestRoleButton.visibility = View.VISIBLE
+                    binding.requestRoleButton.text =
+                        resources.getString(R.string.request_admin_role)
+                    binding.requestRoleWaiting.visibility = View.GONE
+                }
+                "admin" -> {
+                    binding.requestRoleButton.visibility = View.GONE
+                    binding.requestRoleWaiting.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun requestRole() {
+        val username = sessionManager.getUserName()
+        var role = sessionManager.getUserRole()
+        val authToken: String? = sessionManager.getBearerAuthToken()
+
+        if(username != null && role != null && authToken != null) {
+            viewModel.requestRole(authToken, username, getNextRole(role))
+                .observe(this) {
+                    it.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                binding.requestRoleButton.visibility = View.GONE
+                                binding.requestRoleWaiting.visibility = View.VISIBLE
+                            }
+                            Status.ERROR -> {
+                                Toast.makeText(
+                                    applicationContext,
+                                    resource.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            Status.LOADING -> {}
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun getNextRole(role: String): String {
+        if(role == "student")
+            return "teacher"
+        return "admin"
     }
 
     private fun setupViewModel() {

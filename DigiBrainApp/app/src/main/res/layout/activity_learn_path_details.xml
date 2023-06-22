@@ -9,7 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/learn_path_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
+        android:minHeight="@dimen/_50sdp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:paddingStart="@dimen/_10sdp"
@@ -25,7 +26,7 @@
             android:backgroundTint="@color/yellow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintHeight_percent="0.95"
+            app:layout_constraintWidth_percent="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -45,15 +46,16 @@
 
         <TextView
             android:id="@+id/learn_path_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/learn_path_icon"
-            app:layout_constraintTop_toTopOf="parent"
             android:text="Test"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_20sdp"
-            android:textColor="@color/black"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/learn_path_start"
+            app:layout_constraintStart_toEndOf="@id/learn_path_icon"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/learn_path_start"
@@ -62,6 +64,7 @@
             android:background="@drawable/curve_shape"
             android:backgroundTint="@color/yellow"
             android:text="Start"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@id/info_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -75,10 +78,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.8"
+            app:layout_constraintWidth_percent="0.1"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@drawable/ic_info"
-            android:backgroundTint="@color/black"/>
+            android:backgroundTint="@color/black_white"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

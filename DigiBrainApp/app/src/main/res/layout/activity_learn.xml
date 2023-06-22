@@ -5,27 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.LearnActivity"
-    android:background="@drawable/login_background"
     android:weightSum="10"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="3">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_120sdp"
+            android:src="@drawable/kid_searching"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.4" />
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/choose_what_you_want_to_learn"
+            app:layout_constraintWidth_percent="0.6"
+            android:layout_height="match_parent"
+            android:text="@string/choose_none_nsubject"
+            android:textSize="@dimen/_30sdp"
             android:textColor="@color/black_white"
-            android:textSize="@dimen/_25sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.7" />
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ImageView
             android:id="@+id/back_arrow"
@@ -43,7 +48,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6">
+        android:layout_weight="5">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/choose_class_button"
@@ -188,9 +193,9 @@
             android:layout_height="0dp"
             android:text="@string/search"
             android:textSize="@dimen/_24sdp"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/yellow_black"
+            android:backgroundTint="@color/yellow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"

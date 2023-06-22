@@ -29,7 +29,7 @@ class LearnPathGraphFragment(
     var lessonNumber: Long,
     var theoryNumber: Long): Fragment() {
 
-    var sectionPosition = 1
+    private var sectionPosition = if(sectionNumber != 0L) sectionNumber.toInt() else 1
 
     private lateinit var binding: TabRequestsBinding
     private lateinit var viewModel: LearnPathViewModel
@@ -49,7 +49,7 @@ class LearnPathGraphFragment(
         adapter = LearnPathDetailsAdapter(
             context = requireContext(),
             learnPathExpandedModel = sortedLearnPathDetails(),
-            sectionPosition = 1,
+            sectionPosition = sectionPosition,
             sectionNumber = sectionNumber,
             lessonNumber = lessonNumber,
             theoryNumber = theoryNumber,
@@ -66,7 +66,6 @@ class LearnPathGraphFragment(
         super.onResume()
 
         if(LearnPathLocalStatus.done) {
-//            sectionPosition = LearnPathLocalStatus.sectionNumber!!
 
             if(LearnPathLocalStatus.sectionNumber!!.toLong() > expandedLearnPath.sections.size) {
                 updateStatus(true)

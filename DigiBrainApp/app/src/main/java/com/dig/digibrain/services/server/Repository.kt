@@ -27,6 +27,7 @@ class Repository(private val apiService: ApiService) {
     // --PUT--
     suspend fun updateClass(authHeader: String, username: String, id: Long) = apiService.updateClass(authHeader, username, id)
     suspend fun changeProfilePicture(username: String, file: MultipartBody.Part) = apiService.changeProfilePicture(username, file)
+    suspend fun requestRole(authHeader: String, username: String, role: String) = apiService.requestRole(authHeader, username, role)
     // --DELETE--
     suspend fun deleteAccount(authHeader: String, username: String) = apiService.deleteAccount(authHeader, username)
 

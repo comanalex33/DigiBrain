@@ -83,6 +83,7 @@
 
 .message-box {
   border-radius: 25px;
+  height: 60%;
 }
 
 .button-round {
@@ -96,7 +97,11 @@
 }
 
 .inactive-button {
-  background-color: white;
+  background-color: #ededed;
   color: black;
   cursor: pointer;
+}
+
+.search-filter-bar {
+  width: 98%;
 }

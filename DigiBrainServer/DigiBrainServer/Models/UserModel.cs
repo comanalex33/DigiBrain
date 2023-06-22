@@ -7,6 +7,7 @@ namespace DigiBrainServer.Models
     public class UserModel: IdentityUser
     {
         public long ClassId { get; set; }
+        public string RoleRequest { get; set; }
         public string ProfileImageName { get; set; }
         public bool RequestToResolve { get; set; }
         public string RegistrationToken { get; set; }

@@ -436,12 +436,12 @@ function Learn() {
             <div className='search-filter'>
                 <div className="card-header d-flex w-100">
                     <h5 className="mb-0 w-100">
-                        <div className='float-start d-flex align-items-center justify-content-between w-100'>
+                        <div className='float-start d-flex align-items-center justify-content-between search-filter-bar'>
                             <div className="btn btn-link fs-5" onClick={handleSearchFilterChange}>
                                 {t("search_filter")}
                             </div>
                             <div>
-                                <i className={"fa-solid icon" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
+                                <i className={"fa-solid icon mr-3" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
                             </div>
                         </div>
                     </h5>

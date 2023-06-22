@@ -5,7 +5,8 @@
     android:id="@+id/chapter_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/blue"
+    android:backgroundTint="@color/gray_light_dark"
+    app:cardCornerRadius="@dimen/_8sdp"
     android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_5sdp">
 
@@ -26,18 +27,19 @@
                 android:padding="@dimen/_8sdp"
                 android:paddingStart="@dimen/_15sdp"
                 android:text="Chapter 1"
-                android:textColor="@color/white_black"
+                android:textColor="@color/black"
                 android:textSize="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <View
                 android:id="@+id/chapter_expand"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_20sdp"
-                android:src="@drawable/ic_expand_more"
+                android:background="@drawable/ic_expand_more"
+                android:backgroundTint="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +64,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/lessons_recycler_view"
                     android:layout_width="match_parent"
+                    tools:listitem="@layout/card_subject_lesson"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,14 +84,38 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/chapter_add_lesson_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_28sdp"
-                android:src="@drawable/ic_add"
-                app:layout_constraintTop_toBottomOf="@id/chapter_content_content"
-                android:backgroundTint="@color/yellow_black"
-                android:background="@drawable/curve_shape_no_border"/>
+                android:background="@drawable/curve_shape_no_border"
+                android:backgroundTint="@color/yellow_blue_dark"
+                app:layout_constraintTop_toBottomOf="@id/chapter_content_content">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/ic_add"
+                    android:backgroundTint="@color/black_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.8"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--            <ImageView-->
+<!--                android:id="@+id/chapter_add_lesson_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/_28sdp"-->
+<!--                android:src="@drawable/ic_add"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/chapter_content_content"-->
+<!--                android:backgroundTint="@color/yellow_blue_dark"-->
+<!--                android:background="@drawable/curve_shape_no_border"/>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

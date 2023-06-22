@@ -12,7 +12,6 @@ import ClassSelector from '../components/ClassSelector';
 
 import apiService from '../services/ApiService';
 import utils from '../Utils';
-import axios from 'axios';
 
 const SECTION = 0
 const LESSON = 1
@@ -49,10 +48,6 @@ function LearnPath() {
     const username = sessionStorage.getItem('username')
     const token = sessionStorage.getItem('token')
     const config = { headers: { 'Authorization': 'Bearer ' + token } }
-    const configPost = {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token }
-    }
     const { i18n, t } = useTranslation()
 
     let subjectsList = []
@@ -186,7 +181,7 @@ function LearnPath() {
                 .then(response => {
                     setAddNewLearnPathPopup(false)
                     getLearnPaths(true)
-                    apiService.notify(`${t("new_learn_path_notification_title")} ${selectedSubjectName}`, `${t("new_learn_path_message_start")} ${username}, ${t("new_learn_path_message_end")}: ${newLearnPathTitle}`, `subject${selectedSubjectId}`, config)
+                    apiService.notify(`${t("new_learn_path_notification_title")} ${selectedSubjectName}`, `${t("new_learn_path_message_start")} ${username}, ${t("new_learn_path_message_end")}: ${newLearnPathTitle}`, `subject-${selectedSubjectId}`, config)
                         .then(response => {
                             console.log("Users notified")
                         })
@@ -799,12 +794,12 @@ function LearnPath() {
                 <div className='search-filter'>
                     <div className="card-header d-flex w-100">
                         <h5 className="mb-0 w-100">
-                            <div className='float-start d-flex align-items-center justify-content-between w-100'>
+                            <div className='float-start d-flex align-items-center justify-content-between search-filter-bar'>
                                 <div className="btn btn-link fs-5" onClick={handleSearchFilterChange}>
                                     {t("search_filter")}
                                 </div>
                                 <div>
-                                    <i className={"fa-solid icon" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
+                                    <i className={"fa-solid icon mr-3" + (searchFilterActive === true ? ' fa-arrow-up' : ' fa-arrow-down')} onClick={handleSearchFilterChange} />
                                 </div>
                             </div>
                         </h5>

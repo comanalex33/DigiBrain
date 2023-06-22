@@ -37,10 +37,10 @@ class LessonAdapter(var context: Context, private var arrayList: List<LessonMode
 
         holder.card.setOnTouchListener { _, motionEvent ->
             if(motionEvent.action == MotionEvent.ACTION_DOWN) {
-                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.white)
+                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.gray)
                 true
             } else {
-                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.blue_light)
+                holder.card.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.white)
             }
             false
         }

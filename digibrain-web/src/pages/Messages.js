@@ -80,15 +80,15 @@ function Messages() {
 
     return (
         <div className='Page-fit d-flex justify-content-center align-items-center'>
-            <div className='w-50 h-50 message-box border border-dark p-3'>
+            <div className='w-50 message-box border border-dark p-3 d-flex flex-column'>
                 <div className='d-flex gap-4'>
-                    <label className='fs-4'>{t("title")}</label>
+                    <label className='fs-5'>{t("title")}</label>
                     <input type='text' className='w-25' value={title} onChange={handleTitleChanged} />
                 </div>
-                <label className='fs-4'>{t("message")}</label>
+                <label className='fs-5'>{t("message")}</label>
                 <textarea className='w-100 h-50' value={message} onChange={handleMessageChanged} />
                 <div className='d-flex align-items-center'>
-                    <label className='fs-4'>{t("to")}</label>
+                    <label className='fs-5'>{t("to")}</label>
                     <div className='w-100 d-flex justify-content-around btn-toolbar'>
                         <div className={'m-1 p-2 button-round w-25 d-flex justify-content-center align-items-center ' + ((targets.includes('student') === true) ? 'active-button' : 'inactive-button')}
                             onClick={() => handleTargetChanged('student')}>{t("students")}</div>
@@ -98,7 +98,7 @@ function Messages() {
                             onClick={() => handleTargetChanged('admin')}>{t("admins")}</div>
                     </div>
                 </div>
-                <div className='float-end w-100 h-25 d-flex justify-content-center align-items-center'>
+                <div className='flex-grow-1 w-100 d-flex justify-content-center align-items-center'>
                     <button className='btn btn-primary w-25 fs-5' onClick={sendMessage}>{t("send")}</button>
                 </div>
             </div>

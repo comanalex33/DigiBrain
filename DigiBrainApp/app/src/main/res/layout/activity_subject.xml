@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light"
     tools:context=".activities.SubjectActivity"
     android:weightSum="6"
     android:orientation="vertical">
@@ -12,8 +11,14 @@
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:background="@color/blue"
       android:layout_weight="1">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rotation="180"
+        android:background="@drawable/bottom_sheet_background"
+        android:backgroundTint="@color/yellow_blue_dark"/>
 
     <ImageView
         android:id="@+id/back_arrow"
@@ -21,7 +26,7 @@
         android:layout_height="0dp"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/ic_back_arrow"
-        android:backgroundTint="@color/white_black"
+        android:backgroundTint="@color/black_white"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,7 +38,7 @@
         android:layout_height="0dp"
         android:gravity="center_horizontal|bottom"
         android:text="Titlu"
-        android:textColor="@color/white_black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_30sdp"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +52,7 @@
         android:gravity="center"
         android:layout_height="wrap_content"
         android:text="Class X"
-        android:textColor="@color/white_black"
+        android:textColor="@color/black_white"
         android:textSize="@dimen/_15sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subject_title" />
@@ -56,7 +61,7 @@
         android:id="@+id/subject_image"
         android:layout_width="@dimen/_45sdp"
         android:layout_height="@dimen/_45sdp"
-        android:backgroundTint="@color/white_black"
+        android:backgroundTint="@color/black_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/subject_title"
@@ -74,6 +79,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:listitem="@layout/card_subject_chapter"
         android:fadeScrollbars="false"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -94,16 +100,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/add_chapter_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/_10sdp"-->
+<!--        android:backgroundTint="@color/yellow"-->
+<!--        android:src="@drawable/ic_add"-->
+<!--        android:visibility="visible"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
-  <com.google.android.material.floatingactionbutton.FloatingActionButton
-      android:id="@+id/add_chapter_button"
-      android:visibility="gone"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="end|bottom"
-      android:backgroundTint="@color/yellow_black"
-      android:src="@drawable/ic_add"
-      android:layout_margin="@dimen/_10sdp"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/add_chapter_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:visibility="gone"
+        android:backgroundTint="@color/yellow"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+      <View
+          android:layout_width="@dimen/_25sdp"
+          android:layout_height="@dimen/_25sdp"
+          android:layout_margin="@dimen/_8sdp"
+          android:background="@drawable/ic_add"
+          android:backgroundTint="@color/black" />
+
+    </androidx.cardview.widget.CardView>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

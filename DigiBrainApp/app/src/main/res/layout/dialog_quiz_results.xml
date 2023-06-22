@@ -22,7 +22,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/congratulations"
             android:textSize="@dimen/_25sdp"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/number_of_questions"
                 android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_white"
+                android:textColor="@color/black"
                 android:gravity="center"/>
 
             <TextView
@@ -52,6 +52,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_20sdp"
+                android:textColor="@color/dark_gray"
                 android:textStyle="bold"
                 android:gravity="center"/>
 
@@ -73,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_time"
                 android:textSize="@dimen/_16sdp"
-                android:textColor="@color/black_white"
+                android:textColor="@color/black"
                 android:gravity="center"/>
 
             <TextView
@@ -82,6 +83,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_20sdp"
+                android:textColor="@color/dark_gray"
                 android:textStyle="bold"
                 android:gravity="center"/>
 
@@ -103,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/score"
                 android:textSize="@dimen/_16sdp"
-                android:textColor="@color/black_white"
+                android:textColor="@color/black"
                 android:gravity="center"/>
 
             <TextView
@@ -112,10 +114,19 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_20sdp"
+                android:textColor="@color/dark_gray"
                 android:textStyle="bold"
                 android:gravity="center"/>
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/quiz_status_logo"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_90sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/score_holder" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/close_button"
@@ -125,9 +136,9 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_height="wrap_content"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/yellow_black"
+            android:backgroundTint="@color/yellow"
             android:text="@string/close"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/score_holder"

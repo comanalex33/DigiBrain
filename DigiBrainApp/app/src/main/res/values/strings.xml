@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DigiBrainApp</string>
+    <string name="app_name">DigiBrain</string>
 
     <!--    Authentication pages-->
     <string name="username">Username</string>
@@ -28,6 +28,9 @@
     <string name="domain">Domain</string>
     <string name="choose_class">Choose class ...</string>
     <string name="class_">Class</string>
+    <string name="school">School</string>
+    <string name="highschool">Highschool</string>
+    <string name="university">University</string>
     <string name="choose_what_you_want_to_learn">Choose what you want to learn</string>
     <string name="select_class_number">Select a class number</string>
     <string name="select_domain">Select a domain</string>
@@ -60,8 +63,9 @@
     <string name="check">Check</string>
     <string name="ok">Ok</string>
     <string name="total_time">Total time:</string>
-    <string name="number_of_questions">Number of questions:</string>
+    <string name="number_of_questions">Nr. of questions:</string>
     <string name="congratulations">Congratulations</string>
+    <string name="failure">Failure</string>
     <string name="close">Close</string>
     <string name="timeout">Timeout</string>
     <string name="add">Add</string>
@@ -77,10 +81,7 @@
     <!--    Settings-->
     <string name="dark_mode">Dark mode</string>
     <string name="notifications">Notifications</string>
-    <string name="sound">Sound</string>
     <string name="language">Language</string>
-    <string name="learn_more">Learn more</string>
-    <string name="learn_more_description">Learn more about the app and it\'s features</string>
     <string name="add_question">Add question</string>
     <string name="question">Question</string>
     <string name="answer_1">Answer 1</string>
@@ -101,7 +102,7 @@
     <string name="total_number">Total number</string>
     <string name="true_or_false">True or False</string>
     <string name="words_gap">Words Gap</string>
-    <string name="add_subject">Add subject</string>
+    <string name="add_subject">Add\nsubject</string>
     <string name="subject_title">Subject title</string>
     <string name="choose_icon">Choose icon</string>
     <string name="role">Role</string>
@@ -116,4 +117,36 @@
     <string name="user_not_active_title">It\'s time to learn</string>
     <string name="user_not_active_short_message">No activity in past 3 days</string>
     <string name="user_not_active_message">No activity in past 3 days. Read some learning materials or start a learning path</string>
+    <string name="pending_request">Pending request</string>
+    <string name="request_admin_role">Request admin role</string>
+    <string name="request_teacher_role">Request teacher role</string>
+    <string name="check_your_profile">Check your profile</string>
+    <string name="explore">Explore</string>
+    <string name="learning">learning</string>
+    <string name="paths">paths</string>
+    <string name="choose_none_nsubject">Choose\none\nsubject</string>
+    <string name="take_na_nquiz">Take\na\nquiz</string>
+    <string name="learning_paths">Learning paths</string>
+    <string name="subjects_">Subjects:</string>
+    <string name="name_">Name:</string>
+    <string name="filter">Filter</string>
+    <string name="after_class">After class</string>
+    <string name="after_subject">After subject</string>
+    <string name="after_name">After name</string>
+    <string name="learn_path_name">Learn Path name</string>
+    <string name="started">Started</string>
+    <string name="done">Done</string>
+    <string name="author">Author</string>
+    <string name="updated">Updated</string>
+    <string name="views">Views:</string>
+    <string name="sections">Sections</string>
+    <string name="graph">Graph</string>
+    <string name="description">Description</string>
+    <string name="lesson">Lesson</string>
+    <string name="of">of</string>
+    <string name="start_again">Start again</string>
+    <string name="blocked">Blocked</string>
+    <string name="account_created_successfully">Account created successfully</string>
+    <string name="passord_does_not_match">Passwords doesn\'t match</string>
+    <string name="learn_path_started">Learn Path started</string>
 </resources>

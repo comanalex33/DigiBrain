@@ -104,6 +104,22 @@ i18n
                     new_learn_path_message_start: "A new learn path was just created by",
                     new_learn_path_message_end: "check it out in the app",
 
+                    // Requests
+                    admin_approve_check: "Are you sure you want to approve admin role request for user",
+                    admin_decline_check: "Are you sure you want to decline admin role request for user",
+                    teacher_approve_check: "Are you sure you want to approve teacher role request for user",
+                    teacher_decline_check: "Are you sure you want to decline teacher role request for user",
+                    role_change: "Role Change",
+                    teacher: "Teacher",
+                    admin: "Admin",
+                    no_teacher_request: "No teacher request",
+                    no_admin_request: "No admin request",
+                    accepted: "accepted",
+                    rejected: "rejected",
+                    notify_message_1: "Your",
+                    notify_message_2: "request was",
+                    by: "by",
+
                     // Message
                     title_and_message_not_empty: "Title and message cannot be empty",
                     empty_destination: "The message must have a destination",
@@ -208,6 +224,22 @@ i18n
                     new_learn_path_notification_title: "Plan de învățare nou, subiect",
                     new_learn_path_message_start: "Un nou plan de învățare a fost creat de catre",
                     new_learn_path_message_end: "uită-te peste el în aplicație",
+
+                    // Requests
+                    admin_approve_check: "Sigur vrei sa aprobi cererea de admin pentru utilizatorul",
+                    admin_decline_check: "Sigur vrei sa refuzi cererea de admin pentru utilizatorul",
+                    teacher_approve_check: "Sigur vrei sa aprobi cererea de profesor pentru utilizatorul",
+                    teacher_decline_check: "Sigur vrei sa refuzi cererea de profesor pentru utilizatorul",
+                    role_change: "Schimbare de rol",
+                    teacher: "Profesor",
+                    admin: "Admin",
+                    no_teacher_request: "Niciun request de profesor",
+                    no_admin_request: "Niciun request de admin",
+                    accepted: "acceptată",
+                    rejected: "respinsă",
+                    notify_message_1: "Cererea ta de",
+                    notify_message_2: "a fost",
+                    by: "de către",
 
                     // Message
                     title_and_message_not_empty: "Titlul și mesajul nu pot fi goale",

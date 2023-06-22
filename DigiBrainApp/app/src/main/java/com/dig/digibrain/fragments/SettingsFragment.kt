@@ -142,15 +142,8 @@ class SettingsFragment : PreferenceFragmentCompat(), ILanguageChanged {
         preferenceManager.findPreference<SwitchPreferenceCompat>("notifications")?.apply {
             this.title = resources.getString(R.string.notifications)
         }
-        preferenceManager.findPreference<SwitchPreferenceCompat>("sound")?.apply {
-            this.title = resources.getString(R.string.sound)
-        }
         preferenceManager.findPreference<Preference>("language")?.apply {
             this.title = resources.getString(R.string.language)
-        }
-        preferenceManager.findPreference<Preference>("feedback")?.apply {
-            this.title = resources.getString(R.string.learn_more)
-            this.summary = resources.getString(R.string.learn_more_description)
         }
     }
 }

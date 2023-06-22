@@ -7,17 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.App
 import com.dig.digibrain.R
-import com.dig.digibrain.databinding.CardDomainBinding
 import com.dig.digibrain.databinding.CardSubjectBinding
-import com.dig.digibrain.interfaces.IDomainChanged
 import com.dig.digibrain.interfaces.ISubjectChanged
-import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.models.subject.SubjectModel
 
 class SubjectAdapter(var context: Context, var application: Application, var listener: ISubjectChanged, var currentSubject: SubjectModel?, private var arrayList: List<SubjectModel>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {

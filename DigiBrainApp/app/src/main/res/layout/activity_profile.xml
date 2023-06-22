@@ -13,8 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:background="@color/blue_light"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bottom_sheet_background"
+            android:backgroundTint="@color/blue_light_dark"
+            android:rotation="180"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -78,9 +84,9 @@
             android:layout_marginBottom="@dimen/_8sdp"
             android:layout_height="wrap_content"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/yellow_black"
+            android:backgroundTint="@color/yellow"
             android:text="@string/update"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/delete_button"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +117,7 @@
         android:text="@string/account_info"
         android:textSize="@dimen/_25sdp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/black_white"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/_40sdp"/>
 
@@ -136,7 +142,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/ic_profile"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/black_white"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -147,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:text="@string/username"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/username_icon"
@@ -180,7 +186,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/ic_email"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/black_white"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -191,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:text="@string/email"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/email_icon"
@@ -224,7 +230,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/ic_role"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/black_white"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -235,7 +241,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:text="@string/role"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/role_icon"
@@ -268,7 +274,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/ic_class"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/black_white"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -279,7 +285,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:text="@string/class_"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/class_icon"
@@ -294,16 +300,51 @@
                 app:layout_constraintStart_toEndOf="@id/class_icon"
                 app:layout_constraintTop_toBottomOf="@id/class_text" />
 
-            <ImageView
+            <View
                 android:id="@+id/edit_class"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
+                app:layout_constraintDimensionRatio="1:1"
+                android:layout_height="@dimen/_24sdp"
+                android:background="@drawable/ic_edit"
+                android:backgroundTint="@color/black_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/request_role_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/request_admin_role"
+            android:textColor="@color/blue_light_dark"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/request_role_waiting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/pending_request"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/yellow"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
