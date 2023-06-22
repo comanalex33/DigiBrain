@@ -40,7 +40,7 @@ class LanguageSelectorAdapter(
             if(languageModel.code == currentLanguageCode) {
                 holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                     context,
-                    R.color.blue_light
+                    R.color.blue_light_dark
                 )
             }
         }

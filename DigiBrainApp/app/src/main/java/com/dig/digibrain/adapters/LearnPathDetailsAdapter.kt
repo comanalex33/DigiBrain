@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -72,9 +70,9 @@ class LearnPathDetailsAdapter(
                             )
 
                             if(holder.view.id == R.id.done_view)
-                                dialog.setupUI(R.color.yellow, "Start again", false)
+                                dialog.setupUI(R.color.yellow, context.getString(R.string.start_again), false)
                             if(holder.view.id == R.id.future_view)
-                                dialog.setupUI(R.color.gray, "Blocked", false)
+                                dialog.setupUI(R.color.gray, context.getString(R.string.blocked), false)
                         }
                     }
                 }
@@ -94,26 +92,12 @@ class LearnPathDetailsAdapter(
                             )
 
                             if(holder.view.id == R.id.done_view)
-                                dialog.setupUI(R.color.yellow, "Start again", false)
+                                dialog.setupUI(R.color.yellow, context.getString(R.string.start_again), false)
                             if(holder.view.id == R.id.future_view)
-                                dialog.setupUI(R.color.gray, "Blocked", false)
+                                dialog.setupUI(R.color.gray, context.getString(R.string.blocked), false)
                         }
                     }
                 }
-//                val model = holder.initializeUIComponents(position)
-//                if(!preview) {
-//                    holder.itemView.setOnClickListener {
-//                        model?.apply {
-//                            val lesson = getLessonById(this.pathLessonId)
-//                            val dialog = LearnPathLessonDialog(lesson = lesson, quiz = this)
-//
-//                            dialog.show(
-//                                (context as AppCompatActivity).supportFragmentManager,
-//                                "Learn Path quiz details"
-//                            )
-//                        }
-//                    }
-//                }
             }
         }
     }
@@ -155,16 +139,6 @@ class LearnPathDetailsAdapter(
                 }
                 if(lesson.quiz.isNotEmpty())
                     return VIEW_TYPE_QUIZ
-
-//                for(quiz in lesson.quiz) {
-//                    if(quiz.number == lessonPosition) {
-//                        return VIEW_TYPE_QUIZ
-//                    }
-//                }
-//                currentLessonContentSize = lesson.theory.size
-//                if(lesson.quiz.isNotEmpty())
-//                    currentLessonContentSize++
-//                vPosition += currentLessonContentSize
             }
         }
         return -1
@@ -196,6 +170,8 @@ class LearnPathDetailsAdapter(
     inner class LearnPathLessonViewHolder(myView: View): RecyclerView.ViewHolder(myView) {
 
         var lessonTitle: TextView = myView.findViewById(R.id.learn_path_lesson_title)
+        var lessonCurrent: View = myView.findViewById(R.id.learn_path_lesson_current)
+        var lessonCompleted: View = myView.findViewById(R.id.learn_path_lesson_completed)
 
         fun initializeUIComponents(position: Int): LearnPathLesson? {
             val model = getLesson(position)
@@ -213,8 +189,17 @@ class LearnPathDetailsAdapter(
                     if (itemCount == position) {
                         if(!preview)
                             if(this.number < sectionNumber.toInt() ||
-                                (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
-                                this@LearnPathLessonViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+                                (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt())) {
+                                lessonCurrent.visibility = View.GONE
+                                lessonCompleted.visibility = View.VISIBLE
+                            }
+                            else if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt()) {
+                                lessonCurrent.visibility = View.VISIBLE
+                                lessonCompleted.visibility = View.GONE
+                            } else {
+                                lessonCurrent.visibility = View.GONE
+                                lessonCompleted.visibility = View.GONE
+                            }
                         return lesson
                     }
                     itemCount = 1 + lesson.theory.size
@@ -445,21 +430,6 @@ class LearnPathDetailsAdapter(
                         }
                     }
                     return lesson.quiz
-//                    for(quiz in lesson.quiz) {
-//                        if(quiz.number == lessonPosition) {
-//                            if(!preview) {
-//                                if(this.number < sectionNumber.toInt() ||
-//                                    (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt()))
-//                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
-//                                if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt() && theoryNumber == 0L)
-//                                    this@LearnPathQuizViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.yellow))
-//                            }
-//                            return quiz
-//                        }
-//                    }
-//                    itemCount += lesson.theory.size
-//                    if(lesson.quiz.isNotEmpty())
-//                        itemCount++
                 }
             }
             return null

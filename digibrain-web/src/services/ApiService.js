@@ -13,6 +13,15 @@ const apiService = {
 
         return axios.post(`${API_BASE_URL}/api/Auth/login`, user);
     },
+    register: (username, password, email) => {
+        let user = {
+            username: username,
+            password: password,
+            email: email
+        }
+
+        return axios.post(`${API_BASE_URL}/api/Auth/register`, user);
+    },
     getObjectStorageInfo: (config) => {
         return axios.get(`${API_BASE_URL}/api/Auth/object-storage-info`, config)
     },
@@ -23,8 +32,21 @@ const apiService = {
     },
 
     // User
+    // -- GET --
     getUserDetails: (username, config) => {
         return axios.get(`${API_BASE_URL}/api/users/${username}`, config)
+    },
+    getRoleRequests: (config) => {
+        return axios.get(`${API_BASE_URL}/api/users/requests`, config)
+    },
+    // -- PUT --
+    changeUserRole: (username, accept, config) => {
+        let configPut = {
+            method: 'PUT',
+            headers: config.headers
+        }
+
+        return fetch(`${API_BASE_URL}/api/users/${username}/roles/accept/${accept}`, configPut)
     },
 
     // Learn
@@ -76,6 +98,32 @@ const apiService = {
 
         return axios.post(`${API_BASE_URL}/api/subjects`, subject, config);
     },
+    // -- DELETE --
+    deleteLesson: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/lessons/${id}`, config);
+    },
+    deleteChapter: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/chapters/${id}`, config);
+    },
+    // -- PUT --
+    updateChapter: (id, number, name, subjectId, config) => {
+        let chapter = {
+            number: number,
+            name: name,
+            subjectId: subjectId
+        }
+
+        return axios.put(`${API_BASE_URL}/api/chapters/${id}`, chapter, config);
+    },
+    updateLesson: (id, title, text, chapterId, config) => {
+        let lesson = {
+            title: title,
+            text: text,
+            chapterId: chapterId
+        }
+
+        return axios.put(`${API_BASE_URL}/api/lessons/${id}`, lesson, config);
+    },
 
     // Quiz
     // -- GET --
@@ -112,6 +160,18 @@ const apiService = {
     deleteQuestion: (id, config) => {
         return axios.delete(`${API_BASE_URL}/api/questions/${id}`, config)
     },
+    // -- PUT --
+    updateQuestion: (id, text, difficulty, type, languageId, answers, config) => {
+        let model = {
+            text: text,
+            difficulty: difficulty,
+            type: type,
+            languageId: languageId,
+            answers: answers
+        }
+
+        return axios.put(`${API_BASE_URL}/api/questions/${id}`, model, config)
+    },
 
     // Learn Paths
     // -- GET --
@@ -123,6 +183,18 @@ const apiService = {
     },
 
     // -- POST --
+    addLearnPath: (title, description, author, subjectId, imageName, config) => {
+        let learnPath = {
+            title: title,
+            description: description,
+            author: author,
+            subjectId: subjectId,
+            imageName: imageName
+        }
+
+        return axios.post(`${API_BASE_URL}/api/learn-paths`, learnPath, config)
+    },
+
     addLearnPathSection: (number, title, iconId, pathLearnId, config) => {
         let section = {
             number: number,
@@ -156,7 +228,97 @@ const apiService = {
         return axios.post(`${API_BASE_URL}/api/learn-paths/sections/lessons/theory`, theory, config)
     },
 
-    // Add server call to add multiple quiz questions
+    addLearnPathQuiz: (questionsIds, pathLessonId, config) => {
+        let quiz = []
+        for(let i = 0; i < questionsIds.length; i++) {
+            quiz.push( {
+                score: 10,
+                questionId: questionsIds[i],
+                pathLessonId: pathLessonId
+            })
+        }
+
+        return axios.post(`${API_BASE_URL}/api/learn-paths/sections/lessons/quiz`, quiz, config)
+    },
+
+    // -- DELETE --
+    deleteLearnPathSection: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/learn-paths/sections/${id}`, config)
+    },
+    deleteLearnPathLesson: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/learn-paths/sections/lessons/${id}`, config)
+    },
+    deleteLearnPathTheory: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/learn-paths/sections/lessons/theory/${id}`, config)
+    },
+    deleteLearnPathQuiz: (id, config) => {
+        return axios.delete(`${API_BASE_URL}/api/learn-paths/sections/lessons/${id}/quiz`, config)
+    },
+
+    // -- PUT --
+    updateLearnPath: (id, title, description, author, subjectId, imageName, config) => {
+        let learnPath = {
+            title: title,
+            description: description,
+            author: author,
+            subjectId: subjectId,
+            imageName: imageName
+        }
+
+        return axios.put(`${API_BASE_URL}/api/learn-paths/${id}`, learnPath, config)
+    },
+    updateLearnPathSection: (id, number, title, iconId, pathLearnId, config) => {
+        let section = {
+            number: number,
+            title: title,
+            iconId: iconId,
+            pathLearnId: pathLearnId
+        }
+
+        return axios.put(`${API_BASE_URL}/api/learn-paths/sections/${id}`, section, config)
+    },
+    updateLearnPathLesson: (id, number, title, description, pathSectionId, config) => {
+        let lesson = {
+            number: number,
+            title: title,
+            description: description,
+            pathSectionId: pathSectionId
+        }
+
+        return axios.put(`${API_BASE_URL}/api/learn-paths/sections/lessons/${id}`, lesson, config)
+    },
+    updateLearnPathTheory: (id, number, title, text, pathLessonId, config) => {
+        let theory = {
+            number: number,
+            title: title,
+            text: text,
+            pathLessonId: pathLessonId
+        }
+
+        return axios.put(`${API_BASE_URL}/api/learn-paths/sections/lessons/theory/${id}`, theory, config)
+    },
+    updateLearnPathQuiz: (id, questionsIds, pathLessonId, config) => {
+        let quiz = []
+        for(let i = 0; i < questionsIds.length; i++) {
+            quiz.push( {
+                score: 10,
+                questionId: questionsIds[i],
+                pathLessonId: pathLessonId
+            })
+        }
+
+        return axios.put(`${API_BASE_URL}/api/learn-paths/sections/lessons/${id}/quiz`, quiz, config)
+    },
+
+    // Services
+    notify: (title, message, topic, config) => {
+        let configPost = {
+            method: 'POST',
+            headers: config.headers
+        }
+
+        return fetch(`${API_BASE_URL}/api/services/notify/title/${title}/message/${message}/topic/${topic}`, configPost)
+    }
 };
 
 export default apiService;

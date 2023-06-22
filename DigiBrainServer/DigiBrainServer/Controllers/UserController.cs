@@ -101,10 +101,53 @@ namespace DigiBrainServer.Controllers
             return Ok(responseUsers);
         }
 
-        [HttpPost]
-        [Route("{username}/roles/{role}")]
+        [HttpGet]
+        [Route("requests")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> AddRole(string username, string role)
+        public async Task<ActionResult<IEnumerable<UserResponseModel>>> GetUsersWithRequests()
+        {
+            var usersWithRequests = await _userManager.Users.Where(item => item.RoleRequest != null).ToListAsync();
+
+            var responseUsers = new List<UserResponseModel>();
+            foreach (var user in usersWithRequests)
+            {
+                responseUsers.Add((UserResponseModel)user);
+            }
+
+            return Ok(responseUsers);
+        }
+
+        [HttpPut]
+        [Route("{username}/roles/{role}")]
+        [Authorize(Roles = "admin,student,teacher")]
+        public async Task<ActionResult<UserResponseModel>> RequestRole(string username, string role)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "User does not exists"
+                });
+            }
+
+            if (!role.Equals("student") && !role.Equals("teacher") && !role.Equals("admin"))
+            {
+                return BadRequest(new ErrorResponseModel
+                {
+                    Message = "Not an existing role"
+                });
+            }
+
+            user.RoleRequest = role;
+            await _userManager.UpdateAsync(user);
+            return Ok((UserResponseModel)user);
+        }
+
+        [HttpPut]
+        [Route("{username}/roles/accept/{accept}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<UserResponseModel>> ChangeRole(string username, bool accept)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
@@ -114,23 +157,30 @@ namespace DigiBrainServer.Controllers
                    Message = "User does not exists"
                 });
             }
-            var roles = await _userManager.GetRolesAsync(user);
-            if (roles.Any())
+
+            if(user.RoleRequest == null)
             {
                 return BadRequest(new ErrorResponseModel
                 {
-                    Message = "This user already has a role"
+                    Message = "User did not requested a role change"
                 });
             }
-            if (!role.Equals("student") && !role.Equals("teacher"))
+
+            if (accept)
             {
-                return BadRequest(new ErrorResponseModel
-                {
-                    Message = "Not an existing role"
-                });
+                // Delete previous role
+                var roles = await _userManager.GetRolesAsync(user);
+                if(roles.Count != 0)
+                    await _userManager.RemoveFromRoleAsync(user, roles[0]);
+
+                // Add new role
+                await _userManager.AddToRoleAsync(user, user.RoleRequest);
             }
-            await _userManager.AddToRoleAsync(user, role);
-            return Ok();
+
+            user.RoleRequest = null;
+            await _userManager.UpdateAsync(user);
+
+            return Ok((UserResponseModel)user);
         }
 
         [HttpPut]

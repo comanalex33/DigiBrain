@@ -13,7 +13,7 @@ import com.dig.digibrain.R
 import com.dig.digibrain.databinding.DialogQuizResultsBinding
 import com.dig.digibrain.interfaces.ItemClickListener
 
-class QuizResultsDialog(var listener: ItemClickListener, var status: String, var numberOfQuestions: Int, var totalTime: String, var score: Double): DialogFragment() {
+class QuizResultsDialog(var listener: ItemClickListener, var timeout: Boolean, var numberOfQuestions: Int, var totalTime: String, var score: Double): DialogFragment() {
 
     private lateinit var binding: DialogQuizResultsBinding
 
@@ -33,6 +33,9 @@ class QuizResultsDialog(var listener: ItemClickListener, var status: String, var
                 requireContext(),
                 R.color.green
             )
+            binding.statusMessage.text = requireContext().getString(R.string.congratulations)
+            binding.quizStatusLogo.setImageResource(R.drawable.kid_happy)
+
             binding.statusMessage.setTextColor(resources.getColor(R.color.black_white))
             binding.questionNumberText.setTextColor(resources.getColor(R.color.black_white))
             binding.questionsNumber.setTextColor(resources.getColor(R.color.black_white))
@@ -45,6 +48,9 @@ class QuizResultsDialog(var listener: ItemClickListener, var status: String, var
                 requireContext(),
                 R.color.red
             )
+            binding.statusMessage.text = requireContext().getString(R.string.failure)
+            binding.quizStatusLogo.setImageResource(R.drawable.kid_unhappy)
+
             binding.statusMessage.setTextColor(resources.getColor(R.color.white_black))
             binding.questionNumberText.setTextColor(resources.getColor(R.color.white_black))
             binding.questionsNumber.setTextColor(resources.getColor(R.color.white_black))
@@ -54,7 +60,10 @@ class QuizResultsDialog(var listener: ItemClickListener, var status: String, var
             binding.score.setTextColor(resources.getColor(R.color.white_black))
         }
 
-        binding.statusMessage.text = status
+        if(timeout) {
+            binding.statusMessage.text = requireContext().getString(R.string.timeout)
+        }
+
         binding.questionsNumber.text = numberOfQuestions.toString()
         binding.totalTime.text = totalTime
         binding.score.text = score.toString()

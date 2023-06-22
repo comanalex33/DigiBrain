@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dig.digibrain.adapters.LearnPathSectionAdapter
+import com.dig.digibrain.databinding.FragmentLearnPathSectionsBinding
 import com.dig.digibrain.databinding.TabRequestsBinding
 import com.dig.digibrain.interfaces.ILearnPathSectionSelected
 import com.dig.digibrain.models.learnPaths.LearnPathSection
 
-class LearnPathSectionsFragment(var sections: List<LearnPathSection>): Fragment(), ILearnPathSectionSelected {
+class LearnPathSectionsFragment(var sections: List<LearnPathSection>, var sectionNumber: Long): Fragment(), ILearnPathSectionSelected {
 
-    private lateinit var binding: TabRequestsBinding
+    private lateinit var binding: FragmentLearnPathSectionsBinding
     private lateinit var listener: ILearnPathSectionSelected
 
     override fun onCreateView(
@@ -22,10 +23,10 @@ class LearnPathSectionsFragment(var sections: List<LearnPathSection>): Fragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = TabRequestsBinding.inflate(layoutInflater)
+        binding = FragmentLearnPathSectionsBinding.inflate(layoutInflater)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = LearnPathSectionAdapter(requireContext(), this, sections)
+        binding.recyclerView.adapter = LearnPathSectionAdapter(requireContext(), this, sections.sortedBy { it.number }, sectionNumber = sectionNumber)
 
         return binding.root
     }

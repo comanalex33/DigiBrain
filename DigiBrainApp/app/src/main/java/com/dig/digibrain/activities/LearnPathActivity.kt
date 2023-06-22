@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.dig.digibrain.R
 import com.dig.digibrain.adapters.ViewPagerAdapter
 import com.dig.digibrain.databinding.ActivityLearnPathBinding
 import com.dig.digibrain.dialogs.BottomSheetDialog
@@ -43,14 +44,18 @@ class LearnPathActivity : AppCompatActivity(), IApplyLearnPathFilter {
     private var currentClass: Int = 2
     private var isUniversity: Boolean = false
 
-    private val ALL_FRAGMENT = "All"
-    private val STARTED_FRAGMENT = "Started"
-    private val DONE_FRAGMENT = "Done"
+    private var ALL_FRAGMENT = "All"
+    private var STARTED_FRAGMENT = "Started"
+    private var DONE_FRAGMENT = "Done"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLearnPathBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ALL_FRAGMENT = resources.getString(R.string.all)
+        STARTED_FRAGMENT = resources.getString(R.string.started)
+        DONE_FRAGMENT = resources.getString(R.string.done)
 
         sessionManager = SessionManager(applicationContext)
         setupViewModel()

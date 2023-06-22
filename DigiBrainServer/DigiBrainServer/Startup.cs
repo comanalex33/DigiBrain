@@ -1,5 +1,7 @@
 using DigiBrainServer.Models;
 using DigiBrainServer.Services;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +43,11 @@ namespace DigiBrainServer
         {
 
             services.AddControllers();
+
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Configuration.GetValue<string>("FirebaseConfigFile")))
+            });
 
             // Inject Secrets object
             services.AddSingleton(Secrets);

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dig.digibrain.App
+import com.dig.digibrain.R
 import com.dig.digibrain.adapters.ChapterAdapter
 import com.dig.digibrain.adapters.LessonAdapter
 import com.dig.digibrain.adapters.SpacingItemDecorator
@@ -68,9 +69,9 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
         if(subjectId > 0 && classNumber > 0 && subjectName != null) {
             binding.subjectTitle.text = subjectName
             if(atUniversity) {
-                binding.classNumber.text = "Class $classNumber - University"
+                binding.classNumber.text = "${resources.getString(R.string.class_)} $classNumber - ${resources.getString(R.string.university)}"
             } else {
-                binding.classNumber.text = "Class $classNumber"
+                binding.classNumber.text = "${resources.getString(R.string.class_)} $classNumber"
             }
             var iconAvailable = false
             val iconPack = (application as App).iconPack
@@ -130,7 +131,7 @@ class SubjectActivity : AppCompatActivity(), IChapterChanged, ILessonSelected, I
                                     binding.subjectNoContent.visibility = View.VISIBLE
                                 }
 
-                                chapterAdapter = ChapterAdapter(this, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", chapterList!!)
+                                chapterAdapter = ChapterAdapter(this, sessionManager.getUserRole() == "admin" || sessionManager.getUserRole() == "teacher", chapterList!!.sortedBy { it.number })
                                 chapterAdapter.addListener(this)
                                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
                                 binding.recyclerView.adapter = chapterAdapter

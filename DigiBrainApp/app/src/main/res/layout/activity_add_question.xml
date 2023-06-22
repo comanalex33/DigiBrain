@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="5"
-    android:background="@color/blue_light"
     android:orientation="vertical"
     tools:context=".activities.AddSubjectActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.7">
+        android:layout_weight="1.2">
 
         <ImageView
             android:id="@+id/back_arrow"
@@ -26,15 +25,27 @@
             app:layout_constraintWidth_percent="0.1" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="right"
+            android:gravity="center"
             android:paddingTop="@dimen/_5sdp"
             android:paddingEnd="@dimen/_20sdp"
             android:text="@string/add_question"
-            android:textSize="@dimen/_25sdp"
             android:textColor="@color/black_white"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="@dimen/_25sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_140sdp"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/teacher_presenting"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -70,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/difficulty"
-            android:textColor="@color/black"
+            android:textColor="@color/black_white"
             android:textSize="@dimen/_11sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/seekbar_holder" />
@@ -99,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/easy"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -107,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/medium"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -116,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hard"
-                android:textColor="@color/black"
+                android:textColor="@color/black_white"
                 app:layout_constraintTop_toBottomOf="@id/choose_difficulty_seekbar"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -142,6 +153,7 @@
             android:layout_height="wrap_content"
             android:text="@string/choose_quiz_type"
             android:textSize="@dimen/_16sdp"
+            android:textColor="@color/black"
             android:layout_marginStart="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_20sdp"
-            android:textColor="@color/black_white"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/choose_type_text"
@@ -165,7 +177,7 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.5"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:weightSum="4">
 
@@ -178,10 +190,9 @@
                 android:id="@+id/multiple_choice_answer_1"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
 
@@ -224,10 +235,9 @@
                 android:id="@+id/multiple_choice_answer_2"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -271,10 +281,9 @@
                 android:id="@+id/multiple_choice_answer_3"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_3"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -318,10 +327,9 @@
                 android:id="@+id/multiple_choice_answer_4"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_4"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -363,7 +371,7 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.5"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:weightSum="4">
 
@@ -376,10 +384,9 @@
                 android:id="@+id/words_gap_answer_1"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -426,10 +433,9 @@
                 android:id="@+id/words_gap_answer_2"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -476,10 +482,9 @@
                 android:id="@+id/words_gap_answer_3"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_3"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -526,10 +531,9 @@
                 android:id="@+id/words_gap_answer_4"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/answer_4"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -574,7 +578,7 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.5"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:weightSum="4">
 
@@ -591,6 +595,7 @@
                 android:gravity="center"
                 android:text="@string/trueWord"
                 android:textSize="@dimen/_20sdp"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
@@ -631,6 +636,7 @@
                 android:gravity="center"
                 android:text="@string/falseWord"
                 android:textSize="@dimen/_20sdp"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
@@ -671,9 +677,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/yellow_black"
+            android:backgroundTint="@color/yellow"
             android:text="@string/add"
             android:textSize="@dimen/_20sdp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"

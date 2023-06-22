@@ -9,13 +9,18 @@
     <color name="black_white">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="white_black">#000000</color>
+    <color name="white_blue_dark">#00698A</color>
     <color name="red">#FF0000</color>
     <color name="gray">#D3D1D1</color>
     <color name="dark_gray">#959494</color>
     <color name="light_gray">#F3F2F2</color>
-    <color name="blue_light">#00698A</color>
+    <color name="gray_light_dark">#959494</color>
+    <color name="blue_light">#2EC5F5</color>
+    <color name="blue_light_dark">#00698A</color>
     <color name="blue">#00698A</color>
     <color name="green">#4FDA55</color>
     <color name="yellow">#FBE51E</color>
     <color name="yellow_black">#000000</color>
+    <color name="yellow_blue_dark">#00698A</color>
+    <color name="app_mode_color">#121212</color>
 </resources>

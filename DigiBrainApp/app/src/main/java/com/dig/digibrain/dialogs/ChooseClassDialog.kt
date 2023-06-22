@@ -8,13 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.DialogChooseClassBinding
 import com.dig.digibrain.interfaces.IClassChanged
-import com.dig.digibrain.models.subject.DomainModel
 import com.dig.digibrain.utils.Helper.Companion.forAllChildren
 
 class ChooseClassDialog(var currentClass: Int?, var isUniversity: Boolean): DialogFragment() {

@@ -1,8 +1,10 @@
 package com.dig.digibrain.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -27,6 +29,7 @@ import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.LearnPathDetailsViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LearnPathDetailsActivity : AppCompatActivity(), ILearnPathSectionSelected {
 
@@ -108,15 +111,18 @@ class LearnPathDetailsActivity : AppCompatActivity(), ILearnPathSectionSelected 
                         if (resource.data != null) {
                             expandedLearnPath = resource.data
 
+                            if(!preview)
+                                subscribeToSubjectTopic(resource.data.subjectId)
+
                             val adapter = ViewPagerAdapter(supportFragmentManager)
-                            adapter.addFragment(LearnPathSectionsFragment(expandedLearnPath!!.sections), "Sections")
+                            adapter.addFragment(LearnPathSectionsFragment(expandedLearnPath!!.sections, sectionNumber = sectionNumber), getString(R.string.sections))
                             adapter.addFragment(
                                 LearnPathGraphFragment(
                                     expandedLearnPath = expandedLearnPath!!,
                                     preview = preview,
                                     sectionNumber = sectionNumber,
                                     lessonNumber = lessonNumber,
-                                    theoryNumber = theoryNumber), "Graph")
+                                    theoryNumber = theoryNumber), getString(R.string.graph))
                             binding.viewPager.adapter = adapter
                             binding.tabs.setupWithViewPager(binding.viewPager)
                         }
@@ -144,7 +150,7 @@ class LearnPathDetailsActivity : AppCompatActivity(), ILearnPathSectionSelected 
                                     changeVisibility(preview = false)
                                     binding.learnPathStart.visibility = View.GONE
 
-                                    val snackBar = Snackbar.make(binding.root, "Learn Path started", Snackbar.LENGTH_SHORT)
+                                    val snackBar = Snackbar.make(binding.root, getString(R.string.learn_path_started), Snackbar.LENGTH_SHORT)
                                     snackBar.view.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.green))
                                     snackBar.setTextColor(ContextCompat.getColor(applicationContext, R.color.white))
                                     snackBar.show()
@@ -161,6 +167,22 @@ class LearnPathDetailsActivity : AppCompatActivity(), ILearnPathSectionSelected 
                         }
                     }
                 }
+        }
+    }
+
+    private fun subscribeToSubjectTopic(subjectId: Long) {
+        val subjectSubscriptionsString = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getString("subjects", "")
+        val subjectSubscriptions = if(subjectSubscriptionsString != null && subjectSubscriptionsString != "")
+            subjectSubscriptionsString.split(",").toMutableList()
+        else
+            mutableListOf()
+        if(!subjectSubscriptions.contains("subject-${subjectId}")) {
+            FirebaseMessaging.getInstance().subscribeToTopic("subject-${subjectId}")
+            subjectSubscriptions.add("subject-${subjectId}")
+
+            this.getSharedPreferences("application", Context.MODE_PRIVATE).edit()
+                .putString("subjects", TextUtils.join(",", subjectSubscriptions)).apply()
         }
     }
 

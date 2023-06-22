@@ -12,21 +12,10 @@
         app:iconSpaceReserved="false"
         app:title="@string/notifications"/>
 
-    <SwitchPreferenceCompat
-        app:key="sound"
-        app:iconSpaceReserved="false"
-        app:title="@string/sound"/>
-
     <Preference
         app:key="language"
         app:layout="@layout/language_preference"
         app:title="@string/language"
         app:icon="@drawable/flag_of_romania"/>
-
-    <Preference
-        app:key="feedback"
-        app:iconSpaceReserved="false"
-        app:title="@string/learn_more"
-        app:summary="@string/learn_more_description"/>
 
 </PreferenceScreen>

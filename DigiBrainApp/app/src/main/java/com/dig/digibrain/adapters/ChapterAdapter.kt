@@ -57,11 +57,13 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
             if(holder.chapterContent.visibility == View.VISIBLE) {
                 TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
                 holder.chapterContent.visibility = View.GONE
-                holder.expandArrow.setImageResource(R.drawable.ic_expand_more)
+//                holder.expandArrow.setImageResource(R.drawable.ic_expand_more)
+                holder.expandArrow.setBackgroundResource(R.drawable.ic_expand_more)
             } else {
                 TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
                 holder.chapterContent.visibility = View.VISIBLE
-                holder.expandArrow.setImageResource(R.drawable.ic_expand_less)
+//                holder.expandArrow.setImageResource(R.drawable.ic_expand_less)
+                holder.expandArrow.setBackgroundResource(R.drawable.ic_expand_less)
             }
         }
     }
@@ -89,7 +91,7 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
         var card: CardView = myView.findViewById(R.id.chapter_card_view)
         var chapterName: TextView = myView.findViewById(R.id.chapter_name)
         var recyclerView: RecyclerView = myView.findViewById(R.id.lessons_recycler_view)
-        var expandArrow: ImageView = myView.findViewById(R.id.chapter_expand)
+        var expandArrow: View = myView.findViewById(R.id.chapter_expand)
         var chapterContent: View = myView.findViewById(R.id.chapter_content)
         var noContent: View = myView.findViewById(R.id.chapter_no_content)
         var addLesson: View = myView.findViewById(R.id.chapter_add_lesson_button)
@@ -100,7 +102,8 @@ class ChapterAdapter(var context: Context, var modifyCapabilities: Boolean, priv
 
             addLesson.visibility = if(modifyCapabilities) View.VISIBLE else View.GONE
             chapterContent.visibility = View.GONE
-            expandArrow.setImageResource(R.drawable.ic_expand_more)
+            expandArrow.setBackgroundResource(R.drawable.ic_expand_more)
+//            expandArrow.setImageResource(R.drawable.ic_expand_more)
 
             list = recyclerView
             noList = noContent

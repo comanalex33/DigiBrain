@@ -5,14 +5,14 @@
     android:background="@drawable/curve_shape"
     android:layout_margin="@dimen/_2sdp"
     android:id="@+id/words_gap_card"
-    android:backgroundTint="@color/teal_700"
+    android:backgroundTint="@color/blue_light_dark"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Spinner
         android:id="@+id/words_gap_blank"
         android:inputType="text"
-        android:backgroundTint="@color/white_black"
-        android:popupBackground="@color/teal_700"
+        android:backgroundTint="@color/white"
+        android:popupBackground="@color/blue_light_dark"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"

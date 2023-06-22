@@ -48,7 +48,7 @@ class QuizTypeAdapter(var context: Context, var listener: IQuizTypeChanged, var 
         if(selectedPosition == position) {
             holder.card.backgroundTintList = AppCompatResources.getColorStateList(
                 context,
-                R.color.blue_light
+                R.color.blue_light_dark
             )
         } else {
             holder.card.backgroundTintList = AppCompatResources.getColorStateList(

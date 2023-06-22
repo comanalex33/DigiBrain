@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light"
     tools:context=".activities.SettingsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +16,7 @@
             android:id="@+id/settingsImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/ic_settings_blue"
+            android:src="@drawable/ic_settings_white"
             android:layout_marginTop="@dimen/_24sdp"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,5 +56,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_24sdp"
         app:layout_constraintTop_toBottomOf="@+id/settingsHeader"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.3"
+        android:layout_marginEnd="@dimen/_40sdp"
+        android:layout_height="0dp"
+        android:src="@drawable/teacher_thinking"
+        app:layout_constraintTop_toBottomOf="@id/settingsContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -235,6 +235,36 @@ class ProfileViewModel(private val repository: Repository): GetDomainsViewModel(
         }
     }
 
+    fun requestRole(authHeader: String, username: String, role: String) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.requestRole(authHeader, username, role)))
+        } catch (throwable: Throwable) {
+            when(throwable) {
+                is IOException -> {
+                    emit(Resource.error(
+                        data = null,
+                        message = throwable.message ?: "Network error"))
+                }
+                is HttpException -> {
+                    try {
+                        val gson = Gson()
+                        val errorModel = gson.fromJson(throwable.response()?.errorBody()?.string(), ErrorResponseModel::class.java)
+
+                        emit(Resource.error(
+                            data = null,
+                            message = errorModel.message,
+                            invalidFields = errorModel.invalidFeilds))
+                    } catch (exception: Exception) {
+                        emit(Resource.error(
+                            data = null,
+                            message = "Error occurred!"))
+                    }
+                }
+            }
+        }
+    }
+
     fun deleteAccount(authHeader: String, username: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {

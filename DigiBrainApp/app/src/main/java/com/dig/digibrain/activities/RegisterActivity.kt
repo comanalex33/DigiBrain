@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.dig.digibrain.R
 import com.dig.digibrain.databinding.ActivityRegisterBinding
@@ -14,6 +15,7 @@ import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.RegisterViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -61,12 +63,14 @@ class RegisterActivity : AppCompatActivity() {
                             passwordField = false,
                             emailField = false
                         )
-                        Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                        val snackBar = Snackbar.make(binding.root, getString(R.string.account_created_successfully), Snackbar.LENGTH_SHORT)
+                        snackBar.view.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.green))
+                        snackBar.setTextColor(ContextCompat.getColor(applicationContext, R.color.white))
+                        snackBar.show()
                     }
                     Status.ERROR -> {
                         loadingDialog.dismiss()
                         binding.errorMessage.text = resource.message
-                        Toast.makeText(applicationContext, "${registerModel.username} ${resource.invalidFields.toString()}", Toast.LENGTH_SHORT).show()
                         if(resource.invalidFields != null) {
                             for(invalidField in resource.invalidFields) {
                                 if(invalidField.uppercase() == "USERNAME") {
@@ -120,11 +124,9 @@ class RegisterActivity : AppCompatActivity() {
         }
         if(!emptyFeilds) {
             if(binding.password.text.toString() != binding.password2.text.toString()) {
-                binding.password.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder1.startAnimation(animation)
-                binding.password2.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder2.startAnimation(animation)
-                binding.errorMessage.text = "Passwords doesn't match"
+                binding.errorMessage.text = getString(R.string.passord_does_not_match)
                 return false
             }
             return true
@@ -139,30 +141,19 @@ class RegisterActivity : AppCompatActivity() {
 
         usernameField?.let {
             if(it) {
-                binding.username.setBackgroundResource(R.drawable.red_border)
                 binding.usernameHolder.startAnimation(animation)
-            } else {
-                binding.username.setBackgroundResource(R.color.gray)
             }
         }
 
         emailField?.let {
             if(it) {
-                binding.email.setBackgroundResource(R.drawable.red_border)
                 binding.emailHolder.startAnimation(animation)
-            } else {
-                binding.email.setBackgroundResource(R.color.gray)
             }
         }
         passwordField?.let {
             if(it) {
-                binding.password.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder1.startAnimation(animation)
-                binding.password2.setBackgroundResource(R.drawable.red_border)
                 binding.passwordHolder2.startAnimation(animation)
-            } else {
-                binding.password.setBackgroundResource(R.color.gray)
-                binding.password2.setBackgroundResource(R.color.gray)
             }
         }
     }

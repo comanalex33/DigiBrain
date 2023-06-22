@@ -1,6 +1,5 @@
 package com.dig.digibrain.activities
 
-import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -56,7 +55,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         subjectCategories.add(resources.getString(R.string.all))
         val adapter = ArrayAdapter(this, R.layout.spinner_item, subjectCategories)
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.spinner_item_bigger)
         binding.subjectSpinner.adapter = adapter
         binding.subjectSpinner.onItemSelectedListener = this
 
@@ -160,8 +160,8 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             setExtraOffsets(5f, 10f, 5f, 5f)
             dragDecelerationFrictionCoef = 0.95f
             isDrawHoleEnabled = true
-            setHoleColor(resources.getColor(R.color.blue_light))
-            setTransparentCircleColor(resources.getColor(R.color.blue_light))
+            setHoleColor(resources.getColor(R.color.white_black))
+            setTransparentCircleColor(resources.getColor(R.color.white_black))
             setTransparentCircleAlpha(110)
             holeRadius = 58f
             transparentCircleRadius = 61f
@@ -171,7 +171,7 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             isHighlightPerTapEnabled = true
             animateY(1400, Easing.EaseInOutQuad)
             legend.isEnabled = false
-            setEntryLabelColor(resources.getColor(R.color.blue_light))
+            setEntryLabelColor(resources.getColor(R.color.blue_light_dark))
             setEntryLabelTextSize(7f)
         }
     }
@@ -266,7 +266,7 @@ class StatisticsActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(15f)
         data.setValueTypeface(Typeface.DEFAULT_BOLD)
-        data.setValueTextColor(Color.WHITE)
+        data.setValueTextColor(resources.getColor(R.color.black_white))
         pie.data = data
 
         pie.highlightValues(null)

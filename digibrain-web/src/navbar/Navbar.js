@@ -11,12 +11,14 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import apiService from '../services/ApiService';
+import Admin from '../pages/Requests';
 
 const Navbar = () => {
 
     const [languages, setLanguages] = useState([])
 
     let isUserLoggedIn = sessionStorage.getItem('token');
+    let role = sessionStorage.getItem('role')
 
     const navigate = useNavigate();
     const { i18n, t } = useTranslation()
@@ -80,6 +82,18 @@ const Navbar = () => {
                     {(isUserLoggedIn !== null) &&
                         <NavLink to="/learn-path" >
                             {t("learn_path_tab")}
+                        </NavLink>
+                    }
+
+                    {(role === 'admin') &&
+                        <NavLink to="/requests" >
+                            {t("requests_tab")}
+                        </NavLink>
+                    }
+
+                    {(role === 'admin') &&
+                        <NavLink to="/messages" >
+                            {t("messages_tab")}
                         </NavLink>
                     }
                 </NavMenu>

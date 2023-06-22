@@ -39,6 +39,12 @@ interface ApiService {
     suspend fun changeProfilePicture(
         @Path("username") username: String,
         @Part file: MultipartBody.Part): UserModel
+    @PUT("api/users/{username}/roles/{role}")
+    suspend fun requestRole(
+        @Header("Authorization") authHeader : String,
+        @Path("username") username: String,
+        @Path("role") role: String
+    ) : UserModel
     // --DELETE--
     @DELETE("api/users/{username}")
     suspend fun deleteAccount(@Header("Authorization") authHeader : String, @Path("username") username: String): UserModel

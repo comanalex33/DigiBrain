@@ -357,7 +357,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<QuestionResponseModel>> AddQuestion(QuestionViewModel model)
         {
             // Check type correctness
@@ -400,7 +400,7 @@ namespace DigiBrainServer.Controllers
 
         [HttpPost]
         [Route("{id}/subjects")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<List<SubjectQuestionResponseModel>>> AddQuestionToSubjects(long id, List<long> subjectIds)
         {
             var addedSubjectQuestions = new List<SubjectQuestionResponseModel>();
@@ -439,7 +439,7 @@ namespace DigiBrainServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,teacher")]
         public async Task<ActionResult<QuestionResponseModel>> DeleteQuestion(long id)
         {
             var question = await _context.Question.FindAsync(id);
@@ -459,6 +459,123 @@ namespace DigiBrainServer.Controllers
                 _context.Answer.Remove(answer);
             }
 
+            await _context.SaveChangesAsync();
+
+            return Ok((QuestionResponseModel)question);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin,teacher")]
+        public async Task<ActionResult<QuestionResponseModel>> UpdateQuestion(long id, QuestionAnswersViewModel model)
+        {
+            // Question Update
+            var question = await _context.Question.FindAsync(id);
+            if (question == null)
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "This question does not exist"
+                });
+            }
+
+            // Check type correctness
+            if (!acceptedTypes.Contains(model.Type))
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Type not allowed, accepted types are " + string.Join(",", acceptedTypes)
+                });
+            }
+            // Check difficulty correctness
+            if (!acceptedDifficulties.Contains(model.Difficulty))
+            {
+                return NotFound(new ErrorResponseModel
+                {
+                    Message = "Difficulty not allowed, accepted difficulties are " + string.Join(",", acceptedDifficulties)
+                });
+            }
+
+            var questionCheck = _context.Question.Where(item => item.Id != id && item.Text == model.Text && item.Difficulty.Equals(model.Difficulty) && item.Type.Equals(model.Type)).FirstOrDefault();
+            if (questionCheck != null)
+            {
+                return BadRequest(new { message = "A Question with this text, difficulty and type already exists" });
+            }
+
+            question.Text = model.Text;
+            question.Difficulty = model.Difficulty;
+            question.Type = model.Type;
+            question.LanguageId = model.LanguageId;
+
+            _context.Question.Update(question);
+            await _context.SaveChangesAsync();
+
+            // Answers remove
+            var answers = await _context.Answer.Where(item => item.QuestionId == question.Id).ToListAsync();
+            foreach (var answer in answers)
+            {
+                var idFound = false;
+                foreach(var targetAnswer in model.Answers)
+                {
+                    if (targetAnswer.Id == answer.Id)
+                        idFound = true;
+                }
+                if(!idFound)
+                {
+                    _context.Answer.Remove(answer);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Answers update
+            foreach (var answer in model.Answers)
+            {
+                if(answer.Id == 0)
+                {
+                    var answerCheck = _context.Answer.Where(item => item.Text == answer.Text && item.QuestionId == answer.QuestionId).FirstOrDefault();
+                    if (answerCheck != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "An answer with this text already exists for this question: " + answer.QuestionId.ToString()
+                        });
+                    }
+
+                    long newId = _context.Answer.Count() + 1;
+                    answerCheck = await _context.Answer.FindAsync(newId);
+                    while (answerCheck != null)
+                    {
+                        newId++;
+                        answerCheck = await _context.Answer.FindAsync(newId);
+                    }
+
+                    AnswerModel newAnswer = new(newId, answer.Text, answer.Position, answer.Correct, answer.QuestionId);
+                    _context.Answer.Add(newAnswer);
+                } else
+                {
+                    var answerDb = await _context.Answer.FindAsync(answer.Id);
+                    if (answerDb == null)
+                    {
+                        return NotFound(new ErrorResponseModel
+                        {
+                            Message = "This answer does not exist"
+                        });
+                    }
+
+                    var answerCheck = _context.Answer.Where(item => item.Id != answer.Id && item.Text == answer.Text && item.QuestionId == answer.QuestionId).FirstOrDefault();
+                    if (answerCheck != null)
+                    {
+                        return BadRequest(new { message = "An answer with this text already exists for this question" });
+                    }
+
+                    answerDb.Text = answer.Text;
+                    answerDb.Position = answer.Position;
+                    answerDb.Correct = answer.Correct;
+                    answerDb.QuestionId = answer.QuestionId;
+
+                    _context.Answer.Update(answerDb);
+                }
+            }
             await _context.SaveChangesAsync();
 
             return Ok((QuestionResponseModel)question);

@@ -71,14 +71,6 @@ class LearnPathLessonDialog(
                         intent.putExtras(bundle)
 
                         startActivity(intent)
-//                        val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                            if (result.resultCode == Activity.RESULT_OK) {
-//                                val data: Intent? = result.data
-//                                val resultValue = data?.getStringExtra("result_key")
-//                                Toast.makeText(context, resultValue, Toast.LENGTH_SHORT).show()
-//                            }
-//                        }
-//                        getResult.launch(intent)
 
                         // Set current point
                         LearnPathLocalStatus.currentSectionNumber = sectionNumber.toInt()
@@ -96,10 +88,6 @@ class LearnPathLessonDialog(
 
                         dialog?.dismiss()
                     }
-//                    if(quizes != null)
-//                        Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show()
-//                    else
-//                        Toast.makeText(context, "E null", Toast.LENGTH_SHORT).show()
                     quizes?.apply {
 
                         val intent = Intent(requireContext(), QuestionActivity::class.java)
@@ -179,7 +167,7 @@ class LearnPathLessonDialog(
     private fun initializeUIComponents() {
         theory?.apply {
             binding.lessonTitle.text = this.title
-            binding.lessonNumber.text = "Lectia ${this.number} din ${lesson!!.theory.size}"
+            binding.lessonNumber.text = "${getString(R.string.lesson)} ${this.number} ${getString(R.string.of)} ${lesson!!.theory.size}"
         }
         quizes?.apply {
             binding.lessonTitle.text = "Quiz"
@@ -217,15 +205,6 @@ class LearnPathLessonDialog(
     }
 
     fun setupUI(backgroundColor: Int, buttonText: String, update: Boolean = true) {
-//        binding.card.backgroundTintList = AppCompatResources.getColorStateList(
-//            requireContext(),
-//            backgroundColor
-//        )
-//
-//        binding.startButton.text = buttonText
-//
-//        if (backgroundColor == R.color.gray)
-//            binding.startButton.isClickable = false
         this.updateStatus = update
         this.backgroundColor = backgroundColor
         this.buttonText = buttonText

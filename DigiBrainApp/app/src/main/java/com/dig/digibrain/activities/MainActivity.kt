@@ -14,6 +14,7 @@ import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Status
 import com.dig.digibrain.viewModels.SettingsViewModel
 import com.dig.digibrain.viewModels.ViewModelFactory
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -97,6 +98,7 @@ class MainActivity : AppCompatActivity() {
     private fun handleActivity() {
         binding.logoutButton.setOnClickListener {
             sessionManager.disconnect()
+            unsubscribe()
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
@@ -133,6 +135,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun unsubscribe() {
+        // Unsubscribe
+        val subscriptionsString = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getString("subscriptions", "")
+        val subscriptions = if(subscriptionsString != null && subscriptionsString != "")
+            subscriptionsString.split(",")
+        else
+            listOf()
+        for(subscription in subscriptions) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(subscription)
+        }
+        this.getSharedPreferences("application", Context.MODE_PRIVATE).edit()
+            .putString("subscriptions", "").apply()
+
+        // Unsubscribe subjects
+        val subjectSubscriptionsString = this.getSharedPreferences("application", Context.MODE_PRIVATE)
+            .getString("subjects", "")
+        val subjectSubscriptions = if(subjectSubscriptionsString != null && subjectSubscriptionsString != "")
+            subjectSubscriptionsString.split(",")
+        else
+            listOf()
+        for(subscription in subjectSubscriptions) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(subscription)
+        }
+        this.getSharedPreferences("application", Context.MODE_PRIVATE).edit()
+            .putString("subjects", "").apply()
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
@@ -141,6 +171,11 @@ class MainActivity : AppCompatActivity() {
         binding.profileText.text = resources.getString(R.string.profile)
         binding.statsText.text = resources.getString(R.string.statistics)
         binding.settingsText.text = resources.getString(R.string.settings)
+        binding.profileCategory.text = resources.getString(R.string.check_your_profile)
+
+        binding.learnPathTitle1.text = resources.getString(R.string.explore)
+        binding.learnPathTitle2.text = resources.getString(R.string.learning)
+        binding.learnPathTitle3.text = resources.getString(R.string.paths)
         setupUI()
     }
 }

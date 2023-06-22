@@ -5,7 +5,6 @@ using DigiBrainServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -158,29 +157,6 @@ namespace DigiBrainServer.Controllers
             return user;
         }
 
-        [HttpGet]
-        [Route("verify-email")]
-        public async Task<ActionResult<InfoResponseModel>> VerifyEmail(string code)
-        {
-            var user = await _userModel.Users.FirstOrDefaultAsync(item => item.RegistrationToken == code);
-
-            if (user == null)
-            {
-                return Ok(new { message = "Verification failed" });
-            }
-
-            if (user.EmailConfirmed == true)
-            {
-                return BadRequest(new { message = "Email already confirmed" });
-            }
-
-            user.EmailConfirmed = true;
-
-            await _userModel.UpdateAsync(user);
-
-            return Ok(new { message = "Verification successful, you can now login" });
-        }
-
         private async Task AddRoles(string role)
         {
             var roleValue = new RoleModel { Id = Guid.NewGuid().ToString(), Name = role };
@@ -211,7 +187,7 @@ namespace DigiBrainServer.Controllers
 
         private void SendConfirmationEmail(UserModel user, string origin)
         {
-            var verifyUrl = $"{origin}/api/auth/verify-email?code={user.RegistrationToken}";
+            var verifyUrl = $"{origin}/api/services/verify-email?code={user.RegistrationToken}";
             var message = $@"<p>Please click the below link to verify your email address:</p>
                              <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
 

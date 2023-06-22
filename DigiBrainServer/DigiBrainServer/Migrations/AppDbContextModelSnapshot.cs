@@ -585,6 +585,9 @@ namespace DigiBrainServer.Migrations
                     b.Property<bool>("RequestToResolve")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RoleRequest")
+                        .HasColumnType("text");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 

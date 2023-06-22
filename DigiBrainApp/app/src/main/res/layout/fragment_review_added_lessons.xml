@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ReviewAddedLessonsFragment">
 
@@ -14,6 +13,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="0dp"
+            tools:listitem="@layout/card_review_subjects"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,9 +28,10 @@
             app:layout_constraintWidth_percent="0.5"
             app:layout_constraintHeight_percent="0.1"
             android:background="@drawable/curve_shape"
-            android:backgroundTint="@color/yellow_black"
+            android:backgroundTint="@color/yellow"
             android:text="@string/save"
             android:textSize="@dimen/_20sdp"
+            android:textColor="@color/black"
             android:layout_marginBottom="@dimen/_50sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
