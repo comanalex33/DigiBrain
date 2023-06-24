@@ -5,7 +5,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dig.digibrain.R
 import com.dig.digibrain.activities.LoginActivity
@@ -13,6 +15,8 @@ import com.google.firebase.messaging.RemoteMessage
 
 class FirebaseMessagingService : com.google.firebase.messaging.FirebaseMessagingService() {
 
+    private val TAG = "FirebaseMessagingService"
+    
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
@@ -20,7 +24,13 @@ class FirebaseMessagingService : com.google.firebase.messaging.FirebaseMessaging
             val title = it.title
             val body = it.body
 
-            sendNotification(title!!, body!!)
+            val settings: SharedPreferences = this.getSharedPreferences("application", MODE_PRIVATE)
+
+            if (settings.getBoolean("notifications", true)) {
+                sendNotification(title!!, body!!)
+            } else {
+                Log.i(TAG, "Notifications are disabled")
+            }
         }
     }
 
