@@ -225,7 +225,8 @@ class LoginActivity : AppCompatActivity() {
         this.getSharedPreferences("application", Context.MODE_PRIVATE).
             edit().putLong("lastLoginTime", System.currentTimeMillis()).apply()
 
-        Log.v("LoginActivity", "Starting CheckRecentRun service...")
+        Log.v("LoginActivity", "Restarting CheckRecentRun service...")
+        stopService(Intent(this, UserActivityService::class.java))
         startService(Intent(this, UserActivityService::class.java))
     }
 
