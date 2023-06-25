@@ -9,4 +9,7 @@ object LearnPathLocalStatus {
     var currentSectionNumber: Int? = null
     var currentLessonNumber: Int? = null
     var currentTheoryNumber: Int? = null
+
+    var sectionFinished: Long? = null
+    var updated: Boolean = true
 }

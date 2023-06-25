@@ -82,7 +82,6 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
             }
             if(bundle.containsKey("updateStatus")) {
                 updateStatus = bundle.getBoolean("updateStatus")
-                Toast.makeText(applicationContext, "Status $updateStatus", Toast.LENGTH_SHORT).show()
             }
             totalScore = bundle.getInt("score")
             learnPathId = bundle.getLong("learnPathId")
@@ -174,7 +173,6 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         Status.SUCCESS -> {
                             loadingDialog.dismiss()
                             if(resource.data != null) {
-                                Toast.makeText(applicationContext, "Questions received", Toast.LENGTH_SHORT).show()
                                 getAnswers(resource.data)
                             }
                         }
@@ -397,7 +395,6 @@ class QuestionActivity : AppCompatActivity(), ItemClickListener {
                         it?.let { resource ->
                             when (resource.status) {
                                 Status.SUCCESS -> {
-                                    Toast.makeText(applicationContext, "Updated quiz status", Toast.LENGTH_SHORT).show()
                                     finish()
                                 }
                                 Status.ERROR -> {

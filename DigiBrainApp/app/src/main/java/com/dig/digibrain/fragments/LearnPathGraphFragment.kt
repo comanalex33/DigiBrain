@@ -77,13 +77,37 @@ class LearnPathGraphFragment(
                 sectionNumber = LearnPathLocalStatus.sectionNumber!!.toLong(),
                 lessonNumber = LearnPathLocalStatus.lessonNumber!!.toLong(),
                 theoryNumber = LearnPathLocalStatus.theoryNumber!!.toLong(),
-                preview = preview
+                preview = preview,
+                justCompleted = true
             )
             binding.recyclerView.adapter = adapter
 
             updateStatus(false)
 
             LearnPathLocalStatus.done = false
+        } else {
+            if(LearnPathLocalStatus.sectionNumber != null) {
+                adapter = LearnPathDetailsAdapter(
+                    context = requireContext(),
+                    learnPathExpandedModel = expandedLearnPath,
+                    sectionPosition = sectionPosition,
+                    sectionNumber = LearnPathLocalStatus.sectionNumber!!.toLong(),
+                    lessonNumber = LearnPathLocalStatus.lessonNumber!!.toLong(),
+                    theoryNumber = LearnPathLocalStatus.theoryNumber!!.toLong(),
+                    preview = preview
+                )
+            } else {
+                adapter = LearnPathDetailsAdapter(
+                    context = requireContext(),
+                    learnPathExpandedModel = sortedLearnPathDetails(),
+                    sectionPosition = sectionPosition,
+                    sectionNumber = sectionNumber,
+                    lessonNumber = lessonNumber,
+                    theoryNumber = theoryNumber,
+                    preview = preview
+                )
+            }
+            binding.recyclerView.adapter = adapter
         }
     }
 

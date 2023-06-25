@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import com.dig.digibrain.R
 import com.dig.digibrain.databinding.CardLearnPathSectionBinding
 import com.dig.digibrain.interfaces.ILearnPathSectionSelected
 import com.dig.digibrain.models.learnPaths.LearnPathSection
+import com.dig.digibrain.objects.LearnPathLocalStatus
 
 class LearnPathSectionAdapter(var context: Context, var listener: ILearnPathSectionSelected, private var arrayList: List<LearnPathSection>, var sectionNumber: Long): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -48,6 +50,10 @@ class LearnPathSectionAdapter(var context: Context, var listener: ILearnPathSect
 
         if(learnPathSection.number == selectedPosition) {
             holder.currentSection.visibility = View.VISIBLE
+            if(!LearnPathLocalStatus.updated) {
+                listener.changeSectionPosition(learnPathSection.number)
+                LearnPathLocalStatus.updated = true
+            }
         } else {
             holder.currentSection.visibility = View.GONE
         }

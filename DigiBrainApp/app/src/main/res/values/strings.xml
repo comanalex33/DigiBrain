@@ -149,4 +149,5 @@
     <string name="account_created_successfully">Account created successfully</string>
     <string name="passord_does_not_match">Passwords doesn\'t match</string>
     <string name="learn_path_started">Learn Path started</string>
+    <string name="Learn_path_finished">Learn Path finished</string>
 </resources>

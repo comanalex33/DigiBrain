@@ -148,19 +148,6 @@ class MainActivity : AppCompatActivity() {
         }
         this.getSharedPreferences("application", Context.MODE_PRIVATE).edit()
             .putString("subscriptions", "").apply()
-
-        // Unsubscribe subjects
-        val subjectSubscriptionsString = this.getSharedPreferences("application", Context.MODE_PRIVATE)
-            .getString("subjects", "")
-        val subjectSubscriptions = if(subjectSubscriptionsString != null && subjectSubscriptionsString != "")
-            subjectSubscriptionsString.split(",")
-        else
-            listOf()
-        for(subscription in subjectSubscriptions) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(subscription)
-        }
-        this.getSharedPreferences("application", Context.MODE_PRIVATE).edit()
-            .putString("subjects", "").apply()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

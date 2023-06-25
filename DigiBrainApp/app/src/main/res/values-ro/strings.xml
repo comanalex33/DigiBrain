@@ -150,4 +150,5 @@
     <string name="account_created_successfully">Cont creat cu succes</string>
     <string name="passord_does_not_match">Parolele nu se potrivesc</string>
     <string name="learn_path_started">Plan de învățare început</string>
+    <string name="Learn_path_finished">Plan de învățare finalizat</string>
 </resources>
