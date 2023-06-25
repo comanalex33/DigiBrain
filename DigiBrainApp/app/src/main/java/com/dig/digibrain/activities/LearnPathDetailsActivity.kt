@@ -22,6 +22,7 @@ import com.dig.digibrain.fragments.LearnPathTabFragment
 import com.dig.digibrain.interfaces.ILearnPathSectionSelected
 import com.dig.digibrain.models.learnPaths.LearnPathDetailedModel
 import com.dig.digibrain.models.learnPaths.LearnPathExpandedModel
+import com.dig.digibrain.objects.LearnPathLocalStatus
 import com.dig.digibrain.services.SessionManager
 import com.dig.digibrain.services.server.ApiClient
 import com.dig.digibrain.utils.Helper.Companion.getInitials
@@ -53,6 +54,8 @@ class LearnPathDetailsActivity : AppCompatActivity(), ILearnPathSectionSelected 
 
         sessionManager = SessionManager(applicationContext)
         setupViewModel()
+
+        LearnPathLocalStatus.sectionFinished = null
 
         val bundle = intent.extras
         if(bundle != null) {

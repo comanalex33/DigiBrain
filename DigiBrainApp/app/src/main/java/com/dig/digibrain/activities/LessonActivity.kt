@@ -42,7 +42,6 @@ class LessonActivity : AppCompatActivity() {
 
         if(lessonTitle != null && lessonContent != null) {
             binding.lessonTitle.text = lessonTitle
-//            binding.lessonContent.text = HtmlCompat.fromHtml(lessonContent!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
             binding.lessonContent.setBackgroundColor(Color.TRANSPARENT)
             binding.lessonContent.loadData(lessonContent!!, "text/html", "UTF-8")
         }

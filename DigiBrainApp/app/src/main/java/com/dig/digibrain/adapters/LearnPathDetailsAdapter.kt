@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -14,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dig.digibrain.R
 import com.dig.digibrain.dialogs.LearnPathLessonDialog
+import com.dig.digibrain.interfaces.IUpdateSection
 import com.dig.digibrain.models.learnPaths.*
+import com.dig.digibrain.objects.LearnPathLocalStatus
 import com.dig.digibrain.utils.Helper
 
 class LearnPathDetailsAdapter(
@@ -24,7 +27,8 @@ class LearnPathDetailsAdapter(
     var sectionNumber: Long,
     var lessonNumber: Long,
     var theoryNumber: Long,
-    var preview: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var preview: Boolean,
+    var justCompleted: Boolean = false): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_LESSON = 0
     private val VIEW_TYPE_THEORY = 1
@@ -192,6 +196,10 @@ class LearnPathDetailsAdapter(
                                 (this.number == sectionNumber.toInt() && lesson.number < lessonNumber.toInt())) {
                                 lessonCurrent.visibility = View.GONE
                                 lessonCompleted.visibility = View.VISIBLE
+                                if(this.lessons[this.lessons.size - 1] == lesson && justCompleted) {
+                                    LearnPathLocalStatus.sectionFinished = sectionNumber - 1
+                                    LearnPathLocalStatus.updated = false
+                                }
                             }
                             else if(this.number == sectionNumber.toInt() && lesson.number == lessonNumber.toInt()) {
                                 lessonCurrent.visibility = View.VISIBLE

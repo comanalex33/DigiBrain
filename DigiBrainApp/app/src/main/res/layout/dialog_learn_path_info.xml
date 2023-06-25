@@ -51,7 +51,7 @@
             app:layout_constraintTop_toTopOf="@+id/learn_path_icon"
             app:layout_constraintWidth_percent="0.5"
             android:text="TEST"
-            android:textSize="@dimen/_20sdp"
+            android:textSize="@dimen/_17sdp"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:gravity="center"/>
